@@ -5,14 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
 @Data
 @Entity
-@Table(name = "theater_room")
+@Table
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 @ToString(callSuper = true)
 public class TheaterRoom extends BaseEntity{
     private String theaterRoomName;

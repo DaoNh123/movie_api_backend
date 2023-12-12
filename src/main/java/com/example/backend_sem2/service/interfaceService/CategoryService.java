@@ -1,4 +1,4 @@
-package com.example.backend_sem2.service;
+package com.example.backend_sem2.service.interfaceService;
 
 import com.example.backend_sem2.entity.Category;
 import org.springframework.data.domain.Page;

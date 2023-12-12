@@ -10,7 +10,7 @@ import lombok.ToString;
 
 @Data
 @Entity
-@Table(name = "slots")
+@Table
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)

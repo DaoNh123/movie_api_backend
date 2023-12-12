@@ -1,22 +1,15 @@
-package com.example.backend_sem2.entity;
+package com.example.backend_sem2.dto;
 
+import com.example.backend_sem2.entity.Category;
+import com.example.backend_sem2.entity.Comment;
+import com.example.backend_sem2.entity.MovieLabelEnum;
+import com.example.backend_sem2.entity.Slot;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
-@Data
-@Entity
-@Table(name = "movies")
-@AllArgsConstructor
-@NoArgsConstructor
-@SuperBuilder
-public class Movie extends BaseEntity{
+public class MovieResponse {
     @Column(name = "movie_name")
     private String movieName;
     @Column(name = "poster_url", columnDefinition = "TEXT")
@@ -34,9 +27,9 @@ public class Movie extends BaseEntity{
     @ManyToMany(
             fetch = FetchType.LAZY,
             cascade = {
-            CascadeType.PERSIST, CascadeType.DETACH,
-            CascadeType.REFRESH, CascadeType.MERGE
-    })
+                    CascadeType.PERSIST, CascadeType.DETACH,
+                    CascadeType.REFRESH, CascadeType.MERGE
+            })
     @JoinTable(
             name = "category_movie",
             joinColumns = @JoinColumn(name = "movie_id"),
@@ -59,20 +52,5 @@ public class Movie extends BaseEntity{
             CascadeType.PERSIST, CascadeType.DETACH,
             CascadeType.REFRESH, CascadeType.MERGE
     })
-    private List<Slot> slotList = new ArrayList<>();
-
-    @Override
-    public String toString() {
-        return super.toString() + "Movie{" +
-                "movieName='" + movieName + '\'' +
-                ", posterUrl='" + posterUrl + '\'' +
-                ", director='" + director + '\'' +
-                ", description='" + description + '\'' +
-                ", duration=" + duration +
-                ", language='" + language + '\'' +
-                ", movieLabel='" + movieLabel + '\'' +
-                ", openingDay=" + openingDay +
-                ", closingDay=" + closingDay +
-                '}';
-    }
+    private List<Slot> slotList;
 }

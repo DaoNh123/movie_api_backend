@@ -5,12 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @Entity
 @Table(name = "comments")
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 public class Comment extends BaseEntity {
     @Column(name = "comment_username")
     private String commentUsername;

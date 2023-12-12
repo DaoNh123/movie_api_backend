@@ -42,6 +42,7 @@ public class Seat extends BaseEntity{
     private SeatClass seatClass;
     @OneToMany(
             fetch = FetchType.LAZY,
+            mappedBy = "seat",
             cascade = {
                     CascadeType.DETACH, CascadeType.MERGE,
                     CascadeType.PERSIST, CascadeType.REFRESH

@@ -1,9 +1,9 @@
-package com.example.backend_sem2.service;
+package com.example.backend_sem2.service.ServiceImpl;
 
 import com.example.backend_sem2.entity.Category;
 import com.example.backend_sem2.exception.CustomErrorException;
 import com.example.backend_sem2.repository.CategoryRepo;
-import jakarta.persistence.EntityNotFoundException;
+import com.example.backend_sem2.service.interfaceService.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 @Service
 @AllArgsConstructor
-public class CategoryServiceImpl implements CategoryService{
+public class CategoryServiceImpl implements CategoryService {
     private CategoryRepo categoryRepo;
 
     @Override

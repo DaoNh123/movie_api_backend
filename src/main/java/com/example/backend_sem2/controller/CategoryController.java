@@ -1,12 +1,10 @@
 package com.example.backend_sem2.controller;
 
 import com.example.backend_sem2.entity.Category;
-import com.example.backend_sem2.service.CategoryService;
+import com.example.backend_sem2.service.interfaceService.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

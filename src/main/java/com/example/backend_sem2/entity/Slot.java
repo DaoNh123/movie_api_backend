@@ -5,13 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Entity
 @Table(name = "slots")
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
@@ -40,4 +43,19 @@ public class Slot extends BaseEntity{
                     CascadeType.PERSIST, CascadeType.REFRESH
             })
     private List<Order> orderList;
+
+//    protected Slot(final SlotBuilder<?, ?> b) {
+//        super(b);
+//        this.startTime = b.startTime;
+//        this.endTime = b.endTime;
+//        this.movie = b.movie;
+//        this.theaterRoom = b.theaterRoom;
+//        this.orderList = b.orderList;
+//        if(movie != null){
+//            if(movie.getSlotList() == null){
+//                movie.setSlotList(new ArrayList<>());
+//            }
+//            movie.getSlotList().add(this);
+//        }
+//    }
 }

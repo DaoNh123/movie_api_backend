@@ -1,13 +1,10 @@
 package com.example.backend_sem2.controller;
 
+import com.example.backend_sem2.dto.CommentRequest;
 import com.example.backend_sem2.dto.CommentResponse;
-import com.example.backend_sem2.entity.Comment;
-import com.example.backend_sem2.service.CommentService;
+import com.example.backend_sem2.service.interfaceService.CommentService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,5 +18,20 @@ public class CommentController {
             @PathVariable String movieName
     ) {
         return commentService.getAllCommentByMovieName(movieName);
+    }
+
+    @PostMapping("/add")
+    public CommentResponse saveComment(
+            @RequestBody CommentRequest commentRequest
+    ){
+        return commentService.saveComment(commentRequest);
+    }
+
+    @PutMapping("/update/{id}")
+    public CommentResponse updateComment(
+            @RequestBody CommentRequest commentRequest,
+            @PathVariable Long id
+    ){
+        return commentService.updateComment(commentRequest, id);
     }
 }

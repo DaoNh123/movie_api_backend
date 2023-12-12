@@ -8,7 +8,7 @@ import lombok.ToString;
 
 @Data
 @Entity
-@Table(name = "slots")
+@Table(name = "order_details")
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)

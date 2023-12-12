@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "slots")
+@Table(name = "orders")
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
@@ -35,6 +35,7 @@ public class Order extends BaseEntity{
     private List<Seat> seatList;
     @OneToMany(
             fetch = FetchType.LAZY,
+            mappedBy = "order",
             cascade = {
                     CascadeType.DETACH, CascadeType.MERGE,
                     CascadeType.PERSIST, CascadeType.REFRESH
