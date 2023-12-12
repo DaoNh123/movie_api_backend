@@ -43,11 +43,13 @@ public class MovieController {
         return slotService.getSlotsByMovie_Id(id);
     }
 
-    @GetMapping("/{id}/slots/{slot_id}")
+/*  Unused method but do not delete it  */
+    @GetMapping("/{id}/slots_dao/{slot_id}")
     public List<Seat> getAllSeatOfASlotWithStatus(
             @PathVariable Long id,
             @PathVariable(name = "slots_id") Long slotId
     ){
         return seatService.getAllSeatOfASlotWithStatus(id, slotId);
     }
+/*  End unused method   */
 }
