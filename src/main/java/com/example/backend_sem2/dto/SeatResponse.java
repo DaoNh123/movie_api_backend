@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @Data
 public class SeatResponse {
+    private Long seatId;
     private String seatName;
     @JsonIgnore
     private SeatClassResponse seatClassResponse;

@@ -7,11 +7,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = "spring", uses = {ReferenceMapper.class, SeatClassMapper.class})
+@Mapper(componentModel = "spring", uses = {ReferenceMapper.class, SeatClassMapper.class, Seat.class})
 public interface SeatMapper {
     Seat toEntity(Long id);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "seatClass", target = "seatClassResponse")
+    @Mapping(source = "id", target = "seatId")
     SeatResponse toDto(Seat seat);
 }

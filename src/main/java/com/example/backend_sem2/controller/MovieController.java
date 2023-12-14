@@ -61,9 +61,9 @@ public class MovieController {
 
     @GetMapping("/{id}/slots/{slot_id}")
     public List<SeatResponse> getAllSeatOfASlotWithStatus(
-            @PathVariable Long id,
+            @PathVariable(name = "id") Long movieId,
             @PathVariable(name = "slot_id") Long slotId
     ){
-        return seatService.getAllSeatOfASlotWithStatus(id, slotId);
+        return seatService.getAllSeatOfASlotWithStatus(slotId);
     }
 }

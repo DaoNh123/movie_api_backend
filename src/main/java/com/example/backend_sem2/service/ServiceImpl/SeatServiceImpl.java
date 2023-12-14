@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -20,11 +19,11 @@ public class SeatServiceImpl implements SeatService {
     private OrderDetailService orderDetailService;
     private SeatMapper seatMapper;
     @Override
-    public List<SeatResponse> getAllSeatOfASlotWithStatus(Long id, Long slotId) {
+    public List<SeatResponse> getAllSeatOfASlotWithStatus(Long slotId) {
         List<String> orderedSeatNameList = orderDetailService.getAllOrderedSeatName(slotId);
         List<Seat> seatsListInSlot = seatRepo.getSeatBySlotId(slotId);
 
-        List<SeatResponse> seatResponseList = seatsListInSlot.stream()
+        return seatsListInSlot.stream()
                 .map(seat -> {
                     SeatResponse seatResponse = seatMapper.toDto(seat);
                     if(orderedSeatNameList.contains(seat.getSeatName())){
@@ -34,6 +33,5 @@ public class SeatServiceImpl implements SeatService {
                     }
                     return seatResponse;
                 }).toList();
-        return seatResponseList;
     }
 }

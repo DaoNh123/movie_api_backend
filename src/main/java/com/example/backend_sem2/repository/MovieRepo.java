@@ -19,16 +19,16 @@ public interface MovieRepo extends JpaRepository<Movie, Long> {
 //            "(:categoryName IS NULL OR lower(c.categoryName) = lower(:categoryName))" +
 //            " AND (:movieLabel IS NULL OR lower(m.movieLabel) = lower(:movieLabel))")
 
-//    @Query(value = "FROM Movie m INNER JOIN FETCH m.categoryList c " +
-//            "WHERE (:partOfMovieName IS NULL OR m.movieName LIKE CONCAT('%', cast(:partOfMovieName AS text), '%')) " +
-//            "AND (:categoryName IS NULL OR c.categoryName LIKE CONCAT('%', cast(:categoryName AS text), '%')) " +
-//            "AND (:movieLabel IS NULL OR m.movieLabel = :movieLabel ")
-//    Page<Movie> getMoviePageableByCondition3(Pageable pageable, String partOfMovieName, String categoryName, MovieLabelEnum movieLabel);
+    @Query(value = "FROM Movie m INNER JOIN FETCH m.categoryList c " +
+            "WHERE (:partOfMovieName IS NULL OR m.movieName LIKE CONCAT('%', cast(:partOfMovieName AS text), '%')) " +
+            "AND (:categoryName IS NULL OR c.categoryName LIKE CONCAT('%', cast(:categoryName AS text), '%')) " +
+            "AND (:movieLabel IS NULL OR m.movieLabel = :movieLabel) ")
+    Page<Movie> getMoviePageableByCondition3(Pageable pageable, String partOfMovieName, String categoryName, MovieLabelEnum movieLabel);
 
-        @Query(value = "FROM Movie m INNER JOIN FETCH m.categoryList c " +
-            "WHERE (:partOfMovieName IS NULL OR LOWER(CAST(m.movieName AS text)) LIKE '%' || CAST(:partOfMovieName AS text) || '%') AND " +
-            "(:categoryName IS NULL OR LOWER(CAST(c.categoryName AS text)) = LOWER(CAST(:categoryName AS text)))" )
-    Page<Movie> getMoviePageableByCondition1(Pageable pageable, String partOfMovieName, String categoryName);
+//        @Query(value = "FROM Movie m INNER JOIN FETCH m.categoryList c " +
+//            "WHERE (:partOfMovieName IS NULL OR LOWER(CAST(m.movieName AS text)) LIKE '%' || CAST(:partOfMovieName AS text) || '%') AND " +
+//            "(:categoryName IS NULL OR LOWER(CAST(c.categoryName AS text)) = LOWER(CAST(:categoryName AS text)))" )
+//    Page<Movie> getMoviePageableByCondition1(Pageable pageable, String partOfMovieName, String categoryName);
 
 //    @Query(value = "FROM Movie m INNER JOIN FETCH m.categoryList c " +
 //            "WHERE (:partOfMovieName IS NULL OR m.movieName LIKE CONCAT('%', cast(:partOfMovieName AS text), '%')) " +
