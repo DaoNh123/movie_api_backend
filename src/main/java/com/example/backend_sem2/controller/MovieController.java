@@ -1,7 +1,7 @@
 package com.example.backend_sem2.controller;
 
+import com.example.backend_sem2.dto.SeatResponse;
 import com.example.backend_sem2.entity.Movie;
-import com.example.backend_sem2.entity.Seat;
 import com.example.backend_sem2.entity.Slot;
 import com.example.backend_sem2.service.interfaceService.MovieService;
 import com.example.backend_sem2.service.interfaceService.SeatService;
@@ -21,7 +21,7 @@ public class MovieController {
     private SlotService slotService;
     private SeatService seatService;
 
-    @GetMapping
+    @GetMapping("/byCondition")
     public Page<Movie> getMoviePageableByCondition(
             Pageable pageable,
             @RequestParam(name = "name", required = false) String partOfMovieName,
@@ -31,8 +31,23 @@ public class MovieController {
         return movieService.getMoviePageableByCondition(pageable, partOfMovieName, categoryName, movieLabel);
     }
 
+    @GetMapping
+    public Page<Movie> getMoviePageable(
+            Pageable pageable
+    ){
+        return movieService.getMoviePageable(pageable);
+    }
+
+    @GetMapping("/movie-label/{movie-label}")
+    public List<Movie> findMoviesByMovieLabel (
+            @PathVariable(name = "movie-label") String movieLabel
+            ){
+        return movieService.findMoviesByMovieLabel(movieLabel);
+    }
+
     @GetMapping("/{id}")
-    public Movie getMovieById(Long id){
+    public Movie getMovieById(@PathVariable Long id){
+        System.out.println("***" + id);
         return movieService.getMovieById(id);
     }
 
@@ -43,13 +58,12 @@ public class MovieController {
         return slotService.getSlotsByMovie_Id(id);
     }
 
-/*  Unused method but do not delete it  */
-    @GetMapping("/{id}/slots_dao/{slot_id}")
-    public List<Seat> getAllSeatOfASlotWithStatus(
+
+    @GetMapping("/{id}/slots/{slot_id}")
+    public List<SeatResponse> getAllSeatOfASlotWithStatus(
             @PathVariable Long id,
-            @PathVariable(name = "slots_id") Long slotId
+            @PathVariable(name = "slot_id") Long slotId
     ){
         return seatService.getAllSeatOfASlotWithStatus(id, slotId);
     }
-/*  End unused method   */
 }
