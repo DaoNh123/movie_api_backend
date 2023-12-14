@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -13,8 +15,10 @@ import java.util.List;
 @Table(name = "seats")
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 @ToString(callSuper = true)
 public class Seat extends BaseEntity{
+    @Column(name = "seat_name")
     private String seatName;
     @ManyToOne(
             fetch = FetchType.LAZY,
@@ -24,14 +28,7 @@ public class Seat extends BaseEntity{
             }
     )
     private TheaterRoom theaterRoom;
-    @ManyToOne(
-            fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.DETACH, CascadeType.MERGE,
-                    CascadeType.PERSIST, CascadeType.REFRESH
-            }
-    )
-    private Order order;
+
     @ManyToOne(
             fetch = FetchType.LAZY,
             cascade = {
@@ -49,4 +46,18 @@ public class Seat extends BaseEntity{
             }
     )
     private List<OrderDetail> orderDetail;
+
+    protected Seat(final SeatBuilder<?, ?> b) {
+        super(b);
+        this.seatName = b.seatName;
+        this.theaterRoom = b.theaterRoom;
+        this.seatClass = b.seatClass;
+        this.orderDetail = b.orderDetail;
+        if(theaterRoom != null){
+            if(theaterRoom.getSeatList() == null){
+                theaterRoom.setSeatList(new ArrayList<>());
+            }
+            theaterRoom.getSeatList().add(this);
+        }
+    }
 }

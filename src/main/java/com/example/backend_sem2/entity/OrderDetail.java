@@ -5,19 +5,21 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @Entity
 @Table(name = "order_details")
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 @ToString(callSuper = true)
 public class OrderDetail extends BaseEntity{
     @ManyToOne(
             fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.DETACH, CascadeType.MERGE,
-                    CascadeType.MERGE, CascadeType.PERSIST
+                    CascadeType.MERGE
             }
     )
     private Seat seat;
@@ -25,7 +27,7 @@ public class OrderDetail extends BaseEntity{
             fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.DETACH, CascadeType.MERGE,
-                    CascadeType.MERGE, CascadeType.PERSIST
+                    CascadeType.MERGE
             }
     )
     private Order order;

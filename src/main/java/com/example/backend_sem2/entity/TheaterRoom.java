@@ -32,4 +32,5 @@ public class TheaterRoom extends BaseEntity{
             CascadeType.REFRESH, CascadeType.MERGE
     })
     private List<Seat> seatList;
+
 }

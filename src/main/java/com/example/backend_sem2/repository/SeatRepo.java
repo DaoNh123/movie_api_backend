@@ -9,7 +9,14 @@ import java.util.List;
 
 @Repository
 public interface SeatRepo extends JpaRepository<Seat, Long> {
-    @Query("SELECT s FROM Seat s JOIN TheaterRoom tr JOIN Slot slot " +
-            "WHERE slot.id = :slotId")
+    @Query("SELECT s FROM Seat s JOIN FETCH s.theaterRoom tr JOIN FETCH tr.slotList slot " +
+            "JOIN FETCH s.seatClass se WHERE " +
+            " slot.id = :slotId")
     List<Seat> getSeatBySlotId(Long slotId);
+
+//    @Query("SELECT se.seatName FROM OrderDetail AS od " +
+//        "INNER JOIN FETCH od.order AS o INNER JOIN FETCH o.slot AS s " +
+//        "INNER JOIN od.seat AS se " +
+//        "WHERE s.id = :slotId")
+//    List<String> getOrderedSeatNameByOrder_Slot_Id (Long slotId);
 }

@@ -16,4 +16,9 @@ public enum MovieLabelEnum {
     public Long getMinAge() {
         return minAge;
     }
+
+    @Override
+    public String toString() {
+        return this.name();
+    }
 }
