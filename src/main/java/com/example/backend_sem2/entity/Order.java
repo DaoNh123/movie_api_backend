@@ -47,12 +47,9 @@ public class Order extends BaseEntity{
         this.slot = b.slot;
         this.orderDetailList = b.orderDetailList;
 
-//        if(slot != null){
-//            if(slot.getOrderList() == null){
-//                slot.setOrderList(new ArrayList<>());
-//            }
-//            slot.getOrderList().add(this);
-//        }
+        if(this.slot != null){
+            this.slot.addOrder(this);
+        }
     }
 
     @PrePersist
@@ -61,8 +58,8 @@ public class Order extends BaseEntity{
             orderDetailList.stream()
                     .forEach(orderDetail -> orderDetail.setOrder(this));
         }
-        if(this.slot != null){
-            this.slot.addOrder(this);
-        }
+//        if(this.slot != null){
+//            this.slot.addOrder(this);
+//        }
     }
 }

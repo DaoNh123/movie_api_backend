@@ -44,6 +44,7 @@ public class Slot extends BaseEntity{
             })
     private List<Order> orderList;
 
+
     public void addOrder (Order order){
         if(orderList == null){
             orderList = new ArrayList<>();
