@@ -1,22 +1,20 @@
 package com.example.backend_sem2.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+//@Data
+@Getter@Setter
 @Entity
 @Table(name = "seats")
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@ToString(callSuper = true)
+//@ToString(callSuper = true)
 public class Seat extends BaseEntity{
     @Column(name = "seat_name")
     private String seatName;

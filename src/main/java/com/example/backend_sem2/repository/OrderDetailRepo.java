@@ -2,7 +2,6 @@ package com.example.backend_sem2.repository;
 
 import com.example.backend_sem2.entity.OrderDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
@@ -22,4 +21,5 @@ public interface OrderDetailRepo extends JpaRepository<OrderDetail, Long> {
 //    List<String> getOrderedSeatNameByOrder_Slot_Id (Long slotId);
 
     public List<OrderDetail> getOrderDetailByOrder_Slot_Id(Long slotId);
+    boolean existsBySeat_IdAndOrder_Slot_Id(Long seatId, Long slotId);
 }

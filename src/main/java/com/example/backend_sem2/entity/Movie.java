@@ -31,6 +31,8 @@ public class Movie extends BaseEntity{
     private LocalDate openingDay;
     @Column(name = "closing_day", columnDefinition = "DATE")
     private LocalDate closingDay;
+    @Column(name = "trailer_url", columnDefinition = "TEXT")
+    private String trailerUrl;
     @ManyToMany(
             fetch = FetchType.LAZY,
             cascade = {

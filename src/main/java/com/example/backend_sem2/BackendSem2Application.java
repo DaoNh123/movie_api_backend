@@ -43,6 +43,7 @@ public class BackendSem2Application {
                 /*  this method does not generate all generated Object in method    */
                 generateData();
             }
+
         };
     }
 

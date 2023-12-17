@@ -1,5 +1,6 @@
 package com.example.backend_sem2.exception;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
@@ -39,5 +40,10 @@ public class CustomErrorException extends RuntimeException {
                 message
         );
         this.data = data;
+    }
+
+    @Override
+    public String getMessage() {
+        return super.getMessage();
     }
 }
