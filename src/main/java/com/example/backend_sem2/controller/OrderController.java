@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/orders")
 @AllArgsConstructor
@@ -23,15 +25,15 @@ public class OrderController {
         return orderService.createOrder(orderRequest);
     }
 
-    @GetMapping("/{id}")
-    public Order getOrderById(
-            @PathVariable Long id
-    ){
-        return orderService.getOrderById(id);
-    }
+//    @GetMapping("/{id}")
+//    public Order getOrderById(
+//            @PathVariable Long id
+//    ){
+//        return orderService.getOrderById(id);
+//    }
 
     /*  Get information for Order Detail Page  */
-    @GetMapping("/custom/{id}")
+    @GetMapping("/{id}")
     public OrderResponse getOrderCustomById(
             @PathVariable Long id
     ){
@@ -39,9 +41,9 @@ public class OrderController {
     }
 
     @GetMapping("/email/{id}")
-    public String getEmailByOrderId (
+    public ResponseEntity<?> getEmailByOrderId (
             @PathVariable Long id
     ){
-        return orderService.getEmailByOrderId(id);
+        return ResponseEntity.ok(Map.of("email", orderService.getEmailByOrderId(id)));
     }
 }

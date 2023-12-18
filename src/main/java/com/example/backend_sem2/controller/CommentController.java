@@ -21,6 +21,13 @@ public class CommentController {
         return commentService.getAllCommentByMovieName(movieName);
     }
 
+    @GetMapping("/byMoviesId/{movieId}")
+    public List<CommentResponse> getAllCommentByMovieName (
+            @PathVariable Long movieId
+    ) {
+        return commentService.getAllCommentByMovieId(movieId);
+    }
+
     @PostMapping("/add")
     public CommentResponse saveComment(
            @Valid @RequestBody CommentRequest commentRequest

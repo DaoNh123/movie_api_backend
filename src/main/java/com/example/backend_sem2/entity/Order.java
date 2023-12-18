@@ -21,7 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 //@ToString(callSuper = true)
-@JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="id")
+@JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Order extends BaseEntity{
     @Column(name = "customer_name")
     private String customerName;

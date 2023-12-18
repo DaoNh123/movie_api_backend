@@ -7,6 +7,7 @@ import com.example.backend_sem2.entity.Movie;
 import com.example.backend_sem2.entity.Order;
 import com.example.backend_sem2.entity.OrderDetail;
 import com.example.backend_sem2.entity.Slot;
+import com.example.backend_sem2.exception.ApiError;
 import com.example.backend_sem2.exception.CustomErrorException;
 import com.example.backend_sem2.mapper.SeatMapper;
 import com.example.backend_sem2.repository.*;
@@ -74,10 +75,10 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        CustomErrorException throwoutException = new CustomErrorException(HttpStatus.BAD_REQUEST, "Multiple error",
-                createOrderExceptions.stream().map(CustomErrorException::getMessage).collect(Collectors.toList()));
+//        CustomErrorException throwoutException = new CustomErrorException(HttpStatus.BAD_REQUEST, "Multiple error",
+//                createOrderExceptions.stream().map(CustomErrorException::getMessage).collect(Collectors.toList()));
 
-        return ResponseEntity.badRequest().body(throwoutException);
+        return ResponseEntity.badRequest().body(new ApiError(createOrderExceptions));
     }
 
     /*  check if all seat which is ordered still available  */

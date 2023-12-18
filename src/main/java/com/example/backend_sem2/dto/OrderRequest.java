@@ -32,6 +32,7 @@ public class OrderRequest {
     public List<Long> getSeatIdList(){
         List<Long> longList = new ArrayList<>();
         if(seatIdInString != null) longList = Arrays.stream(seatIdInString.split(","))
+                .map(String::trim)
                 .map(Long::parseLong).toList();
         return longList;
     }

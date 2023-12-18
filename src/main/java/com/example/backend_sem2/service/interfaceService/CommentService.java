@@ -12,4 +12,6 @@ public interface CommentService {
     CommentResponse saveComment(CommentRequest commentRequest);
 
     CommentResponse updateComment(CommentRequest commentRequest, Long id);
+
+    List<CommentResponse> getAllCommentByMovieId(Long movieId);
 }
