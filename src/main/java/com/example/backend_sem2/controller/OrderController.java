@@ -2,7 +2,6 @@ package com.example.backend_sem2.controller;
 
 import com.example.backend_sem2.dto.OrderRequest;
 import com.example.backend_sem2.dto.OrderResponseInfo.OrderResponse;
-import com.example.backend_sem2.entity.Order;
 import com.example.backend_sem2.mapper.OrderMapper;
 import com.example.backend_sem2.service.interfaceService.OrderService;
 import lombok.AllArgsConstructor;
@@ -36,14 +35,14 @@ public class OrderController {
     @GetMapping("/{id}")
     public OrderResponse getOrderCustomById(
             @PathVariable Long id
-    ){
+    ) {
         return orderMapper.toDto(orderService.getOrderCustomById(id));
     }
 
     @GetMapping("/email/{id}")
-    public ResponseEntity<?> getEmailByOrderId (
+    public ResponseEntity<?> getEmailByOrderId(
             @PathVariable Long id
-    ){
+    ) {
         return ResponseEntity.ok(Map.of("email", orderService.getEmailByOrderId(id)));
     }
 }
