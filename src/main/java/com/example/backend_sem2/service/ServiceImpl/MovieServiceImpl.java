@@ -20,9 +20,9 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Page<Movie> getMoviePageableByCondition(Pageable pageable, String partOfMovieName, String categoryName, String movieLabel) {
-        return movieRepo.getMoviePageableByCondition1(pageable, partOfMovieName, categoryName);
+//        return movieRepo.getMoviePageableByCondition1(pageable, partOfMovieName, categoryName);
 //        return movieRepo.getMoviePageableByCondition(pageable, partOfMovieName, categoryName, movieLabel);
-//        return movieRepo.getMoviePageableByCondition3(pageable, partOfMovieName, categoryName, getMovieLabelEnum(movieLabel));
+        return movieRepo.getMoviePageableByCondition3(pageable, partOfMovieName, categoryName, getMovieLabelEnum(movieLabel));
 //        return null;
     }
 

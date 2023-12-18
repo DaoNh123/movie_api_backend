@@ -17,7 +17,7 @@ import java.util.List;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(callSuper = true)
+//@ToString(callSuper = true)
 public class Slot extends BaseEntity{
     private ZonedDateTime startTime;
     private ZonedDateTime endTime;
@@ -44,6 +44,14 @@ public class Slot extends BaseEntity{
             })
     private List<Order> orderList;
 
+
+    public void addOrder (Order order){
+        if(orderList == null){
+            orderList = new ArrayList<>();
+        }
+        orderList.add(order);
+    }
+
     protected Slot(final SlotBuilder<?, ?> b) {
         super(b);
         this.startTime = b.startTime;
@@ -57,5 +65,13 @@ public class Slot extends BaseEntity{
             }
             movie.getSlotList().add(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Slot{" +
+                "startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
     }
 }

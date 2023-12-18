@@ -6,7 +6,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 
 public enum MovieLabelEnum {
-    P(null), C12(12L), C16(16L), C18(18L);
+    P(0L), C12(12L), C16(16L), C18(18L);
     private final Long minAge;
 
     MovieLabelEnum(Long minAge) {

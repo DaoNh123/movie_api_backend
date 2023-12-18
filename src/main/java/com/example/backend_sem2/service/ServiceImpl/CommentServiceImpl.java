@@ -25,6 +25,13 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public List<CommentResponse> getAllCommentByMovieId(Long movieId) {
+        return commentRepo.getCommentByMovie_Id(movieId)
+                .stream().map(movie -> commentMapper.toDto(movie)).collect(Collectors.toList());
+
+    }
+
+    @Override
     public CommentResponse saveComment(CommentRequest commentRequest) {
         Comment savedComment = commentRepo.save(commentMapper.toEntity(commentRequest));
         return commentMapper.toDto(savedComment);

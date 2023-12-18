@@ -1,5 +1,8 @@
 package com.example.backend_sem2.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
+@JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Movie extends BaseEntity{
     @Column(name = "movie_name")
     private String movieName;
@@ -31,6 +35,8 @@ public class Movie extends BaseEntity{
     private LocalDate openingDay;
     @Column(name = "closing_day", columnDefinition = "DATE")
     private LocalDate closingDay;
+    @Column(name = "trailer_url", columnDefinition = "TEXT")
+    private String trailerUrl;
     @ManyToMany(
             fetch = FetchType.LAZY,
             cascade = {
@@ -42,6 +48,7 @@ public class Movie extends BaseEntity{
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
+    @JsonIgnore
     private List<Category> categoryList;
     @Column(name = "movie_label")
     @Enumerated(EnumType.STRING)
@@ -52,6 +59,7 @@ public class Movie extends BaseEntity{
             CascadeType.PERSIST, CascadeType.DETACH,
             CascadeType.REFRESH, CascadeType.MERGE
     })
+    @JsonIgnore
     private List<Comment> commentList;
     @OneToMany(
             fetch = FetchType.LAZY,
@@ -59,6 +67,7 @@ public class Movie extends BaseEntity{
             CascadeType.PERSIST, CascadeType.DETACH,
             CascadeType.REFRESH, CascadeType.MERGE
     })
+    @JsonIgnore
     private List<Slot> slotList = new ArrayList<>();
 
     @Override
