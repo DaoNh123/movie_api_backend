@@ -44,19 +44,6 @@ public class MovieController {
         return movieService.getMoviePageableByCondition(pageable, partOfMovieName, categoryName, movieLabel);
     }
 
-//    @PostMapping
-//    public MovieInOrderRes createMovie (){
-//        return
-//    }
-
-    /*  "getMoviePageableByCondition" already cover this method */
-//    @GetMapping("/movie-label/{movie-label}")
-//    public List<MovieResponseInPage> findMoviesByMovieLabel (
-//            @PathVariable(name = "movie-label") String movieLabel
-//            ){
-//        return movieService.findMoviesByMovieLabel(movieLabel);
-//    }
-
     @GetMapping("/{id}")
     public MovieResponseWithComment getMovieWithCommentsById(@PathVariable Long id){
         System.out.println("***" + id);
