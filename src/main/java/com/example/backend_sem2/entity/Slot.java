@@ -1,5 +1,6 @@
 package com.example.backend_sem2.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class Slot extends BaseEntity{
                     CascadeType.DETACH, CascadeType.MERGE,
                     CascadeType.PERSIST, CascadeType.REFRESH
             })
+    @JsonIgnore
     private Movie movie;
     @ManyToOne(
             fetch = FetchType.LAZY,
@@ -34,6 +36,7 @@ public class Slot extends BaseEntity{
                     CascadeType.DETACH, CascadeType.MERGE,
                     CascadeType.PERSIST, CascadeType.REFRESH
             })
+    @JsonIgnore
     private TheaterRoom theaterRoom;
     @OneToMany(
             fetch = FetchType.LAZY,
@@ -42,6 +45,7 @@ public class Slot extends BaseEntity{
                     CascadeType.DETACH, CascadeType.MERGE,
                     CascadeType.PERSIST, CascadeType.REFRESH
             })
+    @JsonIgnore
     private List<Order> orderList;
 
 

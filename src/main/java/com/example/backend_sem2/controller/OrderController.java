@@ -2,6 +2,7 @@ package com.example.backend_sem2.controller;
 
 import com.example.backend_sem2.dto.OrderRequest;
 import com.example.backend_sem2.dto.OrderResponseInfo.OrderResponse;
+import com.example.backend_sem2.entity.Order;
 import com.example.backend_sem2.mapper.OrderMapper;
 import com.example.backend_sem2.service.interfaceService.OrderService;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ public class OrderController {
     private OrderService orderService;
     private OrderMapper orderMapper;
 
+    /*  This endpoint have used "OrderResponse" as a DTO    */
     @PostMapping("/createOrder")
     public ResponseEntity<?> createOrder(
             @RequestBody OrderRequest orderRequest
@@ -24,25 +26,28 @@ public class OrderController {
         return orderService.createOrder(orderRequest);
     }
 
-//    @GetMapping("/{id}")
-//    public Order getOrderById(
-//            @PathVariable Long id
-//    ){
-//        return orderService.getOrderById(id);
-//    }
-
     /*  Get information for Order Detail Page  */
     @GetMapping("/{id}")
-    public OrderResponse getOrderCustomById(
+    public OrderResponse getOrderInfoById(
             @PathVariable Long id
     ) {
         return orderMapper.toDto(orderService.getOrderCustomById(id));
     }
 
+//    @GetMapping("/withoutDto/{id}")
+//    public Order getOrderInfoWithoutDtoById(
+//            @PathVariable Long id
+//    ) {
+//        return orderService.getOrderCustomById(id);
+//    }
+
     @GetMapping("/email/{id}")
     public ResponseEntity<?> getEmailByOrderId(
             @PathVariable Long id
     ) {
-        return ResponseEntity.ok(Map.of("email", orderService.getEmailByOrderId(id)));
+        String emailByOrderId = orderService.getEmailByOrderId(id);
+
+        if(emailByOrderId == null) emailByOrderId = "";
+        return ResponseEntity.ok(Map.of("email", emailByOrderId));
     }
 }

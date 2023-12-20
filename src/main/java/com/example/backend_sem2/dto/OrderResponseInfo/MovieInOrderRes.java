@@ -12,5 +12,5 @@ public class MovieInOrderRes {
     private String movieName;
     private String posterUrl;
     private String director;
-    private String trailerUrl;
+    private String iframe;
 }

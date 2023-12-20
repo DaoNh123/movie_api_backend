@@ -1,17 +1,16 @@
 package com.example.backend_sem2.service.interfaceService;
 
+import com.example.backend_sem2.dto.DtoForMovie.MovieResponseInPage;
+import com.example.backend_sem2.dto.DtoForMovie.MovieResponseWithComment;
 import com.example.backend_sem2.entity.Movie;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface MovieService {
-    Page<Movie> getMoviePageableByCondition(Pageable pageable, String partOfMovieName, String categoryName, String movieLabel);
+    Page<MovieResponseInPage> getMoviePageableByCondition(Pageable pageable, String partOfMovieName, String categoryName, String movieLabel);
 
-    Movie getMovieById(Long id);
+    MovieResponseWithComment getMovieWithCommentsById(Long id);
 
-    Page<Movie> getMoviePageable(Pageable pageable);
-
-    List<Movie> findMoviesByMovieLabel(String movieLabel);
+    /*  "getMoviePageableByCondition" already cover this method */
+//    List<MovieResponseInPage> findMoviesByMovieLabel(String movieLabel);
 }

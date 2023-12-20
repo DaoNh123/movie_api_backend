@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CommentResponse {
+public class CategoryDto {
     private Long id;
-    private String commentUsername;
-    private Long starRate;
-    private String commentContent;
+    private String categoryName;
 }

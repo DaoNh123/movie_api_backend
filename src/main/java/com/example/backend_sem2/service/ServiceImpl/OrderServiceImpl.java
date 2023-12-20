@@ -9,6 +9,7 @@ import com.example.backend_sem2.entity.OrderDetail;
 import com.example.backend_sem2.entity.Slot;
 import com.example.backend_sem2.exception.ApiError;
 import com.example.backend_sem2.exception.CustomErrorException;
+import com.example.backend_sem2.mapper.OrderMapper;
 import com.example.backend_sem2.mapper.SeatMapper;
 import com.example.backend_sem2.repository.*;
 import com.example.backend_sem2.service.interfaceService.OrderService;
@@ -38,6 +39,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderDetailRepo orderDetailRepo;
     private SeatRepo seatRepo;
     private OrderRepo orderRepo;
+    private OrderMapper orderMapper;
 
     @Override
     @Transactional
@@ -48,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
         List<CustomErrorException> createOrderExceptions = new ArrayList<>();
         if(!isEnoughAgeToBook(orderRequest)) createOrderExceptions.add(new CustomErrorException(HttpStatus.BAD_REQUEST, String.format("You need to be older than %s years old to what this movie!", slot.getMovie().getMovieLabel().getMinAge())));
         if(!isSeatAvailable(orderRequest)) createOrderExceptions.add(new CustomErrorException(HttpStatus.BAD_REQUEST, "Some seats you choose have been books, please choose other one!"));
-        if(!isSlotAvailableToBook(slot)) createOrderExceptions.add(new CustomErrorException(HttpStatus.BAD_REQUEST, "This slot have been began, you can not book this slot!"));
+//        if(!isSlotAvailableToBook(slot)) createOrderExceptions.add(new CustomErrorException(HttpStatus.BAD_REQUEST, "This slot have been began, you can not book this slot!"));
 
         if (createOrderExceptions.isEmpty()) {
             try {
@@ -68,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
                         .build();
 
                 orderRepo.save(order);
-                return ResponseEntity.ok(order);
+                return ResponseEntity.ok(orderMapper.toDto(order));
             } catch (Exception e) {
                 e.printStackTrace();
 //                throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Fail to create order!");

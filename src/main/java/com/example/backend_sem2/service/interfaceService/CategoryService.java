@@ -1,17 +1,19 @@
 package com.example.backend_sem2.service.interfaceService;
 
+import com.example.backend_sem2.dto.CategoryDto;
 import com.example.backend_sem2.entity.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface CategoryService {
-    public Page<Category> getPageCategoryByCondition(Pageable pageable, String name);
+    public Page<CategoryDto> getPageCategoryByCondition(Pageable pageable, String name);
 
-    Category saveCategory(String categoryName);
+    CategoryDto saveCategory(String categoryName);
 
-    Category getCategoryById(Long id);
+    CategoryDto getCategoryById(Long id);
 
-    Category saveCategory(Category category);
 
     boolean deleteCategoryById(Long id);
+
+    CategoryDto updateCategory(CategoryDto categoryDto, Long id);
 }
