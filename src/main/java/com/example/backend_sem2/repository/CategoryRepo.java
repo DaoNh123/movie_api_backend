@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CategoryRepo extends JpaRepository<Category, Long> {
 
-    @Query(value = "SELECT * FROM categories c WHERE (:name IS NULL OR c.category_name ILIKE '%' || :name || '$')",
+    @Query(value = "SELECT * FROM categories c WHERE (CAST(:name AS TEXT) IS NULL OR c.category_name ILIKE '%' || :name || '$')",
     nativeQuery = true)
     Page<Category> findPageCategoryByCondition(Pageable pageable, String name);
 

@@ -1,17 +1,12 @@
 package com.example.backend_sem2.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import javax.naming.Name;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -20,8 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-//@ToString(callSuper = true)
-@JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Order extends BaseEntity{
     @Column(name = "customer_name")
     private String customerName;
@@ -32,23 +25,23 @@ public class Order extends BaseEntity{
     @Column(name = "customer_email")
     private String customerEmail;
     @ManyToOne(
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = {
             CascadeType.DETACH, CascadeType.MERGE,
             CascadeType.PERSIST, CascadeType.REFRESH
     })
-//    @JsonIgnore
+    @JsonIgnore
     private Slot slot;
 
     @OneToMany(
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             mappedBy = "order",
             cascade = {
                     CascadeType.DETACH, CascadeType.MERGE,
                     CascadeType.PERSIST, CascadeType.REFRESH
             }
     )
-//    @JsonIgnore
+    @JsonIgnore
     private List<OrderDetail> orderDetailList;
 
     protected Order(final OrderBuilder<?, ?> b) {

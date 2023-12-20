@@ -20,7 +20,8 @@ public class OrderRequest {
     private Long customerAge;
     private Long movieId;
     private Long slotId;
-    private String seatIdInString;
+//    private String seatIdInString;
+    private List<Long> seatIdList;
 //    @JsonIgnore
 //    private List<Long> seatIdList;
 //
@@ -29,11 +30,11 @@ public class OrderRequest {
 //                .map(Long::parseLong).toList();
 //    }
 
-    public List<Long> getSeatIdList(){
-        List<Long> longList = new ArrayList<>();
-        if(seatIdInString != null) longList = Arrays.stream(seatIdInString.split(","))
-                .map(String::trim)
-                .map(Long::parseLong).toList();
-        return longList;
-    }
+//    public List<Long> getSeatIdList(){
+//        List<Long> longList = new ArrayList<>();
+//        if(seatIdInString != null) longList = Arrays.stream(seatIdInString.split(","))
+//                .map(String::trim)
+//                .map(Long::parseLong).toList();
+//        return longList;
+//    }
 }

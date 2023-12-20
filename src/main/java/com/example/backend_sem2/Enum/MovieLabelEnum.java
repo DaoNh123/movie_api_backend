@@ -1,4 +1,4 @@
-package com.example.backend_sem2.entity;
+package com.example.backend_sem2.Enum;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

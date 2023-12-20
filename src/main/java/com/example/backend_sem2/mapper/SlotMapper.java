@@ -1,6 +1,7 @@
 package com.example.backend_sem2.mapper;
 
 import com.example.backend_sem2.dto.OrderResponseInfo.SlotInOrderRes;
+import com.example.backend_sem2.dto.SlotResponse;
 import com.example.backend_sem2.entity.Slot;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
@@ -14,4 +15,9 @@ public interface SlotMapper {
     @Mapping(target = "theaterRoom",
         expression = "java(slot.getTheaterRoom().getTheaterRoomName())")
     SlotInOrderRes toSlotInOrderRes (Slot slot);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "theaterRoom",
+            expression = "java(slot.getTheaterRoom().getTheaterRoomName())")
+    SlotResponse toSlotResponse(Slot slot);
 }

@@ -1,6 +1,10 @@
 package com.example.backend_sem2.controller;
 
+import com.example.backend_sem2.dto.DtoForMovie.MovieResponseInPage;
+import com.example.backend_sem2.dto.DtoForMovie.MovieResponseWithComment;
+import com.example.backend_sem2.dto.OrderResponseInfo.MovieInOrderRes;
 import com.example.backend_sem2.dto.SeatResponse;
+import com.example.backend_sem2.dto.SlotResponse;
 import com.example.backend_sem2.entity.Movie;
 import com.example.backend_sem2.entity.Slot;
 import com.example.backend_sem2.service.interfaceService.MovieService;
@@ -29,8 +33,8 @@ public class MovieController {
     private SlotService slotService;
     private SeatService seatService;
 
-    @GetMapping("/byCondition")
-    public Page<Movie> getMoviePageableByCondition(
+    @GetMapping({"", "/"})
+    public Page<MovieResponseInPage> getMoviePageableByCondition(
             @SortDefault(sort = "id", direction = Sort.Direction.DESC)
             @PageableDefault(size = 20) Pageable pageable,
             @RequestParam(name = "name", required = false) String partOfMovieName,
@@ -40,28 +44,14 @@ public class MovieController {
         return movieService.getMoviePageableByCondition(pageable, partOfMovieName, categoryName, movieLabel);
     }
 
-    @GetMapping
-    public Page<Movie> getMoviePageable(
-            Pageable pageable
-    ){
-        return movieService.getMoviePageable(pageable);
-    }
-
-    @GetMapping("/movie-label/{movie-label}")
-    public List<Movie> findMoviesByMovieLabel (
-            @PathVariable(name = "movie-label") String movieLabel
-            ){
-        return movieService.findMoviesByMovieLabel(movieLabel);
-    }
-
     @GetMapping("/{id}")
-    public Movie getMovieById(@PathVariable Long id){
+    public MovieResponseWithComment getMovieWithCommentsById(@PathVariable Long id){
         System.out.println("***" + id);
-        return movieService.getMovieById(id);
+        return movieService.getMovieWithCommentsById(id);
     }
 
     @GetMapping("/{id}/slots")
-    public List<Slot> getAllSlotOfAMovieByShowDate(
+    public List<SlotResponse> getAllSlotOfAMovieByShowDate(
             @SortDefault(sort = "startTime", direction = Sort.Direction.ASC)
 //            @PageableDefault(value = 10, size = 10, page = 0)
             Pageable pageable,
