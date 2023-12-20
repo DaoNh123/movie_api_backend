@@ -1,8 +1,5 @@
 package com.example.backend_sem2.dto.OrderResponseInfo;
 
-import com.example.backend_sem2.entity.OrderDetail;
-import com.example.backend_sem2.entity.Slot;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,4 +19,11 @@ public class OrderResponse {
     private String customerEmail;
     private SlotInOrderRes slot;
     private List<OrderDetailInOrderRes> orderDetailList;
+
+    public Double getTotalValue(){
+        if(this.orderDetailList.isEmpty()) return 0D;
+        return orderDetailList.stream()
+                .map(orderDetail -> orderDetail.getSeat().getPrice())
+                .reduce(0D, Double::sum);
+    }
 }

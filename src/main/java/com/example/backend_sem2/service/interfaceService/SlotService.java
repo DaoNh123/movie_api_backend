@@ -1,5 +1,6 @@
 package com.example.backend_sem2.service.interfaceService;
 
+import com.example.backend_sem2.dto.SlotResponse;
 import com.example.backend_sem2.entity.Slot;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -11,5 +12,5 @@ public interface SlotService {
     List<Slot> getSlotsByMovie_Id(Long id);
 
 
-    List<Slot> getSlotsByMovie_IdAndShowDate(Pageable pageable, Long id, ZonedDateTime startOfShowDate, ZonedDateTime endOfShowDate);
+    List<SlotResponse> getSlotsByMovie_IdAndShowDate(Pageable pageable, Long id, ZonedDateTime startOfShowDate, ZonedDateTime endOfShowDate);
 }

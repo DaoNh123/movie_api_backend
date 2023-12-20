@@ -28,4 +28,5 @@ public abstract class BaseEntity {
     private ZonedDateTime createdAt;
     @UpdateTimestamp
     private ZonedDateTime updatedAt;
+
 }

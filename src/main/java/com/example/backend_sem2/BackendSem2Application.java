@@ -1,5 +1,6 @@
 package com.example.backend_sem2;
 
+import com.example.backend_sem2.Enum.MovieLabelEnum;
 import com.example.backend_sem2.dto.CommentRequest;
 import com.example.backend_sem2.entity.*;
 import com.example.backend_sem2.mapper.CommentMapper;
@@ -10,11 +11,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootApplication
 @AllArgsConstructor
@@ -29,6 +31,19 @@ public class BackendSem2Application {
     private OrderRepo orderRepo;
     private OrderDetailRepo orderDetailRepo;
     private CommentMapper commentMapper;
+
+    private final String image1 = "https://m.media-amazon.com/images/M/MV5BN2IzYzBiOTQtNGZmMi00NDI5LTgxMzMtN2EzZjA1NjhlOGMxXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_.jpg";
+    private final String image2 = "https://m.media-amazon.com/images/M/MV5BMjk2NjgzMTEtYWViZS00NTMyLWFjMzctODczYmQzNzk2NjIwXkEyXkFqcGdeQXVyMTEyMjM2NDc2._V1_.jpg";
+
+    private final String iframe1 = """
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/bjqEWgDVPe0?si=EkeFabnnr4-yWO46" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>""";
+    private final String iframe2 = """
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/AlhHGUfCYw4?si=omo6TcypeCzNzPGu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>""";
+    private final String iframe3 = """
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/nblUgAMoOvU?si=rzo5bGWxf3zKdMUJ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>""";
+
+    private final long rows = 12;
+    private final long columns = 12;
 
     public static void main(String[] args) {
         SpringApplication.run(BackendSem2Application.class, args);
@@ -60,9 +75,20 @@ public class BackendSem2Application {
         for (int i = 0; i < 20; i++) {
             MovieLabelEnum[] movieLabelEnums = MovieLabelEnum.values();
 
+            String image = i % 2 == 0 ? image1 : image2;
+            List<String> iframeList = List.of(iframe1, iframe2, iframe3);
+            ZonedDateTime openingTime = getRandomZonedDateTime(7);
             movies.add(Movie.builder()
                     .movieName("movieName " + (i + 1))
                     .director("director " + (i + 1))
+                    .posterUrl(image)
+                    .duration(60L + random.nextInt(30))
+                    .language("English")
+                            .openingTime(openingTime)
+                            .closingTime(openingTime.plusDays(random.nextInt(10) + 20))
+                    .iframe(iframeList.get(i % 3))
+                    .description("desc " + (i + 1))
+
                     .movieLabel(movieLabelEnums[random.nextInt(movieLabelEnums.length)])
                     .categoryList(List.of(
                             categories.get(random.nextInt(categories.size()))
@@ -111,9 +137,8 @@ public class BackendSem2Application {
         }
         /*  Generate Seat Class */
         List<SeatClass> seatClasses = List.of(
-                new SeatClass("A", 200_000D),
-                new SeatClass("B", 160_000D),
-                new SeatClass("C", 120_000D)
+                new SeatClass("VIP", 200_000D),
+                new SeatClass("NOR", 160_000D)
         );
 
 
@@ -121,19 +146,17 @@ public class BackendSem2Application {
         List<Seat> seats = new ArrayList<>();
         for (int i = 0; i < theaterRooms.size(); i++) {
             /*  j represent for "row" and k represent for "column"  */
-            for (Character j = 1; j <= 8; j++) {
-                for (int k = 1; k <= 9; k++) {
+            for (Character j = 'A'; j < ('A' + rows); j++) {
+                for (int k = 1; k <= columns; k++) {
                     SeatClass seatClass;
-                    if ((j <= 2 || j >= 7) || (k <= 1 || k >= 9)) {
-                        seatClass = seatClasses.get(2);
-                    } else if ((j <= 3 || j >= 6) || (k <= 3 || k >= 8)) {
+                    if ((j <= 'A' + 1 || j >= 'A' + rows - 2) || (k <= 2 || k >= columns - 1)) {
                         seatClass = seatClasses.get(1);
                     } else {
                         seatClass = seatClasses.get(0);
                     }
 
                     seats.add(Seat.builder()
-                            .seatName(Character.toString('A' + j - 1) + k)
+                            .seatName(Character.toString(j) + k)
                             .theaterRoom(theaterRooms.get(i))
                             .seatClass(seatClass)
                             .build()
@@ -144,18 +167,18 @@ public class BackendSem2Application {
 
         /*  Generate Order and OrderDetail  */
         List<Order> orders = new ArrayList<>();
-        for(int i = 0; i < 500; i++){
+        for (int i = 0; i < 500; i++) {
             List<OrderDetail> orderDetailsInOrder = List.of(
                     OrderDetail.builder().seat(seats.get(random.nextInt(seats.size()))).build(),
                     OrderDetail.builder().seat(seats.get(random.nextInt(seats.size()))).build()
             );
 
             orders.add(Order.builder()
-                            .customerName("Customer " + i)
-                            .customerAddress("Address of customer " + i)
-                            .customerAge(random.nextLong(50) + 18)
-                            .orderDetailList(orderDetailsInOrder)
-                            .slot(slots.get(random.nextInt(slots.size())))
+                    .customerName("Customer " + i)
+                    .customerAddress("Address of customer " + i)
+                    .customerAge(random.nextLong(50) + 18)
+                    .orderDetailList(orderDetailsInOrder)
+                    .slot(slots.get(random.nextInt(slots.size())))
                     .build()
             );
         }
@@ -189,7 +212,27 @@ public class BackendSem2Application {
                 .build();
         System.out.println("*** Test Comment Mapper ***");
         System.out.println(commentMapper.toEntity(commentRequest));
+    }
+    private static ZonedDateTime getRandomZonedDateTime(Integer dayRange) {
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDate today = LocalDate.now();
 
+        ZonedDateTime zdtStart = today.minusDays(dayRange).atStartOfDay(zoneId)
+                .with(LocalTime.of(16, 0));
 
+        ZonedDateTime zdtEnd = today.plusDays(dayRange)
+                .atStartOfDay(zoneId)
+                .with(LocalTime.of(2, 0));
+
+        ZonedDateTime zdtResult =
+                Instant.ofEpochMilli(
+                        ThreadLocalRandom
+                                .current()
+                                .nextLong(
+                                        zdtStart.toInstant().toEpochMilli(),
+                                        zdtEnd.toInstant().toEpochMilli()
+                                ) / (1000 * 600) * (1000 * 600)            // make time is multiple of 10 minutes
+                ).atZone(zoneId);
+        return zdtResult;
     }
 }
