@@ -4,7 +4,9 @@ import com.example.backend_sem2.Enum.MovieLabelEnum;
 import com.example.backend_sem2.dto.CommentRequest;
 import com.example.backend_sem2.entity.*;
 import com.example.backend_sem2.mapper.CommentMapper;
+import com.example.backend_sem2.model.MovieOverviewDetailIMDB;
 import com.example.backend_sem2.repository.*;
+import com.example.backend_sem2.webClient.ApiMovieService;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,9 +15,7 @@ import org.springframework.context.annotation.Bean;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootApplication
@@ -31,6 +31,8 @@ public class BackendSem2Application {
     private OrderRepo orderRepo;
     private OrderDetailRepo orderDetailRepo;
     private CommentMapper commentMapper;
+
+    private ApiMovieService apiMovieService;
 
     private final String image1 = "https://m.media-amazon.com/images/M/MV5BN2IzYzBiOTQtNGZmMi00NDI5LTgxMzMtN2EzZjA1NjhlOGMxXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_.jpg";
     private final String image2 = "https://m.media-amazon.com/images/M/MV5BMjk2NjgzMTEtYWViZS00NTMyLWFjMzctODczYmQzNzk2NjIwXkEyXkFqcGdeQXVyMTEyMjM2NDc2._V1_.jpg";
@@ -54,12 +56,37 @@ public class BackendSem2Application {
         return runner -> {
 //            testCommentMapper();
 //            testMovieLabelEnumInMovie();
+//            testApiService();
+
+
+            testGetOverviewOfMovieIMDB("tt4729430");
+
             if (!slotRepo.existsById(1L)) {
                 /*  this method does not generate all generated Object in method    */
                 generateData();
             }
 
         };
+    }
+
+//    private MovieOverviewDetailIMDB testGetOverviewOfMovieIMDB(String movieIdInImdb) {
+//        return apiMovieService.getDataIsNotList("/title/get-overview-details",
+//                MovieOverviewDetailIMDB.class, Map.ofEntries(
+//                        Map.entry("tconst", "tt4729430")
+//                ));
+//    }
+
+    private void testGetOverviewOfMovieIMDB(String movieIdInImdb) {
+        MovieOverviewDetailIMDB result = apiMovieService.getDataIsNotList("title/get-overview-details",
+                MovieOverviewDetailIMDB.class, Map.ofEntries(
+                        Map.entry("tconst", "tt4729430")
+                ));
+        System.out.println("result = " + result);
+    }
+
+    public void testApiService() {
+        List<String> movieIdList = apiMovieService.getMostPopularMovieListCodeInIMDB();
+        movieIdList.forEach(System.out::println);
     }
 
     public void generateData() {
@@ -84,8 +111,8 @@ public class BackendSem2Application {
                     .posterUrl(image)
                     .duration(60L + random.nextInt(30))
                     .language("English")
-                            .openingTime(openingTime)
-                            .closingTime(openingTime.plusDays(random.nextInt(10) + 20))
+                    .openingTime(openingTime)
+                    .closingTime(openingTime.plusDays(random.nextInt(10) + 20))
                     .iframe(iframeList.get(i % 3))
                     .description("desc " + (i + 1))
 
@@ -213,6 +240,7 @@ public class BackendSem2Application {
         System.out.println("*** Test Comment Mapper ***");
         System.out.println(commentMapper.toEntity(commentRequest));
     }
+
     private static ZonedDateTime getRandomZonedDateTime(Integer dayRange) {
         ZoneId zoneId = ZoneId.systemDefault();
         LocalDate today = LocalDate.now();
