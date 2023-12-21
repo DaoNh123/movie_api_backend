@@ -3,6 +3,7 @@ package com.example.backend_sem2;
 import com.example.backend_sem2.Enum.MovieLabelEnum;
 import com.example.backend_sem2.dto.CommentRequest;
 import com.example.backend_sem2.entity.*;
+import com.example.backend_sem2.mapper.CategoryMapper;
 import com.example.backend_sem2.mapper.CommentMapper;
 import com.example.backend_sem2.model.MovieOverviewDetailIMDB;
 import com.example.backend_sem2.repository.*;
@@ -31,6 +32,7 @@ public class BackendSem2Application {
     private OrderRepo orderRepo;
     private OrderDetailRepo orderDetailRepo;
     private CommentMapper commentMapper;
+    private CategoryMapper categoryMapper;
 
     private ApiMovieService apiMovieService;
 
@@ -57,16 +59,25 @@ public class BackendSem2Application {
 //            testCommentMapper();
 //            testMovieLabelEnumInMovie();
 //            testApiService();
+//            testGetOverviewOfMovieIMDB("tt4729430");
+//            getAllCategorySet();
 
-
-            testGetOverviewOfMovieIMDB("tt4729430");
-
+            testSaveMovieFromApi();
             if (!slotRepo.existsById(1L)) {
                 /*  this method does not generate all generated Object in method    */
                 generateData();
             }
 
         };
+    }
+
+    private void testSaveMovieFromApi() {
+        apiMovieService.saveMovieFromApi(apiMovieService.getMostPopularMovieListCodeInIMDB().subList(0, 2));
+    }
+
+    private void getAllCategorySet() {
+        Set<Category> categorySet = categoryRepo.getAllCategorySet();
+        categorySet.stream().map(categoryMapper::toDto).forEach(System.out::println);
     }
 
 //    private MovieOverviewDetailIMDB testGetOverviewOfMovieIMDB(String movieIdInImdb) {

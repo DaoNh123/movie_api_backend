@@ -8,6 +8,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
+import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,4 +32,20 @@ public class Category extends BaseEntity{
             inverseJoinColumns = @JoinColumn(name = "movie_id")
     )
     private List<Movie> movieList;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Category category = (Category) o;
+
+        return Objects.equals(categoryName.toLowerCase(), category.categoryName.toLowerCase());
+    }
+
+    @Override
+    public int hashCode() {
+        return categoryName.toLowerCase().hashCode();
+    }
 }

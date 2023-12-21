@@ -20,4 +20,6 @@ public interface MovieRepo extends JpaRepository<Movie, Long> {
     @Query(value = "FROM Movie m INNER JOIN FETCH m.commentList c " +
             "WHERE m.id = :id")
     Movie getMovieWithComments(Long id);
+
+    boolean existsByImdbId(String imdbId);
 }

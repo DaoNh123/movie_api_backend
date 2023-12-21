@@ -33,6 +33,11 @@ public class AppConfig implements WebMvcConfigurer {
     private Long writeTimeout;
     @Value("${base_url}")
     private String baseUrl;
+    @Value("${x_rapid.api.key}")
+    private String xRapidKey;
+    @Value("${x_rapid.api.host}")
+    private String xRapidHost;
+
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -53,8 +58,8 @@ public class AppConfig implements WebMvcConfigurer {
         WebClient webClient = WebClient.builder()
                 .baseUrl(baseUrl)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultHeader("X-RapidAPI-Key", "bda124916dmsh4e0b0c25cbc936fp1f8469jsn63cd93a049f3")
-                .defaultHeader("X-RapidAPI-Host", "imdb8.p.rapidapi.com")
+                .defaultHeader("X-RapidAPI-Key", xRapidKey)
+                .defaultHeader("X-RapidAPI-Host", xRapidHost)
                 .defaultUriVariables(Collections.singletonMap("url", baseUrl))
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();
