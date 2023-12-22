@@ -5,10 +5,16 @@ import com.example.backend_sem2.dto.CommentRequest;
 import com.example.backend_sem2.entity.*;
 import com.example.backend_sem2.mapper.CategoryMapper;
 import com.example.backend_sem2.mapper.CommentMapper;
-import com.example.backend_sem2.model.MovieOverviewDetailIMDB;
+import com.example.backend_sem2.model.rapidApi.MovieOverviewDetailIMDB;
+import com.example.backend_sem2.model.theMovieDB.ConfigurationTheMovieDB;
+import com.example.backend_sem2.model.theMovieDB.GenreResponse;
+import com.example.backend_sem2.model.theMovieDB.MovieInApi;
+import com.example.backend_sem2.model.theMovieDB.TrendingMovieResponse;
 import com.example.backend_sem2.repository.*;
 import com.example.backend_sem2.webClient.ApiMovieService;
+import com.example.backend_sem2.webClient.OkHttpService;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -35,6 +41,7 @@ public class BackendSem2Application {
     private CategoryMapper categoryMapper;
 
     private ApiMovieService apiMovieService;
+    private OkHttpService okHttpService;
 
     private final String image1 = "https://m.media-amazon.com/images/M/MV5BN2IzYzBiOTQtNGZmMi00NDI5LTgxMzMtN2EzZjA1NjhlOGMxXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_.jpg";
     private final String image2 = "https://m.media-amazon.com/images/M/MV5BMjk2NjgzMTEtYWViZS00NTMyLWFjMzctODczYmQzNzk2NjIwXkEyXkFqcGdeQXVyMTEyMjM2NDc2._V1_.jpg";
@@ -62,13 +69,62 @@ public class BackendSem2Application {
 //            testGetOverviewOfMovieIMDB("tt4729430");
 //            getAllCategorySet();
 
-            testSaveMovieFromApi();
+//            testSaveMovieFromApi();
+
+//            testOkHttpTheMovieDB();
+//            saveDataOkHttpTheMovieDB();
             if (!slotRepo.existsById(1L)) {
                 /*  this method does not generate all generated Object in method    */
                 generateData();
             }
 
         };
+    }
+
+    private void saveDataOkHttpTheMovieDB() {
+    }
+
+    private void testOkHttpTheMovieDB() {
+        List<MovieInApi> movieInApiList = getMovieInApiList(3L);
+        List<Category> categoryListFromGenre = getCategoriesFromGenre();
+        ConfigurationTheMovieDB configurationTheMovieDB = getConfigurationTheMovieDB();
+
+//        System.out.println("configurationTheMovieDB = " + configurationTheMovieDB);
+//        System.out.println("configurationTheMovieDB.getImageSizes() = " + configurationTheMovieDB.getImageSizes());
+//        System.out.println("response.getMovieInApiList().size() = " + movieInApiList.size());
+//        System.out.println("genreResponse.getGenres().size() = " + genreResponse.getGenres().size());
+        System.out.println("movieInApiList.get(0).toMovieEntity(categoryListFromGenre, configurationTheMovieDB) = " +
+                movieInApiList.get(0).toMovieEntity(categoryListFromGenre, configurationTheMovieDB));
+    }
+
+    private ConfigurationTheMovieDB getConfigurationTheMovieDB() {
+        ConfigurationTheMovieDB configurationTheMovieDB = okHttpService.getResponseEntity("/configuration",
+                ConfigurationTheMovieDB.class, new HashMap<>());
+        return configurationTheMovieDB;
+    }
+
+    @NotNull
+    private List<Category> getCategoriesFromGenre() {
+        GenreResponse genreResponse = okHttpService.getResponseEntity("/genre/movie/list",
+                GenreResponse.class, new HashMap<>());
+        List<Category> categoryListFromGenre = genreResponse.getGenres().stream()
+                .map(genre -> (Category)Category.builder().genreId(genre.getId()).categoryName(genre.getName()).build())
+                .toList();
+        return categoryListFromGenre;
+    }
+
+    @NotNull
+    private List<MovieInApi> getMovieInApiList(Long numberOfPages) {
+        List<MovieInApi> movieInApiList = new ArrayList<>();
+        for (int i = 0; i < numberOfPages; i++) {
+            TrendingMovieResponse response = okHttpService.getResponseEntity("/trending/movie/day",
+                    TrendingMovieResponse.class, Map.ofEntries(
+                            Map.entry("page", Integer.toString(i + 1))
+                    )
+            );
+            movieInApiList.addAll(response.getMovieInApiList());
+        }
+        return movieInApiList;
     }
 
     private void testSaveMovieFromApi() {
@@ -102,38 +158,58 @@ public class BackendSem2Application {
 
     public void generateData() {
         Random random = new Random();
-        /*  Generate Category   */
-        List<Category> categories = new ArrayList<>();
-        for (int i = 1; i <= 10; i++) {
-            categories.add(Category.builder().categoryName("category +" + i).build());
-        }
+        /*  Try to get Category and Movie from TheMovieDB     */
+        List<MovieInApi> movieInApiList = getMovieInApiList(1L);
+        List<Category> categories = getCategoriesFromGenre();
+        ConfigurationTheMovieDB configurationTheMovieDB = getConfigurationTheMovieDB();
 
-        /*  Generate Movie   */
-        List<Movie> movies = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            MovieLabelEnum[] movieLabelEnums = MovieLabelEnum.values();
+        List<String> iframeList = List.of(iframe1, iframe2, iframe3);
 
-            String image = i % 2 == 0 ? image1 : image2;
-            List<String> iframeList = List.of(iframe1, iframe2, iframe3);
-            ZonedDateTime openingTime = getRandomZonedDateTime(7);
-            movies.add(Movie.builder()
-                    .movieName("movieName " + (i + 1))
-                    .director("director " + (i + 1))
-                    .posterUrl(image)
-                    .duration(60L + random.nextInt(30))
-                    .language("English")
-                    .openingTime(openingTime)
-                    .closingTime(openingTime.plusDays(random.nextInt(10) + 20))
-                    .iframe(iframeList.get(i % 3))
-                    .description("desc " + (i + 1))
+        List<Movie> movies = movieInApiList.stream()
+                .map(movieInApi -> movieInApi.toMovieEntity(categories, configurationTheMovieDB))
+                /*  add some data for "Movie" entity    */
+                .map(movie -> {
+                    ZonedDateTime openingTime = getRandomZonedDateTime(7);
+                    movie.setDuration(60L + random.nextInt(30));
+                    movie.setOpeningTime(openingTime);
+                    movie.setClosingTime(openingTime.plusDays(random.nextInt(10) + 20));
+                    movie.setIframe(iframeList.get(random.nextInt(3)));
+                    return movie;
+                })
+        .toList();
 
-                    .movieLabel(movieLabelEnums[random.nextInt(movieLabelEnums.length)])
-                    .categoryList(List.of(
-                            categories.get(random.nextInt(categories.size()))
-                    ))
-                    .build()
-            );
-        }
+//        /*  Generate Category   */
+//        List<Category> categories = new ArrayList<>();
+//        for (int i = 1; i <= 10; i++) {
+//            categories.add(Category.builder().categoryName("category +" + i).build());
+//        }
+
+//        /*  Generate Movie   */
+//        List<Movie> movies = new ArrayList<>();
+//        for (int i = 0; i < 20; i++) {
+//            MovieLabelEnum[] movieLabelEnums = MovieLabelEnum.values();
+//
+//            String image = i % 2 == 0 ? image1 : image2;
+//            List<String> iframeList = List.of(iframe1, iframe2, iframe3);
+//            ZonedDateTime openingTime = getRandomZonedDateTime(7);
+//            movies.add(Movie.builder()
+//                    .movieName("movieName " + (i + 1))
+//                    .director("director " + (i + 1))
+//                    .posterUrl(image)
+//                    .duration(60L + random.nextInt(30))
+//                    .language("English")
+//                    .openingTime(openingTime)
+//                    .closingTime(openingTime.plusDays(random.nextInt(10) + 20))
+//                    .iframe(iframeList.get(i % 3))
+//                    .description("desc " + (i + 1))
+//
+//                    .movieLabel(movieLabelEnums[random.nextInt(movieLabelEnums.length)])
+//                    .categoryList(List.of(
+//                            categories.get(random.nextInt(categories.size()))
+//                    ))
+//                    .build()
+//            );
+//        }
 
         /*  Generate Comment   */
         List<Comment> comments = new ArrayList<>();

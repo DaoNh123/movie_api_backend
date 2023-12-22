@@ -4,7 +4,7 @@ import com.example.backend_sem2.Utility.ApiUtility;
 import com.example.backend_sem2.entity.Category;
 import com.example.backend_sem2.entity.Movie;
 import com.example.backend_sem2.mapper.MovieMapper;
-import com.example.backend_sem2.model.MovieOverviewDetailIMDB;
+import com.example.backend_sem2.model.rapidApi.MovieOverviewDetailIMDB;
 import com.example.backend_sem2.repository.CategoryRepo;
 import com.example.backend_sem2.repository.MovieRepo;
 import jakarta.transaction.Transactional;

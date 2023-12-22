@@ -32,7 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
             String message = categoryName + " is already exist!";
             throw new CustomErrorException(HttpStatus.BAD_REQUEST, message);
         }
-        return categoryMapper.toDto(categoryRepo.save(new Category(categoryName, new ArrayList<>())));
+        return categoryMapper.toDto(categoryRepo.save(Category.builder().categoryName(categoryName).build()));
     }
 
     @Override

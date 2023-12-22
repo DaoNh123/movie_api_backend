@@ -1,4 +1,4 @@
-package com.example.backend_sem2.model;
+package com.example.backend_sem2.model.rapidApi;
 
 import com.example.backend_sem2.Enum.MovieLabelEnum;
 import com.example.backend_sem2.entity.Movie;

@@ -4,7 +4,7 @@ import com.example.backend_sem2.dto.DtoForMovie.MovieResponseInPage;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseWithComment;
 import com.example.backend_sem2.dto.OrderResponseInfo.MovieInOrderRes;
 import com.example.backend_sem2.entity.Movie;
-import com.example.backend_sem2.model.MovieOverviewDetailIMDB;
+import com.example.backend_sem2.model.rapidApi.MovieOverviewDetailIMDB;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -32,6 +32,8 @@ public class Category extends BaseEntity{
             inverseJoinColumns = @JoinColumn(name = "movie_id")
     )
     private List<Movie> movieList;
+    @Column(name = "genre_id")
+    private Long genreId; // connect with "genreId" in theMovieDB
 
     @Override
     public boolean equals(Object o) {

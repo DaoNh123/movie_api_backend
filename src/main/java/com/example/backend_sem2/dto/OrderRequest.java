@@ -1,6 +1,7 @@
 package com.example.backend_sem2.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,26 +16,14 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class OrderRequest {
+//    @NonNull
     private String customerName;
     private String customerAddress;
     private Long customerAge;
+    @Email
+    private String customerEmail;
     private Long movieId;
     private Long slotId;
-//    private String seatIdInString;
     private List<Long> seatIdList;
-//    @JsonIgnore
-//    private List<Long> seatIdList;
-//
-//    public void convertToSeatIdList(){
-//        if(seatIdInString != null) this.seatIdList = Arrays.stream(seatIdInString.split(","))
-//                .map(Long::parseLong).toList();
-//    }
 
-//    public List<Long> getSeatIdList(){
-//        List<Long> longList = new ArrayList<>();
-//        if(seatIdInString != null) longList = Arrays.stream(seatIdInString.split(","))
-//                .map(String::trim)
-//                .map(Long::parseLong).toList();
-//        return longList;
-//    }
 }

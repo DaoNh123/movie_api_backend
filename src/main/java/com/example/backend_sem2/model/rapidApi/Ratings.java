@@ -1,4 +1,4 @@
-package com.example.backend_sem2.model;
+package com.example.backend_sem2.model.rapidApi;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ImageInApi {
-    private Long height;
-    private String id;
-    private String url;
-    private Long width;
+public class Ratings {
+    private boolean canRate;
+    private Double ratings;
+    private Long ratingCount;
+    private Long topRank;
 }

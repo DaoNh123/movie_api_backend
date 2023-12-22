@@ -1,4 +1,4 @@
-package com.example.backend_sem2.model;
+package com.example.backend_sem2.model.rapidApi;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
