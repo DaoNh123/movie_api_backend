@@ -17,6 +17,7 @@ import java.util.List;
 public class MovieResponseWithComment {
     private Long id;
     private String movieName;
+    private Double imdbRatings;         // new
     private String posterUrl;
     private String director;
     private String description;

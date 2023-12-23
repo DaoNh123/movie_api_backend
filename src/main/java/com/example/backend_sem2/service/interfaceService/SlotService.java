@@ -12,5 +12,5 @@ public interface SlotService {
     List<Slot> getSlotsByMovie_Id(Long id);
 
 
-    List<SlotResponse> getSlotsByMovie_IdAndShowDate(Pageable pageable, Long id, ZonedDateTime startOfShowDate, ZonedDateTime endOfShowDate);
+    List<SlotResponse> getSlotsByMovie_IdBetweenTwoZonedDateTimes(Pageable pageable, Long id, ZonedDateTime startOfShowDate, ZonedDateTime endOfShowDate);
 }

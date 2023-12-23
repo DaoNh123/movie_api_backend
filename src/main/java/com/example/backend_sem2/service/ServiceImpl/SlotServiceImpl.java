@@ -24,7 +24,7 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
-    public List<SlotResponse> getSlotsByMovie_IdAndShowDate(Pageable pageable, Long id, ZonedDateTime startOfShowDate, ZonedDateTime endOfShowDate) {
+    public List<SlotResponse> getSlotsByMovie_IdBetweenTwoZonedDateTimes(Pageable pageable, Long id, ZonedDateTime startOfShowDate, ZonedDateTime endOfShowDate) {
         return slotRepo.getSlotsByMovie_IdAndStartTimeBetween(pageable, id, startOfShowDate, endOfShowDate)
                 .stream().map(slotMapper::toSlotResponse).toList();
     }

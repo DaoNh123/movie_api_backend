@@ -19,7 +19,7 @@ public class OrderController {
     private OrderMapper orderMapper;
 
     /*  This endpoint have used "OrderResponse" as a DTO    */
-    @PostMapping("/createOrder")
+    @PostMapping("/")
     public ResponseEntity<?> createOrder(
             @RequestBody OrderRequest orderRequest
     ) {

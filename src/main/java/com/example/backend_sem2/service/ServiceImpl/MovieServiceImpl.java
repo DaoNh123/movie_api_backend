@@ -19,9 +19,9 @@ public class MovieServiceImpl implements MovieService {
     private MovieMapper movieMapper;
 
     @Override
-    public Page<MovieResponseInPage> getMoviePageableByCondition(Pageable pageable, String partOfMovieName, String categoryName, String movieLabel) {
+    public Page<MovieResponseInPage> getMoviePageableByCondition(Pageable pageable, String partOfMovieName, String categoryName, MovieLabelEnum movieLabel) {
 
-        Page<Movie> moviePageableByCondition3 = movieRepo.getMoviePageableByCondition3(pageable, partOfMovieName, categoryName, movieLabel);
+        Page<Movie> moviePageableByCondition3 = movieRepo.getMoviePageableByCondition(pageable, partOfMovieName, categoryName, movieLabel);
 
         return moviePageableByCondition3.map(movieMapper::toMovieResponseInPage);
 

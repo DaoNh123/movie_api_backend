@@ -50,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
         List<CustomErrorException> createOrderExceptions = new ArrayList<>();
         if(!isEnoughAgeToBook(orderRequest)) createOrderExceptions.add(new CustomErrorException(HttpStatus.BAD_REQUEST, String.format("You need to be older than %s years old to what this movie!", slot.getMovie().getMovieLabel().getMinAge())));
         if(!isSeatAvailable(orderRequest)) createOrderExceptions.add(new CustomErrorException(HttpStatus.BAD_REQUEST, "Some seats you choose have been books, please choose other one!"));
-//        if(!isSlotAvailableToBook(slot)) createOrderExceptions.add(new CustomErrorException(HttpStatus.BAD_REQUEST, "This slot have been began, you can not book this slot!"));
+        if(!isSlotAvailableToBook(slot)) createOrderExceptions.add(new CustomErrorException(HttpStatus.BAD_REQUEST, "This slot have been began, you can not book this slot!"));
 
         if (createOrderExceptions.isEmpty()) {
             try {
