@@ -3,13 +3,13 @@ package com.example.backend_sem2.exception;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.aspectj.weaver.tools.Trace;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
 public class CustomErrorException extends RuntimeException {
     private HttpStatus status = null;
-
     private Object data = null;
 
     public CustomErrorException() {

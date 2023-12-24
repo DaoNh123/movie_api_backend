@@ -22,6 +22,12 @@ import java.util.List;
 public class Movie extends BaseEntity{
     @Column(name = "movie_name")
     private String movieName;
+    @Column(name = "imdb_id")
+    private String imdbId;              // new
+    @Column(name = "the_movie_db_id")
+    private Long theMovieDBId;        // new
+    @Column(name = "imdb_ratings")
+    private Double imdbRatings;         // new
     @Column(name = "poster_url", columnDefinition = "TEXT")
     private String posterUrl;
     @Column(name = "director")

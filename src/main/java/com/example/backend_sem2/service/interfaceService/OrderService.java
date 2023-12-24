@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 public interface OrderService {
     Order getOrderById(Long id);
 
-    ResponseEntity<?> createOrder(OrderRequest orderRequest);
+    Object createOrder(OrderRequest orderRequest);
 
     String getEmailByOrderId(Long id);
 

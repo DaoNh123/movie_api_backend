@@ -2,9 +2,9 @@ package com.example.backend_sem2.controller;
 
 import com.example.backend_sem2.dto.OrderRequest;
 import com.example.backend_sem2.dto.OrderResponseInfo.OrderResponse;
-import com.example.backend_sem2.entity.Order;
 import com.example.backend_sem2.mapper.OrderMapper;
 import com.example.backend_sem2.service.interfaceService.OrderService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +19,9 @@ public class OrderController {
     private OrderMapper orderMapper;
 
     /*  This endpoint have used "OrderResponse" as a DTO    */
-    @PostMapping("/createOrder")
-    public ResponseEntity<?> createOrder(
-            @RequestBody OrderRequest orderRequest
+    @PostMapping("/")
+    public Object createOrder(
+            @RequestBody @Valid OrderRequest orderRequest
     ) {
         return orderService.createOrder(orderRequest);
     }

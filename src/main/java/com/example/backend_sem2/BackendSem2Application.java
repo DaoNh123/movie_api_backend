@@ -1,11 +1,20 @@
 package com.example.backend_sem2;
 
+import com.example.backend_sem2.Api.OkHttp.OkHttpService;
+import com.example.backend_sem2.Api.webClient.ApiMovieService;
 import com.example.backend_sem2.Enum.MovieLabelEnum;
 import com.example.backend_sem2.dto.CommentRequest;
 import com.example.backend_sem2.entity.*;
+import com.example.backend_sem2.mapper.CategoryMapper;
 import com.example.backend_sem2.mapper.CommentMapper;
+import com.example.backend_sem2.model.rapidApi.MovieOverviewDetailIMDB;
+import com.example.backend_sem2.model.theMovieDB.ConfigurationTheMovieDB;
+import com.example.backend_sem2.model.theMovieDB.GenreResponse;
+import com.example.backend_sem2.model.theMovieDB.MovieInApi;
+import com.example.backend_sem2.model.theMovieDB.TrendingMovieResponse;
 import com.example.backend_sem2.repository.*;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,9 +22,7 @@ import org.springframework.context.annotation.Bean;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootApplication
@@ -31,16 +38,17 @@ public class BackendSem2Application {
     private OrderRepo orderRepo;
     private OrderDetailRepo orderDetailRepo;
     private CommentMapper commentMapper;
+    private CategoryMapper categoryMapper;
+
+    private ApiMovieService apiMovieService;
+    private OkHttpService okHttpService;
 
     private final String image1 = "https://m.media-amazon.com/images/M/MV5BN2IzYzBiOTQtNGZmMi00NDI5LTgxMzMtN2EzZjA1NjhlOGMxXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_.jpg";
     private final String image2 = "https://m.media-amazon.com/images/M/MV5BMjk2NjgzMTEtYWViZS00NTMyLWFjMzctODczYmQzNzk2NjIwXkEyXkFqcGdeQXVyMTEyMjM2NDc2._V1_.jpg";
 
-    private final String iframe1 = """
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/bjqEWgDVPe0?si=EkeFabnnr4-yWO46" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>""";
-    private final String iframe2 = """
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/AlhHGUfCYw4?si=omo6TcypeCzNzPGu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>""";
-    private final String iframe3 = """
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/nblUgAMoOvU?si=rzo5bGWxf3zKdMUJ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>""";
+    private final String iframe1 = "https://www.youtube.com/embed/bjqEWgDVPe0?si=EkeFabnnr4-yWO46";
+    private final String iframe2 = "https://www.youtube.com/embed/AlhHGUfCYw4?si=omo6TcypeCzNzPGu";
+    private final String iframe3 = "https://www.youtube.com/embed/nblUgAMoOvU?si=rzo5bGWxf3zKdMUJ";
 
     private final long rows = 12;
     private final long columns = 12;
@@ -54,6 +62,15 @@ public class BackendSem2Application {
         return runner -> {
 //            testCommentMapper();
 //            testMovieLabelEnumInMovie();
+//            testApiService();
+//            testGetOverviewOfMovieIMDB("tt4729430");
+//            getAllCategorySet();
+
+//            testSaveMovieFromApi();
+
+//            testOkHttpTheMovieDB();
+//            saveDataOkHttpTheMovieDB();
+            testMovieWithIdRating();
             if (!slotRepo.existsById(1L)) {
                 /*  this method does not generate all generated Object in method    */
                 generateData();
@@ -62,40 +79,133 @@ public class BackendSem2Application {
         };
     }
 
+    private void testMovieWithIdRating() {
+        System.out.println("okHttpService.getMovieWithRatingUsingTheMovieDBId(695721) = "
+                + okHttpService.getMovieWithRatingUsingTheMovieDBId(695721L));
+    }
+
+    private void saveDataOkHttpTheMovieDB() {
+    }
+
+    private void testOkHttpTheMovieDB() {
+        List<MovieInApi> movieInApiList = getMovieInApiList(3L);
+        List<Category> categoryListFromGenre = getCategoriesFromGenre();
+        ConfigurationTheMovieDB configurationTheMovieDB = getConfigurationTheMovieDB();
+
+//        System.out.println("configurationTheMovieDB = " + configurationTheMovieDB);
+//        System.out.println("configurationTheMovieDB.getImageSizes() = " + configurationTheMovieDB.getImageSizes());
+//        System.out.println("response.getMovieInApiList().size() = " + movieInApiList.size());
+//        System.out.println("genreResponse.getGenres().size() = " + genreResponse.getGenres().size());
+        System.out.println("movieInApiList.get(0).toMovieEntity(categoryListFromGenre, configurationTheMovieDB) = " +
+                movieInApiList.get(0).toMovieEntity(categoryListFromGenre, configurationTheMovieDB));
+    }
+
+    private ConfigurationTheMovieDB getConfigurationTheMovieDB() {
+        ConfigurationTheMovieDB configurationTheMovieDB = okHttpService.getResponseEntity("/configuration",
+                ConfigurationTheMovieDB.class, new HashMap<>());
+        return configurationTheMovieDB;
+    }
+
+    @NotNull
+    private List<Category> getCategoriesFromGenre() {
+        GenreResponse genreResponse = okHttpService.getResponseEntity("/genre/movie/list",
+                GenreResponse.class, new HashMap<>());
+        List<Category> categoryListFromGenre = genreResponse.getGenres().stream()
+                .map(genre -> (Category)Category.builder().genreId(genre.getId()).categoryName(genre.getName()).build())
+                .toList();
+        return categoryListFromGenre;
+    }
+
+    @NotNull
+    private List<MovieInApi> getMovieInApiList(Long numberOfPages) {
+        List<MovieInApi> movieInApiList = new ArrayList<>();
+        for (int i = 0; i < numberOfPages; i++) {
+            TrendingMovieResponse response = okHttpService.getResponseEntity("/trending/movie/day",
+                    TrendingMovieResponse.class, Map.ofEntries(
+                            Map.entry("page", Integer.toString(i + 1))
+                    )
+            );
+            movieInApiList.addAll(response.getMovieInApiList());
+        }
+        return movieInApiList;
+    }
+
+    private void testSaveMovieFromApi() {
+        apiMovieService.saveMovieFromApi(apiMovieService.getMostPopularMovieListCodeInIMDB().subList(0, 2));
+    }
+
+    private void getAllCategorySet() {
+        Set<Category> categorySet = categoryRepo.getAllCategorySet();
+        categorySet.stream().map(categoryMapper::toDto).forEach(System.out::println);
+    }
+
+    private void testGetOverviewOfMovieIMDB(String movieIdInImdb) {
+        MovieOverviewDetailIMDB result = apiMovieService.getDataIsNotList("title/get-overview-details",
+                MovieOverviewDetailIMDB.class, Map.ofEntries(
+                        Map.entry("tconst", "tt4729430")
+                ));
+        System.out.println("result = " + result);
+    }
+
+    public void testApiService() {
+        List<String> movieIdList = apiMovieService.getMostPopularMovieListCodeInIMDB();
+        movieIdList.forEach(System.out::println);
+    }
+
     public void generateData() {
         Random random = new Random();
-        /*  Generate Category   */
-        List<Category> categories = new ArrayList<>();
-        for (int i = 1; i <= 10; i++) {
-            categories.add(Category.builder().categoryName("category +" + i).build());
-        }
+        /*  Try to get Category and Movie from TheMovieDB     */
+        List<MovieInApi> movieInApiList = getMovieInApiList(1L);
+        List<Category> categories = getCategoriesFromGenre();
+        ConfigurationTheMovieDB configurationTheMovieDB = getConfigurationTheMovieDB();
 
-        /*  Generate Movie   */
-        List<Movie> movies = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            MovieLabelEnum[] movieLabelEnums = MovieLabelEnum.values();
+        List<String> iframeList = List.of(iframe1, iframe2, iframe3);
 
-            String image = i % 2 == 0 ? image1 : image2;
-            List<String> iframeList = List.of(iframe1, iframe2, iframe3);
-            ZonedDateTime openingTime = getRandomZonedDateTime(7);
-            movies.add(Movie.builder()
-                    .movieName("movieName " + (i + 1))
-                    .director("director " + (i + 1))
-                    .posterUrl(image)
-                    .duration(60L + random.nextInt(30))
-                    .language("English")
-                            .openingTime(openingTime)
-                            .closingTime(openingTime.plusDays(random.nextInt(10) + 20))
-                    .iframe(iframeList.get(i % 3))
-                    .description("desc " + (i + 1))
+        List<Movie> movies = movieInApiList.stream()
+                .map(movieInApi -> movieInApi.toMovieEntity(categories, configurationTheMovieDB))
+                /*  add some data for "Movie" entity    */
+                .map(movie -> {
+                    ZonedDateTime openingTime = getRandomZonedDateTime(7);
+                    movie.setDuration(60L + random.nextInt(30));
+                    movie.setOpeningTime(openingTime);
+                    movie.setClosingTime(openingTime.plusDays(random.nextInt(10) + 20));
+                    movie.setIframe(iframeList.get(random.nextInt(3)));
+                    return movie;
+                })
+        .toList();
 
-                    .movieLabel(movieLabelEnums[random.nextInt(movieLabelEnums.length)])
-                    .categoryList(List.of(
-                            categories.get(random.nextInt(categories.size()))
-                    ))
-                    .build()
-            );
-        }
+//        /*  Generate Category   */
+//        List<Category> categories = new ArrayList<>();
+//        for (int i = 1; i <= 10; i++) {
+//            categories.add(Category.builder().categoryName("category +" + i).build());
+//        }
+
+//        /*  Generate Movie   */
+//        List<Movie> movies = new ArrayList<>();
+//        for (int i = 0; i < 20; i++) {
+//            MovieLabelEnum[] movieLabelEnums = MovieLabelEnum.values();
+//
+//            String image = i % 2 == 0 ? image1 : image2;
+//            List<String> iframeList = List.of(iframe1, iframe2, iframe3);
+//            ZonedDateTime openingTime = getRandomZonedDateTime(7);
+//            movies.add(Movie.builder()
+//                    .movieName("movieName " + (i + 1))
+//                    .director("director " + (i + 1))
+//                    .posterUrl(image)
+//                    .duration(60L + random.nextInt(30))
+//                    .language("English")
+//                    .openingTime(openingTime)
+//                    .closingTime(openingTime.plusDays(random.nextInt(10) + 20))
+//                    .iframe(iframeList.get(i % 3))
+//                    .description("desc " + (i + 1))
+//
+//                    .movieLabel(movieLabelEnums[random.nextInt(movieLabelEnums.length)])
+//                    .categoryList(List.of(
+//                            categories.get(random.nextInt(categories.size()))
+//                    ))
+//                    .build()
+//            );
+//        }
 
         /*  Generate Comment   */
         List<Comment> comments = new ArrayList<>();
@@ -213,6 +323,7 @@ public class BackendSem2Application {
         System.out.println("*** Test Comment Mapper ***");
         System.out.println(commentMapper.toEntity(commentRequest));
     }
+
     private static ZonedDateTime getRandomZonedDateTime(Integer dayRange) {
         ZoneId zoneId = ZoneId.systemDefault();
         LocalDate today = LocalDate.now();

@@ -14,21 +14,23 @@ import java.util.List;
 @RequestMapping("/comments")
 public class CommentController {
     private CommentService commentService;
-    @GetMapping("/{movieName}")
-    public List<CommentResponse> getAllCommentByMovieName (
-            @PathVariable String movieName
-    ) {
-        return commentService.getAllCommentByMovieName(movieName);
-    }
+    /*  Remove because duplication  */
+//    @GetMapping("/{movieName}")
+//    public List<CommentResponse> getAllCommentByMovieName (
+//            @PathVariable String movieName
+//    ) {
+//        return commentService.getAllCommentByMovieName(movieName);
+//    }
 
-    @GetMapping("/byMoviesId/{movieId}")
-    public List<CommentResponse> getAllCommentByMovieName (
-            @PathVariable Long movieId
-    ) {
-        return commentService.getAllCommentByMovieId(movieId);
-    }
+    /*  Remove because unnecessary, comment will be got in "getMovieWithCommentsById"   */
+//    @GetMapping("/byMoviesId/{movieId}")
+//    public List<CommentResponse> getAllCommentByMovieName (
+//            @PathVariable Long movieId
+//    ) {
+//        return commentService.getAllCommentByMovieId(movieId);
+//    }
 
-    @PostMapping("/add")
+    @PostMapping("/")
     public CommentResponse saveComment(
            @Valid @RequestBody CommentRequest commentRequest
     ){

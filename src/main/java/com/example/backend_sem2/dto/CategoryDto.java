@@ -1,5 +1,6 @@
 package com.example.backend_sem2.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,5 +12,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CategoryDto {
     private Long id;
+    @NotBlank
     private String categoryName;
+    @NotBlank
+    private String somethingHere;
 }
