@@ -1,5 +1,7 @@
 package com.example.backend_sem2;
 
+import com.example.backend_sem2.Api.OkHttp.OkHttpService;
+import com.example.backend_sem2.Api.webClient.ApiMovieService;
 import com.example.backend_sem2.Enum.MovieLabelEnum;
 import com.example.backend_sem2.dto.CommentRequest;
 import com.example.backend_sem2.entity.*;
@@ -11,8 +13,6 @@ import com.example.backend_sem2.model.theMovieDB.GenreResponse;
 import com.example.backend_sem2.model.theMovieDB.MovieInApi;
 import com.example.backend_sem2.model.theMovieDB.TrendingMovieResponse;
 import com.example.backend_sem2.repository.*;
-import com.example.backend_sem2.webClient.ApiMovieService;
-import com.example.backend_sem2.webClient.OkHttpService;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.CommandLineRunner;
@@ -46,12 +46,9 @@ public class BackendSem2Application {
     private final String image1 = "https://m.media-amazon.com/images/M/MV5BN2IzYzBiOTQtNGZmMi00NDI5LTgxMzMtN2EzZjA1NjhlOGMxXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_.jpg";
     private final String image2 = "https://m.media-amazon.com/images/M/MV5BMjk2NjgzMTEtYWViZS00NTMyLWFjMzctODczYmQzNzk2NjIwXkEyXkFqcGdeQXVyMTEyMjM2NDc2._V1_.jpg";
 
-    private final String iframe1 = """
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/bjqEWgDVPe0?si=EkeFabnnr4-yWO46" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>""";
-    private final String iframe2 = """
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/AlhHGUfCYw4?si=omo6TcypeCzNzPGu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>""";
-    private final String iframe3 = """
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/nblUgAMoOvU?si=rzo5bGWxf3zKdMUJ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>""";
+    private final String iframe1 = "https://www.youtube.com/embed/bjqEWgDVPe0?si=EkeFabnnr4-yWO46";
+    private final String iframe2 = "https://www.youtube.com/embed/AlhHGUfCYw4?si=omo6TcypeCzNzPGu";
+    private final String iframe3 = "https://www.youtube.com/embed/nblUgAMoOvU?si=rzo5bGWxf3zKdMUJ";
 
     private final long rows = 12;
     private final long columns = 12;
@@ -73,12 +70,18 @@ public class BackendSem2Application {
 
 //            testOkHttpTheMovieDB();
 //            saveDataOkHttpTheMovieDB();
+            testMovieWithIdRating();
             if (!slotRepo.existsById(1L)) {
                 /*  this method does not generate all generated Object in method    */
                 generateData();
             }
 
         };
+    }
+
+    private void testMovieWithIdRating() {
+        System.out.println("okHttpService.getMovieWithRatingUsingTheMovieDBId(695721) = "
+                + okHttpService.getMovieWithRatingUsingTheMovieDBId(695721L));
     }
 
     private void saveDataOkHttpTheMovieDB() {
@@ -135,13 +138,6 @@ public class BackendSem2Application {
         Set<Category> categorySet = categoryRepo.getAllCategorySet();
         categorySet.stream().map(categoryMapper::toDto).forEach(System.out::println);
     }
-
-//    private MovieOverviewDetailIMDB testGetOverviewOfMovieIMDB(String movieIdInImdb) {
-//        return apiMovieService.getDataIsNotList("/title/get-overview-details",
-//                MovieOverviewDetailIMDB.class, Map.ofEntries(
-//                        Map.entry("tconst", "tt4729430")
-//                ));
-//    }
 
     private void testGetOverviewOfMovieIMDB(String movieIdInImdb) {
         MovieOverviewDetailIMDB result = apiMovieService.getDataIsNotList("title/get-overview-details",

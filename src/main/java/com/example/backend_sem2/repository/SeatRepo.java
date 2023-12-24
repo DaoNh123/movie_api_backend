@@ -19,4 +19,5 @@ public interface SeatRepo extends JpaRepository<Seat, Long> {
 //        "INNER JOIN od.seat AS se " +
 //        "WHERE s.id = :slotId")
 //    List<String> getOrderedSeatNameByOrder_Slot_Id (Long slotId);
+//    boolean isSeatBelongToSlot(String seatId, slotId)
 }

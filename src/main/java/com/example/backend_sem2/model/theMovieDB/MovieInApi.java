@@ -94,7 +94,7 @@ public class MovieInApi {
 
         return Movie.builder()
                 .movieName(this.title)
-                .imdbId(Long.toString(this.id))
+                .theMovieDBId(this.id)
                 .imdbRatings(this.voteAverage)
                 .posterUrl(String.join("",posterBaseUrl, size, this.posterPath))
                 .description(this.overview)

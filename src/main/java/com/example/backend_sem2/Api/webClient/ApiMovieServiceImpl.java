@@ -1,4 +1,4 @@
-package com.example.backend_sem2.webClient;
+package com.example.backend_sem2.Api.webClient;
 
 import com.example.backend_sem2.Utility.ApiUtility;
 import com.example.backend_sem2.entity.Category;
@@ -8,7 +8,6 @@ import com.example.backend_sem2.model.rapidApi.MovieOverviewDetailIMDB;
 import com.example.backend_sem2.repository.CategoryRepo;
 import com.example.backend_sem2.repository.MovieRepo;
 import jakarta.transaction.Transactional;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,26 +20,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@NoArgsConstructor
-//@AllArgsConstructor
 public class ApiMovieServiceImpl implements ApiMovieService {
-    @Autowired
     private WebClient webClient;
-    @Autowired
     private CategoryRepo categoryRepo;
-    @Autowired
     private MovieRepo movieRepo;
-    @Autowired
     private MovieMapper movieMapper;
     private final String mostPopularMovieURI = "title/get-most-popular-movies";
     private final String getOverviewDetailURI = "title/get-overview-details";
     @Value("${base_url}")
     private String baseUrl;
 
-//    @Autowired
-//    public ApiMovieServiceImpl(WebClient webClient) {
-//        this.webClient = webClient;
-//    }
+    @Autowired
+    public ApiMovieServiceImpl(WebClient webClient, CategoryRepo categoryRepo, MovieRepo movieRepo, MovieMapper movieMapper) {
+        this.webClient = webClient;
+        this.categoryRepo = categoryRepo;
+        this.movieRepo = movieRepo;
+        this.movieMapper = movieMapper;
+    }
 
     @Transactional
     public void saveMovieFromApi(List<String> movieCodeList) {

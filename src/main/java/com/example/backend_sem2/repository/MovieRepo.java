@@ -9,6 +9,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 @EnableJpaRepositories
 public interface MovieRepo extends JpaRepository<Movie, Long> {
@@ -30,4 +34,13 @@ public interface MovieRepo extends JpaRepository<Movie, Long> {
 
     boolean existsByImdbId(String imdbId);
     boolean existsByMovieNameIgnoreCase(String movieName);
+
+    Page<Movie> getMoviesByOpeningTimeAfter(Pageable pageable, ZonedDateTime zonedDateTime);
+
+    @Query(value = "FROM Movie m LEFT JOIN FETCH m.slotList s " +
+            "WHERE s.id = :slotId")
+    Optional<Movie> findMovieBySlotId (Long slotId);
+
+    @Query(value = "SELECT m.theMovieDBId FROM Movie m")
+    List<Long> getAllTheMovieDBIdOfAllMovies();
 }

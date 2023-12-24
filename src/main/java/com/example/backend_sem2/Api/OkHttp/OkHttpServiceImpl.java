@@ -1,15 +1,21 @@
-package com.example.backend_sem2.webClient;
+package com.example.backend_sem2.Api.OkHttp;
 
+import com.example.backend_sem2.entity.Movie;
+import com.example.backend_sem2.mapper.MovieMapper;
 import com.example.backend_sem2.model.theMovieDB.*;
+import com.example.backend_sem2.repository.MovieRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +26,8 @@ import java.util.Objects;
 public class OkHttpServiceImpl implements OkHttpService{
     private OkHttpClient okHttpClient;
     private ObjectMapper objectMapper;
+    private MovieRepo movieRepo;
+    private MovieMapper movieMapper;
     private final String theMovieDbBaseUrl = "https://api.themoviedb.org/3";
 
     public Request createGetRequest(String getRequestUrl){
@@ -48,9 +56,14 @@ public class OkHttpServiceImpl implements OkHttpService{
 
         Response response = okHttpClient.newCall(getRequest).execute();
 
-        String string = response.body().string();
-        T entityResponse = objectMapper.readValue(string, type);
-        return entityResponse;
+        String string = null;
+        try {
+            assert response.body() != null;
+            string = response.body().string();
+        } catch (IOException e) {
+            System.out.println("No data received!");
+        }
+        return objectMapper.readValue(string, type);
     }
 
     /*  Method to get Trending "MovieInApi" depend on pageId   */
@@ -74,4 +87,29 @@ public class OkHttpServiceImpl implements OkHttpService{
         return getResponseEntity("/genre/movie/list",
                 GenreResponse.class, new HashMap<>()).getGenres();
     }
+
+    /*  Get info of a Movie from "theMovieDB" by Id, using in "@Schedule" to update rating for movie */
+    public MovieWithIdRating getMovieWithRatingUsingTheMovieDBId (Long theMovieDBId){
+        String endpoint = "/movie/" + theMovieDBId;
+
+        return getResponseEntity(endpoint, MovieWithIdRating.class, new HashMap<>());
+    }
+
+//    @Scheduled(cron = "0 0/5 0 ? * * *")
+////    @Scheduled(cron =  "0/10 * * * * *")
+//    @Transactional
+//    public void updateRatingAndMovieIMDBId(){
+//        System.out.println("---Start updating rating---");
+//
+//        List<Movie> movieList = movieRepo.findAll();
+//
+//        movieList.stream().forEach(movie -> {
+//            MovieWithIdRating movieWithIdRating = getMovieWithRatingUsingTheMovieDBId(movie.getTheMovieDBId());
+//            movieMapper.updateMovieRating(movieWithIdRating, movie);
+//        });
+//
+//        movieRepo.saveAllAndFlush(movieList);
+//
+//        System.out.println("---End updating rating---");
+//    }
 }

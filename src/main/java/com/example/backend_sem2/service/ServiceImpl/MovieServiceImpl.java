@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.ZonedDateTime;
+
 @Repository
 @AllArgsConstructor
 public class MovieServiceImpl implements MovieService {
@@ -33,21 +35,13 @@ public class MovieServiceImpl implements MovieService {
         return movieMapper.toMovieResponseWithComment(movieRepo.getMovieWithComments(id));
     }
 
-    /*  "getMoviePageableByCondition" already cover this method */
-//    @Override
-//    public List<MovieResponseInPage> findMoviesByMovieLabel(String movieLabel) {
-//        MovieLabelEnum movieLabelEnum = getMovieLabelEnum(movieLabel);
-//        if(movieLabelEnum == null) throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Your movie label is not exist!");
-//        return movieRepo.findMoviesByMovieLabel(movieLabelEnum).stream()
-//                .map(movieMapper::toMovieResponseInPage).toList();
-//    }
-
-    private MovieLabelEnum getMovieLabelEnum(String movieLabel) {
-        try {
-            return MovieLabelEnum.valueOf(movieLabel);
-        } catch (IllegalArgumentException e) {
-            return null;
-            //throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Your movie label is not exist!");
-        }
+    @Override
+    public Page<MovieResponseInPage> getMoviesByOpeningTimeAfter(
+            Pageable pageable,
+            ZonedDateTime zonedDateTime
+    ) {
+        return movieRepo.getMoviesByOpeningTimeAfter(pageable, zonedDateTime)
+                .map(movieMapper::toMovieResponseInPage);
     }
+
 }

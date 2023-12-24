@@ -2,6 +2,7 @@ package com.example.backend_sem2.controller;
 
 import com.example.backend_sem2.dto.CategoryDto;
 import com.example.backend_sem2.service.interfaceService.CategoryService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +35,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public CategoryDto updateCategory(@RequestBody CategoryDto categoryDto, @PathVariable Long id)
+    public CategoryDto updateCategory(@Valid @RequestBody CategoryDto categoryDto, @PathVariable Long id)
     {
         return categoryService.updateCategory(categoryDto, id);
     }

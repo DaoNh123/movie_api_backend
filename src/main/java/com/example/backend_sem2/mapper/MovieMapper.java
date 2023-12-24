@@ -1,14 +1,14 @@
 package com.example.backend_sem2.mapper;
 
+import com.example.backend_sem2.dto.CategoryDto;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseInPage;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseWithComment;
 import com.example.backend_sem2.dto.OrderResponseInfo.MovieInOrderRes;
+import com.example.backend_sem2.entity.Category;
 import com.example.backend_sem2.entity.Movie;
 import com.example.backend_sem2.model.rapidApi.MovieOverviewDetailIMDB;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import com.example.backend_sem2.model.theMovieDB.MovieWithIdRating;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", uses = {ReferenceMapper.class, CommentMapper.class})
 public interface MovieMapper {
@@ -29,4 +29,9 @@ public interface MovieMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Movie toEntity(MovieOverviewDetailIMDB movieInApi);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "voteAverage", target = "imdbRatings")
+    @BeanMapping(nullValuePropertyMappingStrategy =  NullValuePropertyMappingStrategy.IGNORE)
+    Movie updateMovieRating (MovieWithIdRating movieWithIdRating, @MappingTarget Movie movie);
 }

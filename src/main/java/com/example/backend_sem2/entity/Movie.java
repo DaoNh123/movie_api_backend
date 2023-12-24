@@ -24,6 +24,8 @@ public class Movie extends BaseEntity{
     private String movieName;
     @Column(name = "imdb_id")
     private String imdbId;              // new
+    @Column(name = "the_movie_db_id")
+    private Long theMovieDBId;        // new
     @Column(name = "imdb_ratings")
     private Double imdbRatings;         // new
     @Column(name = "poster_url", columnDefinition = "TEXT")
