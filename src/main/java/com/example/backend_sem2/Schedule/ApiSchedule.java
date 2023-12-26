@@ -21,7 +21,7 @@ public class ApiSchedule {
     private MovieMapper movieMapper;
     private OkHttpService okHttpService;
 
-    @Scheduled(cron = "0 0/5 * * * *")      // Run every 5 minutes
+//    @Scheduled(cron = "0 0/5 * * * *")      // Run every 5 minutes
 //    @Scheduled(cron =  "0/10 * * * * *")      // Run every 10 seconds
     @Transactional
     public void updateRatingAndMovieIMDBId() {

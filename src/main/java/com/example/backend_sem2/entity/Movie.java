@@ -1,5 +1,6 @@
 package com.example.backend_sem2.entity;
 
+
 import com.example.backend_sem2.Enum.MovieLabelEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -36,8 +37,12 @@ public class Movie extends BaseEntity{
     private String description;
     private Long duration;          // calculate in seconds
     private String language;
+    @Column(name = "opening_time")
     private ZonedDateTime openingTime;      // The time which customer can book a ticket
+    @Column(name = "closing_time")
     private ZonedDateTime closingTime;      // The time which movie is no longer selling ticket
+//    private MovieStatusEnum status;
+//    private MovieBookingStatusEnum movieBookingStatusEnum;
     @Column(name = "iframe", columnDefinition = "TEXT")
     private String iframe;
     @ManyToMany(

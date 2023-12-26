@@ -22,7 +22,7 @@ import java.time.ZonedDateTime;
 @ToString
 public abstract class BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     @CreationTimestamp
     private ZonedDateTime createdAt;

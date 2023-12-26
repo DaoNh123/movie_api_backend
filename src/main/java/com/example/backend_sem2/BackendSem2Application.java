@@ -71,11 +71,13 @@ public class BackendSem2Application {
 //            testOkHttpTheMovieDB();
 //            saveDataOkHttpTheMovieDB();
             testMovieWithIdRating();
+            Long start = System.currentTimeMillis();
             if (!slotRepo.existsById(1L)) {
                 /*  this method does not generate all generated Object in method    */
-                generateData();
+                generateData(10L);
             }
-
+            Long end = System.currentTimeMillis();
+            System.out.println("Running time: " + (end - start));
         };
     }
 
@@ -111,7 +113,7 @@ public class BackendSem2Application {
         GenreResponse genreResponse = okHttpService.getResponseEntity("/genre/movie/list",
                 GenreResponse.class, new HashMap<>());
         List<Category> categoryListFromGenre = genreResponse.getGenres().stream()
-                .map(genre -> (Category)Category.builder().genreId(genre.getId()).categoryName(genre.getName()).build())
+                .map(genre -> (Category) Category.builder().genreId(genre.getId()).categoryName(genre.getName()).build())
                 .toList();
         return categoryListFromGenre;
     }
@@ -119,6 +121,8 @@ public class BackendSem2Application {
     @NotNull
     private List<MovieInApi> getMovieInApiList(Long numberOfPages) {
         List<MovieInApi> movieInApiList = new ArrayList<>();
+        Set<MovieInApi> movieInApiSet = new HashSet<>();
+
         for (int i = 0; i < numberOfPages; i++) {
             TrendingMovieResponse response = okHttpService.getResponseEntity("/trending/movie/day",
                     TrendingMovieResponse.class, Map.ofEntries(
@@ -126,7 +130,22 @@ public class BackendSem2Application {
                     )
             );
             movieInApiList.addAll(response.getMovieInApiList());
+            movieInApiSet.addAll(response.getMovieInApiList());
         }
+//        Set<String>
+
+        System.out.println("*** movieInApiList.size():" + movieInApiList.size());
+        for (int i = 0; i < movieInApiList.size(); i++) {
+            MovieInApi movieInApi = movieInApiList.get(i);
+            System.out.println((i + 1) + " " + movieInApi.getId() + " " + movieInApi.getOriginalTitle());
+        }
+        System.out.println("*** movieInApiSet.size():" + movieInApiSet.size());
+        Iterator<MovieInApi> movieInApiIterator = movieInApiSet.iterator();
+        int i = 1;
+        while (movieInApiIterator.hasNext()) {
+            System.out.println((i++) + " " + movieInApiIterator.next().getId() + " " + movieInApiIterator.next().getOriginalTitle());
+        }
+        System.out.println("*** End");
         return movieInApiList;
     }
 
@@ -152,10 +171,10 @@ public class BackendSem2Application {
         movieIdList.forEach(System.out::println);
     }
 
-    public void generateData() {
+    public void generateData(Long numberOfPage) {
         Random random = new Random();
         /*  Try to get Category and Movie from TheMovieDB     */
-        List<MovieInApi> movieInApiList = getMovieInApiList(1L);
+        List<MovieInApi> movieInApiList = getMovieInApiList(numberOfPage);
         List<Category> categories = getCategoriesFromGenre();
         ConfigurationTheMovieDB configurationTheMovieDB = getConfigurationTheMovieDB();
 
@@ -172,53 +191,24 @@ public class BackendSem2Application {
                     movie.setIframe(iframeList.get(random.nextInt(3)));
                     return movie;
                 })
-        .toList();
-
-//        /*  Generate Category   */
-//        List<Category> categories = new ArrayList<>();
-//        for (int i = 1; i <= 10; i++) {
-//            categories.add(Category.builder().categoryName("category +" + i).build());
-//        }
-
-//        /*  Generate Movie   */
-//        List<Movie> movies = new ArrayList<>();
-//        for (int i = 0; i < 20; i++) {
-//            MovieLabelEnum[] movieLabelEnums = MovieLabelEnum.values();
-//
-//            String image = i % 2 == 0 ? image1 : image2;
-//            List<String> iframeList = List.of(iframe1, iframe2, iframe3);
-//            ZonedDateTime openingTime = getRandomZonedDateTime(7);
-//            movies.add(Movie.builder()
-//                    .movieName("movieName " + (i + 1))
-//                    .director("director " + (i + 1))
-//                    .posterUrl(image)
-//                    .duration(60L + random.nextInt(30))
-//                    .language("English")
-//                    .openingTime(openingTime)
-//                    .closingTime(openingTime.plusDays(random.nextInt(10) + 20))
-//                    .iframe(iframeList.get(i % 3))
-//                    .description("desc " + (i + 1))
-//
-//                    .movieLabel(movieLabelEnums[random.nextInt(movieLabelEnums.length)])
-//                    .categoryList(List.of(
-//                            categories.get(random.nextInt(categories.size()))
-//                    ))
-//                    .build()
-//            );
-//        }
+                .toList();
 
         /*  Generate Comment   */
         List<Comment> comments = new ArrayList<>();
-        for (int i = 1; i <= 100; i++) {
-
-            comments.add(Comment.builder()
-                    .commentUsername("user " + i)
-                    .starRate(random.nextLong(5) + 1L)
-                    .commentContent("comment content " + i)
-                    .movie(movies.get(random.nextInt(movies.size())))
-                    .build()
-            );
+        for (int i = 0; i < movies.size(); i++) {
+            int numberOfComment = random.nextInt(5) + 3;
+            for (int j = 0; j < numberOfComment; j++) {
+                comments.add(Comment.builder()
+                        .commentUsername("user " + i)
+                        .starRate(random.nextLong(5) + 1L)
+                        .commentContent("comment content " + i)
+                        .movie(movies.get(i))
+                        .build()
+                );
+            }
         }
+
+
         /*  Generate Theater Room   */
         List<TheaterRoom> theaterRooms = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
@@ -231,20 +221,19 @@ public class BackendSem2Application {
         /*  Generate Slot   */
         ZonedDateTime currentDateTime = ZonedDateTime.now();
         List<Slot> slots = new ArrayList<>();
-        for (int i = 0; i < 50; i++) {
-            int randomDays = random.nextInt(11) - 5;
-            Movie movie;
-            if (i < 5) movie = movies.get(0);
-            else {
-                movie = movies.get(random.nextInt(movies.size()));
+        for (int i = 0; i < movies.size(); i++) {
+            int numberOfSlot = random.nextInt(3) + 2;
+            Movie movie = movies.get(i);
+            for (int j = 0; j < numberOfSlot; j++) {
+                int randomDays = random.nextInt(11) - 5;
+                slots.add(Slot.builder()
+                        .startTime(currentDateTime.plus(randomDays, ChronoUnit.DAYS))
+                        .movie(movie)
+                        .theaterRoom(theaterRooms.get(random.nextInt(theaterRooms.size())))
+                        .build());
             }
-            slots.add(Slot.builder()
-                    .startTime(currentDateTime.plus(randomDays, ChronoUnit.DAYS))
-                    .movie(movie)
-                    .theaterRoom(theaterRooms.get(random.nextInt(theaterRooms.size())))
-                    .build()
-            );
         }
+
         /*  Generate Seat Class */
         List<SeatClass> seatClasses = List.of(
                 new SeatClass("VIP", 200_000D),
