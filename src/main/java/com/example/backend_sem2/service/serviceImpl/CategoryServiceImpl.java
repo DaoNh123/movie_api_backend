@@ -70,6 +70,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Map<String, Category> getCategoryNameMapInDB() {
         Set<Category> allCategoryInDB = categoryRepo.getAllCategorySet();
+        System.out.println("*** ***");
+        allCategoryInDB.forEach(category -> System.out.println(category.getId()));
 
         Map<String, Category> nameCategoryMap = new HashMap<>();
         if(allCategoryInDB != null){

@@ -14,6 +14,6 @@ public class CategoryDto {
     private Long id;
     @NotBlank
     private String categoryName;
-    @NotBlank
-    private String somethingHere;
+
+//    private String somethingHere;
 }

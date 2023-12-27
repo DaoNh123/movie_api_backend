@@ -57,7 +57,8 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public MovieResponseInPage createMovie(CreateMovieRequest createMovieRequest) {
+        Movie createdMovie = movieRepo.save(movieMapper.toEntity(createMovieRequest));
 
-        return null;
+        return movieMapper.toMovieResponseInPage(createdMovie);
     }
 }

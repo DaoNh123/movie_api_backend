@@ -35,6 +35,13 @@ public class MovieController {
     private SlotService slotService;
     private SeatService seatService;
 
+    @PostMapping({"", "/"})
+    public MovieResponseInPage createAMovie(
+            @RequestBody CreateMovieRequest createMovieRequest
+    ){
+        return movieService.createMovie(createMovieRequest);
+    }
+
     @GetMapping({"", "/"})
     public Page<MovieResponseInPage> getMoviePageableByCondition(
             @SortDefault(sort = "openingTime", direction = Sort.Direction.DESC)
@@ -122,35 +129,12 @@ public class MovieController {
     }
 
 
-    @GetMapping("/{id}/slots/{slot_id}")
-    public List<SeatResponse> getAllSeatOfASlotWithStatus(
-            @PathVariable(name = "id") Long movieId,
-            @PathVariable(name = "slot_id") Long slotId
-    ) {
-        System.out.println("*** Movie Id is: " + movieId);
-        return seatService.getAllSeatOfASlotWithStatus(slotId);
-    }
-
-    @PostMapping({"", "/"})
-    public MovieResponseInPage createMovie(
-                    CreateMovieRequest createMovieRequest
-    ) {
-        return movieService.createMovie(createMovieRequest);
-    }
-
-
-    /*  Removing        */
-//    @GetMapping("/host")
-//    public String getHostName(HttpServletRequest request) {
-//
-//        System.out.println(request.getLocalName());  // it will return the hostname of the machine where server is running.
-//
-//        System.out.println(request.getLocalAddr());  // it will return the ip address of the machine where server is running.
-//
-//        String requestURI = request.getRequestURI();
-//        String requestURL = request.getRequestURL().toString();
-//
-//        System.out.println("Local path: " + requestURL.replace(requestURI, ""));
-//        return request.getHeader("host");
+//    @GetMapping("/{id}/slots/{slot_id}")
+//    public List<SeatResponse> getAllSeatOfASlotWithStatus(
+//            @PathVariable(name = "id") Long movieId,
+//            @PathVariable(name = "slot_id") Long slotId
+//    ) {
+//        System.out.println("*** Movie Id is: " + movieId);
+//        return seatService.getAllSeatOfASlotWithStatus(slotId);
 //    }
 }
