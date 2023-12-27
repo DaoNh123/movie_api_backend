@@ -1,6 +1,6 @@
-package com.example.backend_sem2.service.ServiceImpl;
+package com.example.backend_sem2.service.serviceImpl;
 
-import com.example.backend_sem2.Enum.SeatStatusEnum;
+import com.example.backend_sem2.enums.SeatStatusEnum;
 import com.example.backend_sem2.dto.OrderRequest;
 import com.example.backend_sem2.dto.SeatResponse;
 import com.example.backend_sem2.entity.Movie;

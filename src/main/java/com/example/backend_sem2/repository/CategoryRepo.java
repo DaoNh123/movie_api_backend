@@ -20,4 +20,6 @@ public interface CategoryRepo extends JpaRepository<Category, Long> {
 
     @Query(value = "FROM Category c")
     Set<Category> getAllCategorySet();
+
+    Category findByCategoryName (String categoryName);
 }

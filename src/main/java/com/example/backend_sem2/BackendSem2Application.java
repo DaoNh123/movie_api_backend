@@ -1,8 +1,8 @@
 package com.example.backend_sem2;
 
-import com.example.backend_sem2.Api.OkHttp.OkHttpService;
-import com.example.backend_sem2.Api.webClient.ApiMovieService;
-import com.example.backend_sem2.Enum.MovieLabelEnum;
+import com.example.backend_sem2.api.theMovieDBApi.HttpService;
+import com.example.backend_sem2.api.webClient.ApiMovieService;
+import com.example.backend_sem2.enums.MovieLabelEnum;
 import com.example.backend_sem2.dto.CommentRequest;
 import com.example.backend_sem2.entity.*;
 import com.example.backend_sem2.mapper.CategoryMapper;
@@ -41,7 +41,7 @@ public class BackendSem2Application {
     private CategoryMapper categoryMapper;
 
     private ApiMovieService apiMovieService;
-    private OkHttpService okHttpService;
+    private HttpService httpService;
 
     private final String image1 = "https://m.media-amazon.com/images/M/MV5BN2IzYzBiOTQtNGZmMi00NDI5LTgxMzMtN2EzZjA1NjhlOGMxXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_.jpg";
     private final String image2 = "https://m.media-amazon.com/images/M/MV5BMjk2NjgzMTEtYWViZS00NTMyLWFjMzctODczYmQzNzk2NjIwXkEyXkFqcGdeQXVyMTEyMjM2NDc2._V1_.jpg";
@@ -82,8 +82,8 @@ public class BackendSem2Application {
     }
 
     private void testMovieWithIdRating() {
-        System.out.println("okHttpService.getMovieWithRatingUsingTheMovieDBId(695721) = "
-                + okHttpService.getMovieWithRatingUsingTheMovieDBId(695721L));
+        System.out.println("httpService.getMovieWithRatingUsingTheMovieDBId(695721) = "
+                + httpService.getMovieWithRatingUsingTheMovieDBId(695721L));
     }
 
     private void saveDataOkHttpTheMovieDB() {
@@ -103,14 +103,14 @@ public class BackendSem2Application {
     }
 
     private ConfigurationTheMovieDB getConfigurationTheMovieDB() {
-        ConfigurationTheMovieDB configurationTheMovieDB = okHttpService.getResponseEntity("/configuration",
+        ConfigurationTheMovieDB configurationTheMovieDB = httpService.getResponseEntity("/configuration",
                 ConfigurationTheMovieDB.class, new HashMap<>());
         return configurationTheMovieDB;
     }
 
     @NotNull
     private List<Category> getCategoriesFromGenre() {
-        GenreResponse genreResponse = okHttpService.getResponseEntity("/genre/movie/list",
+        GenreResponse genreResponse = httpService.getResponseEntity("/genre/movie/list",
                 GenreResponse.class, new HashMap<>());
         List<Category> categoryListFromGenre = genreResponse.getGenres().stream()
                 .map(genre -> (Category) Category.builder().genreId(genre.getId()).categoryName(genre.getName()).build())
@@ -124,7 +124,7 @@ public class BackendSem2Application {
         Set<MovieInApi> movieInApiSet = new HashSet<>();
 
         for (int i = 0; i < numberOfPages; i++) {
-            TrendingMovieResponse response = okHttpService.getResponseEntity("/trending/movie/day",
+            TrendingMovieResponse response = httpService.getResponseEntity("/trending/movie/day",
                     TrendingMovieResponse.class, Map.ofEntries(
                             Map.entry("page", Integer.toString(i + 1))
                     )
@@ -140,11 +140,12 @@ public class BackendSem2Application {
             System.out.println((i + 1) + " " + movieInApi.getId() + " " + movieInApi.getOriginalTitle());
         }
         System.out.println("*** movieInApiSet.size():" + movieInApiSet.size());
-        Iterator<MovieInApi> movieInApiIterator = movieInApiSet.iterator();
-        int i = 1;
-        while (movieInApiIterator.hasNext()) {
-            System.out.println((i++) + " " + movieInApiIterator.next().getId() + " " + movieInApiIterator.next().getOriginalTitle());
-        }
+//        Iterator<MovieInApi> movieInApiIterator = movieInApiSet.iterator();
+//        int i = 1;
+//        while (movieInApiIterator.hasNext()) {
+//            if(movieInApiIterator.next() == null) i++;
+//            System.out.println((i++) + " " + movieInApiIterator.next().getId() + " " + movieInApiIterator.next().getOriginalTitle());
+//        }
         System.out.println("*** End");
         return movieInApiList;
     }

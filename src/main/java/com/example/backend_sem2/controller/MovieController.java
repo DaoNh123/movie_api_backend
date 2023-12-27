@@ -1,10 +1,12 @@
 package com.example.backend_sem2.controller;
 
-import com.example.backend_sem2.Enum.MovieLabelEnum;
+import com.example.backend_sem2.dto.CreateMovieRequest;
+import com.example.backend_sem2.enums.MovieLabelEnum;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseInPage;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseWithComment;
 import com.example.backend_sem2.dto.SeatResponse;
 import com.example.backend_sem2.dto.SlotResponse;
+import com.example.backend_sem2.enums.MovieShowingStatusEnum;
 import com.example.backend_sem2.service.interfaceService.MovieService;
 import com.example.backend_sem2.service.interfaceService.SeatService;
 import com.example.backend_sem2.service.interfaceService.SlotService;
@@ -35,17 +37,42 @@ public class MovieController {
 
     @GetMapping({"", "/"})
     public Page<MovieResponseInPage> getMoviePageableByCondition(
-            @SortDefault(sort = "id", direction = Sort.Direction.DESC)
+            @SortDefault(sort = "openingTime", direction = Sort.Direction.DESC)
             @PageableDefault(size = 20) Pageable pageable,
             @RequestParam(name = "name", required = false) String partOfMovieName,
             @RequestParam(name = "category_name", required = false) String categoryName,
             @RequestParam(name = "movie_label", required = false) MovieLabelEnum movieLabel
-    ){
+    ) {
         return movieService.getMoviePageableByCondition(pageable, partOfMovieName, categoryName, movieLabel);
     }
 
+    @GetMapping({"/now-showing"})
+    public Page<MovieResponseInPage> getMovieWithShowingStatusPageableByCondition(
+            @SortDefault(sort = "openingTime", direction = Sort.Direction.DESC)
+            @PageableDefault(size = 20) Pageable pageable,
+            @RequestParam(name = "name", required = false) String partOfMovieName,
+            @RequestParam(name = "category_name", required = false) String categoryName,
+            @RequestParam(name = "movie_label", required = false) MovieLabelEnum movieLabel
+    ) {
+        MovieShowingStatusEnum showingStatus = MovieShowingStatusEnum.NOW_SHOWING;
+        return movieService.getMovieWithShowingStatusPageableByCondition(pageable, partOfMovieName, categoryName, movieLabel, showingStatus);
+    }
+
+    /*  Coming Soon Movie   */
+    @GetMapping("/coming-soon")
+    public Page<MovieResponseInPage> getComingSoonMoviesByCondition(
+            @SortDefault(sort = "openingTime", direction = Sort.Direction.DESC)
+            @PageableDefault(size = 20) Pageable pageable,
+            @RequestParam(name = "name", required = false) String partOfMovieName,
+            @RequestParam(name = "category_name", required = false) String categoryName,
+            @RequestParam(name = "movie_label", required = false) MovieLabelEnum movieLabel
+    ) {
+        MovieShowingStatusEnum showingStatus = MovieShowingStatusEnum.UNRELEASED;
+        return movieService.getMovieWithShowingStatusPageableByCondition(pageable, partOfMovieName, categoryName, movieLabel, showingStatus);
+    }
+
     @GetMapping("/{id}")
-    public MovieResponseWithComment getMovieWithCommentsById(@PathVariable Long id){
+    public MovieResponseWithComment getMovieWithCommentsById(@PathVariable Long id) {
         System.out.println("***" + id);
         return movieService.getMovieWithCommentsById(id);
     }
@@ -59,7 +86,7 @@ public class MovieController {
             @DateTimeFormat(pattern = "dd.MM.yyyy")
             @RequestParam(name = "show_date", required = false) LocalDate showDate,
             @PathVariable Long id
-    ){
+    ) {
         System.out.println("showDate = " + showDate);
         ZoneId zoneId = ZoneId.of("UTC+7");
         ZonedDateTime startOfShowDate = (showDate == null) ? null : showDate.atStartOfDay().atZone(zoneId);
@@ -68,13 +95,14 @@ public class MovieController {
         return getResponseMap(pageable, id, startOfShowDate, endOfShowDate);
     }
 
+
     @GetMapping("/{id}/slotsInNext7Days")
     public Map<String, Object> getAllSlotOfAMovieWithinSevenDaysFromNow(
             @SortDefault(sort = "startTime", direction = Sort.Direction.ASC)
 //            @PageableDefault(value = 10, size = 10, page = 0)
             Pageable pageable,
             @PathVariable Long id
-    ){
+    ) {
         ZoneId zoneId = ZoneId.of("UTC+7");
         ZonedDateTime startOfShowDate = ZonedDateTime.now();
         ZonedDateTime endOfShowDate = ZonedDateTime.now().toLocalDate().atStartOfDay(zoneId).plusDays(7);
@@ -93,29 +121,24 @@ public class MovieController {
         return response;
     }
 
-    /*  Coming Soon Movie   */
-    @GetMapping("/coming-soon")
-    public Page<MovieResponseInPage> getComingSoonMovie (
-            @SortDefault(sort = "startTime", direction = Sort.Direction.ASC)
-            Pageable pageable
-    ){
-        ZoneId zoneId = ZoneId.of("UTC+7");
-        LocalDate today = LocalDate.now();
-        ZonedDateTime startOfTomorrow = today.plusDays(1).atStartOfDay().atZone(zoneId);
-        return movieService.getMoviesByOpeningTimeAfter(pageable, startOfTomorrow);
-    }
-
 
     @GetMapping("/{id}/slots/{slot_id}")
     public List<SeatResponse> getAllSeatOfASlotWithStatus(
             @PathVariable(name = "id") Long movieId,
             @PathVariable(name = "slot_id") Long slotId
-    ){
+    ) {
         System.out.println("*** Movie Id is: " + movieId);
         return seatService.getAllSeatOfASlotWithStatus(slotId);
     }
 
-    
+    @PostMapping({"", "/"})
+    public MovieResponseInPage createMovie(
+                    CreateMovieRequest createMovieRequest
+    ) {
+        return movieService.createMovie(createMovieRequest);
+    }
+
+
     /*  Removing        */
 //    @GetMapping("/host")
 //    public String getHostName(HttpServletRequest request) {

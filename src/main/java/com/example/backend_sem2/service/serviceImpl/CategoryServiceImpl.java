@@ -1,4 +1,4 @@
-package com.example.backend_sem2.service.ServiceImpl;
+package com.example.backend_sem2.service.serviceImpl;
 
 import com.example.backend_sem2.dto.CategoryDto;
 import com.example.backend_sem2.entity.Category;
@@ -13,7 +13,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -63,4 +67,15 @@ public class CategoryServiceImpl implements CategoryService {
         return true;
     }
 
+    @Override
+    public Map<String, Category> getCategoryNameMapInDB() {
+        Set<Category> allCategoryInDB = categoryRepo.getAllCategorySet();
+
+        Map<String, Category> nameCategoryMap = new HashMap<>();
+        if(allCategoryInDB != null){
+            nameCategoryMap = allCategoryInDB.stream()
+                    .collect(Collectors.toMap(Category::toString, Function.identity()));
+        }
+        return nameCategoryMap;
+    }
 }

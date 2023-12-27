@@ -1,19 +1,24 @@
 package com.example.backend_sem2.entity;
 
 
-import com.example.backend_sem2.Enum.MovieLabelEnum;
+import com.example.backend_sem2.enums.MovieBookingStatusEnum;
+import com.example.backend_sem2.enums.MovieLabelEnum;
+import com.example.backend_sem2.enums.MovieShowingStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "movies")
 @AllArgsConstructor
@@ -41,8 +46,13 @@ public class Movie extends BaseEntity{
     private ZonedDateTime openingTime;      // The time which customer can book a ticket
     @Column(name = "closing_time")
     private ZonedDateTime closingTime;      // The time which movie is no longer selling ticket
-//    private MovieStatusEnum status;
-//    private MovieBookingStatusEnum movieBookingStatusEnum;
+    @Column(name = "showing_status")
+    @Enumerated(EnumType.STRING)
+    private MovieShowingStatusEnum movieShowingStatusEnum;        // UNRELEASED, NOW_SHOWING, ENDED
+    @Column(name = "booking_status")
+    @Enumerated(EnumType.STRING)
+    private MovieBookingStatusEnum movieBookingStatusEnum;      // ALLOWED, NOT_ALLOWED
+    private Boolean deleted;
     @Column(name = "iframe", columnDefinition = "TEXT")
     private String iframe;
     @ManyToMany(
@@ -76,7 +86,30 @@ public class Movie extends BaseEntity{
             CascadeType.REFRESH, CascadeType.MERGE
     })
     @JsonIgnore
-    private List<Slot> slotList = new ArrayList<>();
+    private List<Slot> slotList;
+
+    @PrePersist
+    public void prePersistMovie(){
+        this.deleted = false;
+
+        /*  Set up MovieShowingStatusEnum   */
+        LocalDate today = LocalDate.now();
+        LocalDate openingDate = this.openingTime.toLocalDate();
+        LocalDate closingDate = this.closingTime.toLocalDate();
+        if(today.isBefore(openingDate)){
+            this.movieShowingStatusEnum = MovieShowingStatusEnum.UNRELEASED;
+        }
+        else if(today.isAfter(closingDate)){
+            this.movieShowingStatusEnum = MovieShowingStatusEnum.ENDED;
+        }else {
+            this.movieShowingStatusEnum = MovieShowingStatusEnum.NOW_SHOWING;
+        }
+
+        /*  Set up MovieBookingStatusEnum   */
+        if(today.isBefore(openingDate.minusDays(3))){
+            this.movieBookingStatusEnum = MovieBookingStatusEnum.NOT_ALLOWED;
+        }else this.movieBookingStatusEnum = MovieBookingStatusEnum.ALLOWED;
+    }
 
     @Override
     public String toString() {

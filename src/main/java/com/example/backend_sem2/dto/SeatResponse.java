@@ -1,6 +1,6 @@
 package com.example.backend_sem2.dto;
 
-import com.example.backend_sem2.Enum.SeatStatusEnum;
+import com.example.backend_sem2.enums.SeatStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 

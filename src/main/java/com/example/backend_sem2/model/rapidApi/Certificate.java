@@ -1,7 +1,6 @@
 package com.example.backend_sem2.model.rapidApi;
 
-import com.example.backend_sem2.Enum.MovieLabelEnum;
-import com.example.backend_sem2.entity.Movie;
+import com.example.backend_sem2.enums.MovieLabelEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;

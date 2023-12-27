@@ -1,6 +1,6 @@
-package com.example.backend_sem2.Api.webClient;
+package com.example.backend_sem2.api.webClient;
 
-import com.example.backend_sem2.Utility.ApiUtility;
+import com.example.backend_sem2.utility.ApiUtility;
 import com.example.backend_sem2.entity.Category;
 import com.example.backend_sem2.entity.Movie;
 import com.example.backend_sem2.mapper.MovieMapper;

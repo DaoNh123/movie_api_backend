@@ -1,4 +1,4 @@
-package com.example.backend_sem2.service.ServiceImpl;
+package com.example.backend_sem2.service.serviceImpl;
 
 import com.example.backend_sem2.entity.OrderDetail;
 import com.example.backend_sem2.repository.OrderDetailRepo;

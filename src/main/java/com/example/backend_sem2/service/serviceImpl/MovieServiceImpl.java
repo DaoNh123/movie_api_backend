@@ -1,9 +1,11 @@
-package com.example.backend_sem2.service.ServiceImpl;
+package com.example.backend_sem2.service.serviceImpl;
 
+import com.example.backend_sem2.dto.CreateMovieRequest;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseInPage;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseWithComment;
 import com.example.backend_sem2.entity.Movie;
-import com.example.backend_sem2.Enum.MovieLabelEnum;
+import com.example.backend_sem2.enums.MovieLabelEnum;
+import com.example.backend_sem2.enums.MovieShowingStatusEnum;
 import com.example.backend_sem2.mapper.MovieMapper;
 import com.example.backend_sem2.repository.MovieRepo;
 import com.example.backend_sem2.service.interfaceService.MovieService;
@@ -23,12 +25,21 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Page<MovieResponseInPage> getMoviePageableByCondition(Pageable pageable, String partOfMovieName, String categoryName, MovieLabelEnum movieLabel) {
 
-        Page<Movie> moviePageableByCondition3 = movieRepo.getMoviePageableByCondition(pageable, partOfMovieName, categoryName, movieLabel);
+        Page<Movie> moviePageableByCondition = movieRepo.getMoviePageableByCondition(pageable, partOfMovieName,
+                categoryName, movieLabel, null, null, false);
 
-        return moviePageableByCondition3.map(movieMapper::toMovieResponseInPage);
+        return moviePageableByCondition.map(movieMapper::toMovieResponseInPage);
 
     }
 
+    @Override
+    public Page<MovieResponseInPage> getMovieWithShowingStatusPageableByCondition(Pageable pageable, String partOfMovieName, String categoryName, MovieLabelEnum movieLabel, MovieShowingStatusEnum showingStatus) {
+
+        Page<Movie> nowShowingMoviePageableByCondition = movieRepo.getMoviePageableByCondition(pageable,
+                partOfMovieName, categoryName, movieLabel, showingStatus, null, false);
+
+        return nowShowingMoviePageableByCondition.map(movieMapper::toMovieResponseInPage);
+    }
 
     @Override
     public MovieResponseWithComment getMovieWithCommentsById(Long id) {
@@ -44,4 +55,9 @@ public class MovieServiceImpl implements MovieService {
                 .map(movieMapper::toMovieResponseInPage);
     }
 
+    @Override
+    public MovieResponseInPage createMovie(CreateMovieRequest createMovieRequest) {
+
+        return null;
+    }
 }

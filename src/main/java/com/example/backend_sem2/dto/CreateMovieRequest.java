@@ -1,5 +1,6 @@
 package com.example.backend_sem2.dto;
 
+import com.example.backend_sem2.entity.Category;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -36,4 +37,6 @@ public class CreateMovieRequest {
         if(CollectionUtils.isEmpty(categoryList)) return false;
         else return !categoryList.contains(null);
     }
+
+//    public List<Category> convertTo
 }
