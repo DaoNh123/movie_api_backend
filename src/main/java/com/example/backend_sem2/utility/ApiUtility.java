@@ -1,4 +1,4 @@
-package com.example.backend_sem2.Utility;
+package com.example.backend_sem2.utility;
 
 import java.util.List;
 

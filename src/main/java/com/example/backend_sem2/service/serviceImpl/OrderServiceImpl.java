@@ -1,6 +1,6 @@
-package com.example.backend_sem2.service.ServiceImpl;
+package com.example.backend_sem2.service.serviceImpl;
 
-import com.example.backend_sem2.Enum.Status;
+import com.example.backend_sem2.enums.SeatStatusEnum;
 import com.example.backend_sem2.dto.OrderRequest;
 import com.example.backend_sem2.dto.SeatResponse;
 import com.example.backend_sem2.entity.Movie;
@@ -96,7 +96,7 @@ public class OrderServiceImpl implements OrderService {
                     if(seatResponse == null) throw  new CustomErrorException(HttpStatus.BAD_REQUEST, "There are seats which do not belong to this slot or isn't exist");
                     return seatResponse;
                 })
-                .allMatch(seatResponse -> seatResponse.getStatus().equals(Status.AVAILABLE));
+                .allMatch(seatResponse -> seatResponse.getStatus().equals(SeatStatusEnum.AVAILABLE));
     }
 
     /*  --- Solution 2: Check through "existsBySeat_IdAnAndOrder_Slot_Id" --- */

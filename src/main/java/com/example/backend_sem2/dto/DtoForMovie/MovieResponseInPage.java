@@ -1,7 +1,7 @@
 package com.example.backend_sem2.dto.DtoForMovie;
 
 import com.example.backend_sem2.entity.Movie;
-import com.example.backend_sem2.Enum.MovieLabelEnum;
+import com.example.backend_sem2.enums.MovieLabelEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

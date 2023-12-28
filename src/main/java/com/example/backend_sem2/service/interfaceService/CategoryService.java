@@ -5,6 +5,7 @@ import com.example.backend_sem2.entity.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Map;
 import java.util.Set;
 
 public interface CategoryService {
@@ -16,4 +17,6 @@ public interface CategoryService {
     boolean deleteCategoryById(Long id);
 
     CategoryDto updateCategory(CategoryDto categoryDto, Long id);
+
+    Map<String, Category> getCategoryNameMapInDB();
 }

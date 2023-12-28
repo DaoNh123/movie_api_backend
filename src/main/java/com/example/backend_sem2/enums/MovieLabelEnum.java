@@ -1,9 +1,4 @@
-package com.example.backend_sem2.Enum;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
+package com.example.backend_sem2.enums;
 
 public enum MovieLabelEnum {
     P(0L), C12(12L), C16(16L), C18(18L);

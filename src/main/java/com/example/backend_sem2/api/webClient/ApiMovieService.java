@@ -1,4 +1,4 @@
-package com.example.backend_sem2.Api.webClient;
+package com.example.backend_sem2.api.webClient;
 
 import java.util.List;
 import java.util.Map;

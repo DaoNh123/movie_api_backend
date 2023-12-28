@@ -1,6 +1,6 @@
-package com.example.backend_sem2.service.ServiceImpl;
+package com.example.backend_sem2.service.serviceImpl;
 
-import com.example.backend_sem2.Enum.Status;
+import com.example.backend_sem2.enums.SeatStatusEnum;
 import com.example.backend_sem2.dto.SeatResponse;
 import com.example.backend_sem2.entity.Seat;
 import com.example.backend_sem2.mapper.SeatMapper;
@@ -30,9 +30,9 @@ public class SeatServiceImpl implements SeatService {
                 .map(seat -> {
                     SeatResponse seatResponse = seatMapper.toDto(seat);
                     if(orderedSeatNameList.contains(seat.getSeatName())){
-                        seatResponse.setStatus(Status.BOOKED);
+                        seatResponse.setStatus(SeatStatusEnum.BOOKED);
                     }else {
-                        seatResponse.setStatus(Status.AVAILABLE);
+                        seatResponse.setStatus(SeatStatusEnum.AVAILABLE);
                     }
                     return seatResponse;
                 }).toList();

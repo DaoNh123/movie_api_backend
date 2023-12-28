@@ -1,7 +1,6 @@
 package com.example.backend_sem2.dto;
 
-import com.example.backend_sem2.Enum.Status;
-import com.example.backend_sem2.entity.SeatClass;
+import com.example.backend_sem2.enums.SeatStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -14,7 +13,7 @@ public class SeatResponse {
     private String seatName;
     @JsonIgnore
     private SeatClassResponse seatClassResponse;
-    private Status status;
+    private SeatStatusEnum status;
 
     public SeatClassResponse getSeatClass(){
         return this.seatClassResponse;

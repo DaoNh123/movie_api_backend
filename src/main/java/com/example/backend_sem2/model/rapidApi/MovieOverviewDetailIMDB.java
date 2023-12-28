@@ -1,7 +1,7 @@
 package com.example.backend_sem2.model.rapidApi;
 
-import com.example.backend_sem2.Enum.MovieLabelEnum;
-import com.example.backend_sem2.Utility.ApiUtility;
+import com.example.backend_sem2.enums.MovieLabelEnum;
+import com.example.backend_sem2.utility.ApiUtility;
 import com.example.backend_sem2.entity.Category;
 import com.example.backend_sem2.entity.Movie;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -29,17 +29,6 @@ public class MovieOverviewDetailIMDB {
 
     public Movie toMovieEntity() {
 
-//        return Movie.builder()
-//                .imdbId(this.id)
-//                .movieName(this.title.getTitle())
-//                .movieLabel(this.certificates.certificateListForUS.get(0).getMovieLabelEnum())                  // convert from "certificate"
-//                .posterUrl(this.title.getImage().getUrl())
-//                .duration(title.getRunningTimeInMinutes() * 60)
-//                .imdbRatings(ratings.getRatings())
-////                .categoryList()               // convert from "genres"
-//                .director(this.plotSummary.getAuthor())
-//                .description(this.plotSummary.getText())
-//                .build();
         return Movie.builder()
                 .imdbId(ApiUtility.getIdFromEndpointString(this.id))
                 .movieName(this.title != null ? this.title.getTitle() : null)
@@ -49,7 +38,7 @@ public class MovieOverviewDetailIMDB {
                         ? this.certificates.certificateListForUS.get(0).getMovieLabelEnum() : MovieLabelEnum.C16)
                 .posterUrl(this.title != null && this.title.getImage() != null ? this.title.getImage().getUrl() : null)
                 .duration(this.title != null && this.title.getRunningTimeInMinutes() != null
-                        ? this.title.getRunningTimeInMinutes() * 60 : null)
+                        ? (this.title.getRunningTimeInMinutes() * 60) : null)
                 .imdbRatings(ratings.getRatings())
 //                .categoryList()               // convert from "genres"
                 .director(this.plotSummary != null ? this.plotSummary.getAuthor() : null)
