@@ -67,11 +67,13 @@ public class OrderServiceImpl implements OrderService {
                     .customerName(orderRequest.getCustomerName())
                     .customerAddress(orderRequest.getCustomerAddress())
                     .customerAge(orderRequest.getCustomerAge())
+                    .customerEmail(orderRequest.getCustomerEmail())
                     .orderDetailList(orderDetails)
                     .slot(slot)
                     .build();
 
             orderRepo.save(order);
+
             return orderMapper.toDto(order);
         } catch (Exception e) {
             throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Fail to create order!");

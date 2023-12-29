@@ -26,7 +26,7 @@ import java.util.List;
 @SuperBuilder
 
 public class Movie extends BaseEntity{
-    @Column(name = "movie_name", unique = true)
+    @Column(name = "movie_name")
     private String movieName;
     @Column(name = "imdb_id")
     private String imdbId;              // new

@@ -11,26 +11,11 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/comments")
+@RequestMapping("/api/comments")
 public class CommentController {
     private CommentService commentService;
-    /*  Remove because duplication  */
-//    @GetMapping("/{movieName}")
-//    public List<CommentResponse> getAllCommentByMovieName (
-//            @PathVariable String movieName
-//    ) {
-//        return commentService.getAllCommentByMovieName(movieName);
-//    }
 
-    /*  Remove because unnecessary, comment will be got in "getMovieWithCommentsById"   */
-//    @GetMapping("/byMoviesId/{movieId}")
-//    public List<CommentResponse> getAllCommentByMovieName (
-//            @PathVariable Long movieId
-//    ) {
-//        return commentService.getAllCommentByMovieId(movieId);
-//    }
-
-    @PostMapping("/")
+    @PostMapping({"", "/"})
     public CommentResponse saveComment(
            @Valid @RequestBody CommentRequest commentRequest
     ){
