@@ -62,8 +62,8 @@ public class S3AmazonUtils {
                 .build();
 
         PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
-        System.out.println("PreSigned URL: " + presignedRequest.url());
-        System.out.println("HTTP method: " + presignedRequest.httpRequest().method());
+//        System.out.println("PreSigned URL: " + presignedRequest.url());
+//        System.out.println("HTTP method: " + presignedRequest.httpRequest().method());
 
         return presignedRequest.url().toExternalForm();
     }

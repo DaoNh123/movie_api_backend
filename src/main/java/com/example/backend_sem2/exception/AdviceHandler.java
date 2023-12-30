@@ -78,6 +78,7 @@ public class AdviceHandler {
     public ResponseEntity<ErrorResponse> catchOtherException(Exception ex) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         System.out.println(ex.getClass() + "***");
+        System.out.println(ex.getMessage());
         ex.printStackTrace();
         ErrorResponse errorResponse = new ErrorResponse(status,
                 ex.getMessage() + "___*___Exception2");

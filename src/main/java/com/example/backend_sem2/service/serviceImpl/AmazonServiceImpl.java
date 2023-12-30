@@ -43,7 +43,7 @@ public class AmazonServiceImpl implements AmazonService {
         if (objectKey.startsWith("/")) {
             objectKey = objectKey.substring(1);
         }
-        System.out.println("***: " + objectKey);
+//        System.out.println("***: " + objectKey);
 //        https://s3.ap-southeast-1.amazonaws.com/
 //        https://s3.ap-southeast-1.amazonaws.com
         return S3AmazonUtils.createPreSignedGetUrl(bucketName, objectKey, s3Presigner);
