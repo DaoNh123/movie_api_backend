@@ -1,16 +1,16 @@
 package com.example.backend_sem2.controller;
 
 import com.example.backend_sem2.dto.CreateMovieRequest;
-import com.example.backend_sem2.enums.MovieLabelEnum;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseInPage;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseWithComment;
-import com.example.backend_sem2.dto.SeatResponse;
 import com.example.backend_sem2.dto.SlotResponse;
+import com.example.backend_sem2.enums.MovieLabelEnum;
 import com.example.backend_sem2.enums.MovieShowingStatusEnum;
 import com.example.backend_sem2.service.interfaceService.MovieService;
 import com.example.backend_sem2.service.interfaceService.SeatService;
 import com.example.backend_sem2.service.interfaceService.SlotService;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,9 +35,10 @@ public class MovieController {
     private SlotService slotService;
     private SeatService seatService;
 
+    @SneakyThrows
     @PostMapping({"", "/"})
     public MovieResponseInPage createAMovie(
-            @RequestBody CreateMovieRequest createMovieRequest
+            @ModelAttribute CreateMovieRequest createMovieRequest
     ){
         return movieService.createMovie(createMovieRequest);
     }
@@ -87,7 +88,7 @@ public class MovieController {
     /*  Prepare to remove because do not using in Frontend */
     @GetMapping("/{id}/slots")
     public Map<String, Object> getAllSlotOfAMovieByShowDate(
-            @SortDefault(sort = "startTime", direction = Sort.Direction.ASC)
+            @SortDefault(sort = "openingTime", direction = Sort.Direction.ASC)
 //            @PageableDefault(value = 10, size = 10, page = 0)
             Pageable pageable,
             @DateTimeFormat(pattern = "dd.MM.yyyy")
@@ -105,7 +106,7 @@ public class MovieController {
 
     @GetMapping("/{id}/slotsInNext7Days")
     public Map<String, Object> getAllSlotOfAMovieWithinSevenDaysFromNow(
-            @SortDefault(sort = "startTime", direction = Sort.Direction.ASC)
+            @SortDefault(sort = "startTime", direction = Sort.Direction.ASC)            // startTime is Slot property
 //            @PageableDefault(value = 10, size = 10, page = 0)
             Pageable pageable,
             @PathVariable Long id
@@ -128,13 +129,4 @@ public class MovieController {
         return response;
     }
 
-
-//    @GetMapping("/{id}/slots/{slot_id}")
-//    public List<SeatResponse> getAllSeatOfASlotWithStatus(
-//            @PathVariable(name = "id") Long movieId,
-//            @PathVariable(name = "slot_id") Long slotId
-//    ) {
-//        System.out.println("*** Movie Id is: " + movieId);
-//        return seatService.getAllSeatOfASlotWithStatus(slotId);
-//    }
 }

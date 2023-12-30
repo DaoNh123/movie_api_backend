@@ -1,18 +1,16 @@
 package com.example.backend_sem2;
 
 import com.example.backend_sem2.api.theMovieDBApi.HttpService;
-import com.example.backend_sem2.api.webClient.ApiMovieService;
-import com.example.backend_sem2.enums.MovieLabelEnum;
-import com.example.backend_sem2.dto.CommentRequest;
 import com.example.backend_sem2.entity.*;
-import com.example.backend_sem2.mapper.CategoryMapper;
-import com.example.backend_sem2.mapper.CommentMapper;
-import com.example.backend_sem2.model.rapidApi.MovieOverviewDetailIMDB;
+import com.example.backend_sem2.mapper.MovieMapper;
+import com.example.backend_sem2.mapper.MovieMapper2;
 import com.example.backend_sem2.model.theMovieDB.ConfigurationTheMovieDB;
 import com.example.backend_sem2.model.theMovieDB.GenreResponse;
 import com.example.backend_sem2.model.theMovieDB.MovieInApi;
 import com.example.backend_sem2.model.theMovieDB.TrendingMovieResponse;
-import com.example.backend_sem2.repository.*;
+import com.example.backend_sem2.repository.CommentRepo;
+import com.example.backend_sem2.repository.SlotRepo;
+
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.CommandLineRunner;
@@ -28,20 +26,12 @@ import java.util.concurrent.ThreadLocalRandom;
 @SpringBootApplication
 @AllArgsConstructor
 public class BackendSem2Application {
-    private MovieRepo movieRepo;
-    private CategoryRepo categoryRepo;
+
     private CommentRepo commentRepo;
     private SlotRepo slotRepo;
-    private TheaterRoomRepo theaterRoomRepo;
-    private SeatRepo seatRepo;
-    private SeatClassRepo seatClassRepo;
-    private OrderRepo orderRepo;
-    private OrderDetailRepo orderDetailRepo;
-    private CommentMapper commentMapper;
-    private CategoryMapper categoryMapper;
-
-    private ApiMovieService apiMovieService;
+    private MovieMapper movieMapper;
     private HttpService httpService;
+    private MovieMapper2 movieMapper2;
 
     private final String image1 = "https://m.media-amazon.com/images/M/MV5BN2IzYzBiOTQtNGZmMi00NDI5LTgxMzMtN2EzZjA1NjhlOGMxXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_.jpg";
     private final String image2 = "https://m.media-amazon.com/images/M/MV5BMjk2NjgzMTEtYWViZS00NTMyLWFjMzctODczYmQzNzk2NjIwXkEyXkFqcGdeQXVyMTEyMjM2NDc2._V1_.jpg";
@@ -60,21 +50,11 @@ public class BackendSem2Application {
     @Bean
     public CommandLineRunner commandLineRunner() {
         return runner -> {
-//            testCommentMapper();
-//            testMovieLabelEnumInMovie();
-//            testApiService();
-//            testGetOverviewOfMovieIMDB("tt4729430");
-//            getAllCategorySet();
-
-//            testSaveMovieFromApi();
-
-//            testOkHttpTheMovieDB();
-//            saveDataOkHttpTheMovieDB();
             testMovieWithIdRating();
             Long start = System.currentTimeMillis();
             if (!slotRepo.existsById(1L)) {
                 /*  this method does not generate all generated Object in method    */
-                generateData(10L);
+                generateData(1L);
             }
             Long end = System.currentTimeMillis();
             System.out.println("Running time: " + (end - start));
@@ -84,22 +64,6 @@ public class BackendSem2Application {
     private void testMovieWithIdRating() {
         System.out.println("httpService.getMovieWithRatingUsingTheMovieDBId(695721) = "
                 + httpService.getMovieWithRatingUsingTheMovieDBId(695721L));
-    }
-
-    private void saveDataOkHttpTheMovieDB() {
-    }
-
-    private void testOkHttpTheMovieDB() {
-        List<MovieInApi> movieInApiList = getMovieInApiList(3L);
-        List<Category> categoryListFromGenre = getCategoriesFromGenre();
-        ConfigurationTheMovieDB configurationTheMovieDB = getConfigurationTheMovieDB();
-
-//        System.out.println("configurationTheMovieDB = " + configurationTheMovieDB);
-//        System.out.println("configurationTheMovieDB.getImageSizes() = " + configurationTheMovieDB.getImageSizes());
-//        System.out.println("response.getMovieInApiList().size() = " + movieInApiList.size());
-//        System.out.println("genreResponse.getGenres().size() = " + genreResponse.getGenres().size());
-        System.out.println("movieInApiList.get(0).toMovieEntity(categoryListFromGenre, configurationTheMovieDB) = " +
-                movieInApiList.get(0).toMovieEntity(categoryListFromGenre, configurationTheMovieDB));
     }
 
     private ConfigurationTheMovieDB getConfigurationTheMovieDB() {
@@ -112,9 +76,13 @@ public class BackendSem2Application {
     private List<Category> getCategoriesFromGenre() {
         GenreResponse genreResponse = httpService.getResponseEntity("/genre/movie/list",
                 GenreResponse.class, new HashMap<>());
+        genreResponse.getGenres().forEach(System.out::println);
+
         List<Category> categoryListFromGenre = genreResponse.getGenres().stream()
                 .map(genre -> (Category) Category.builder().genreId(genre.getId()).categoryName(genre.getName()).build())
                 .toList();
+
+        categoryListFromGenre.forEach(System.out::println);
         return categoryListFromGenre;
     }
 
@@ -150,28 +118,6 @@ public class BackendSem2Application {
         return movieInApiList;
     }
 
-    private void testSaveMovieFromApi() {
-        apiMovieService.saveMovieFromApi(apiMovieService.getMostPopularMovieListCodeInIMDB().subList(0, 2));
-    }
-
-    private void getAllCategorySet() {
-        Set<Category> categorySet = categoryRepo.getAllCategorySet();
-        categorySet.stream().map(categoryMapper::toDto).forEach(System.out::println);
-    }
-
-    private void testGetOverviewOfMovieIMDB(String movieIdInImdb) {
-        MovieOverviewDetailIMDB result = apiMovieService.getDataIsNotList("title/get-overview-details",
-                MovieOverviewDetailIMDB.class, Map.ofEntries(
-                        Map.entry("tconst", "tt4729430")
-                ));
-        System.out.println("result = " + result);
-    }
-
-    public void testApiService() {
-        List<String> movieIdList = apiMovieService.getMostPopularMovieListCodeInIMDB();
-        movieIdList.forEach(System.out::println);
-    }
-
     public void generateData(Long numberOfPage) {
         Random random = new Random();
         /*  Try to get Category and Movie from TheMovieDB     */
@@ -182,7 +128,8 @@ public class BackendSem2Application {
         List<String> iframeList = List.of(iframe1, iframe2, iframe3);
 
         List<Movie> movies = movieInApiList.stream()
-                .map(movieInApi -> movieInApi.toMovieEntity(categories, configurationTheMovieDB))
+//                .map(movieInApi -> movieInApi.toMovieEntity(categories, configurationTheMovieDB))
+                .map(movieInApi -> movieMapper.toEntity(movieInApi, configurationTheMovieDB, categories))
                 /*  add some data for "Movie" entity    */
                 .map(movie -> {
                     ZonedDateTime openingTime = getRandomZonedDateTime(7);
@@ -193,6 +140,10 @@ public class BackendSem2Application {
                     return movie;
                 })
                 .toList();
+        System.out.println("*** Start checking Movie ***");
+        movies.forEach(movie -> {
+            System.out.println("*** " + movieMapper.toMovieResponseInPage(movie));
+        });
 
         /*  Generate Comment   */
         List<Comment> comments = new ArrayList<>();
@@ -283,35 +234,6 @@ public class BackendSem2Application {
             );
         }
         commentRepo.saveAll(comments);
-    }
-
-    private void testMovieLabelEnumInMovie() {
-        createAnMovie();
-        Movie movie = movieRepo.findById(1L).orElse(null);
-        System.out.println(movie);
-    }
-
-    private void createAnMovie() {
-        if (!movieRepo.existsById(1L)) {
-            Movie movie = Movie.builder()
-                    .id(1L)
-                    .movieName("test 1")
-                    .movieLabel(MovieLabelEnum.C16)
-                    .build();
-            movieRepo.save(movie);
-        }
-    }
-
-    public void testCommentMapper() {
-        createAnMovie();
-        CommentRequest commentRequest = CommentRequest.builder()
-                .commentUsername("Dao")
-                .commentContent("good!")
-                .starRate(4L)
-                .movieId(1L)
-                .build();
-        System.out.println("*** Test Comment Mapper ***");
-        System.out.println(commentMapper.toEntity(commentRequest));
     }
 
     private static ZonedDateTime getRandomZonedDateTime(Integer dayRange) {

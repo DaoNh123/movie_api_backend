@@ -1,4 +1,4 @@
-package com.example.backend_sem2.utility;
+package com.example.backend_sem2.utils;
 
 import com.example.backend_sem2.entity.Category;
 import com.example.backend_sem2.mapper.CategoryMapper;

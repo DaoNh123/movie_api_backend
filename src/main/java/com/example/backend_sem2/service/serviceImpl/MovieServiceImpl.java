@@ -8,12 +8,14 @@ import com.example.backend_sem2.enums.MovieLabelEnum;
 import com.example.backend_sem2.enums.MovieShowingStatusEnum;
 import com.example.backend_sem2.mapper.MovieMapper;
 import com.example.backend_sem2.repository.MovieRepo;
+import com.example.backend_sem2.service.interfaceService.AmazonService;
 import com.example.backend_sem2.service.interfaceService.MovieService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 
 @Repository
@@ -21,6 +23,8 @@ import java.time.ZonedDateTime;
 public class MovieServiceImpl implements MovieService {
     private MovieRepo movieRepo;
     private MovieMapper movieMapper;
+    private AmazonService amazonService;
+
 
     @Override
     public Page<MovieResponseInPage> getMoviePageableByCondition(Pageable pageable, String partOfMovieName, String categoryName, MovieLabelEnum movieLabel) {
@@ -55,8 +59,13 @@ public class MovieServiceImpl implements MovieService {
                 .map(movieMapper::toMovieResponseInPage);
     }
 
+//    private String exactFileNameFrom
+
     @Override
-    public MovieResponseInPage createMovie(CreateMovieRequest createMovieRequest) {
+    public MovieResponseInPage createMovie(CreateMovieRequest createMovieRequest) throws IOException {
+        if (createMovieRequest.getPoster() != null) createMovieRequest.setPosterUrl(amazonService.
+                handleImageInCreateMovieRequest(createMovieRequest.getPoster()));
+
         Movie createdMovie = movieRepo.save(movieMapper.toEntity(createMovieRequest));
 
         return movieMapper.toMovieResponseInPage(createdMovie);

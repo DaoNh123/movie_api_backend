@@ -3,12 +3,14 @@ package com.example.backend_sem2.model.theMovieDB;
 import com.example.backend_sem2.enums.MovieLabelEnum;
 import com.example.backend_sem2.entity.Category;
 import com.example.backend_sem2.entity.Movie;
+import com.example.backend_sem2.service.interfaceService.AmazonService;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Date;
 import java.util.List;

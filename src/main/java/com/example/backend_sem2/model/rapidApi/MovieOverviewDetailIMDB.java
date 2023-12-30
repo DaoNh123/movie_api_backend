@@ -1,7 +1,7 @@
 package com.example.backend_sem2.model.rapidApi;
 
 import com.example.backend_sem2.enums.MovieLabelEnum;
-import com.example.backend_sem2.utility.ApiUtility;
+import com.example.backend_sem2.utils.ApiUtility;
 import com.example.backend_sem2.entity.Category;
 import com.example.backend_sem2.entity.Movie;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
