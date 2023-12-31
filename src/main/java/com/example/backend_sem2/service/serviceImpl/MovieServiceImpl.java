@@ -11,6 +11,9 @@ import com.example.backend_sem2.repository.MovieRepo;
 import com.example.backend_sem2.service.interfaceService.AmazonService;
 import com.example.backend_sem2.service.interfaceService.MovieService;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -20,6 +23,7 @@ import java.time.ZonedDateTime;
 
 @Repository
 @AllArgsConstructor
+@EnableCaching
 public class MovieServiceImpl implements MovieService {
     private MovieRepo movieRepo;
     private MovieMapper movieMapper;
@@ -27,6 +31,7 @@ public class MovieServiceImpl implements MovieService {
 
 
     @Override
+    @Cacheable(value = "movieByCondition")
     public Page<MovieResponseInPage> getMoviePageableByCondition(Pageable pageable, String partOfMovieName, String categoryName, MovieLabelEnum movieLabel) {
 
         Page<Movie> moviePageableByCondition = movieRepo.getMoviePageableByCondition(pageable, partOfMovieName,
@@ -37,6 +42,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    @Cacheable(value = "movieWithShowingStatus")
     public Page<MovieResponseInPage> getMovieWithShowingStatusPageableByCondition(Pageable pageable, String partOfMovieName, String categoryName, MovieLabelEnum movieLabel, MovieShowingStatusEnum showingStatus) {
 
         Page<Movie> nowShowingMoviePageableByCondition = movieRepo.getMoviePageableByCondition(pageable,
@@ -62,6 +68,7 @@ public class MovieServiceImpl implements MovieService {
 //    private String exactFileNameFrom
 
     @Override
+    @CacheEvict(value = {"movieWithShowingStatus", "movieByCondition"}, allEntries = true)
     public MovieResponseInPage createMovie(CreateMovieRequest createMovieRequest) throws IOException {
         if (createMovieRequest.getPoster() != null) createMovieRequest.setPosterUrl(amazonService.
                 handleImageInCreateMovieRequest(createMovieRequest.getPoster()));

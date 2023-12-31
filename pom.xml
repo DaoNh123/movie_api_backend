@@ -197,6 +197,18 @@
             <artifactId>s3control</artifactId>
         </dependency>
         <!--    End dependencies for Amazon S3-->
+
+        <!--    Start Dependencies for Redis  -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>4.4.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <!--    End Dependencies for Redis  -->
     </dependencies>
 
     <build>

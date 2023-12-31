@@ -63,7 +63,11 @@ public class MovieController {
             @RequestParam(name = "movie_label", required = false) MovieLabelEnum movieLabel
     ) {
         MovieShowingStatusEnum showingStatus = MovieShowingStatusEnum.NOW_SHOWING;
-        return movieService.getMovieWithShowingStatusPageableByCondition(pageable, partOfMovieName, categoryName, movieLabel, showingStatus);
+        Long start = System.currentTimeMillis();
+        Page<MovieResponseInPage> movieWithShowingStatusPageableByCondition = movieService.getMovieWithShowingStatusPageableByCondition(pageable, partOfMovieName, categoryName, movieLabel, showingStatus);
+        Long end = System.currentTimeMillis();
+        System.out.println("Running time: " + (end - start));
+        return movieWithShowingStatusPageableByCondition;
     }
 
     /*  Coming Soon Movie   */
