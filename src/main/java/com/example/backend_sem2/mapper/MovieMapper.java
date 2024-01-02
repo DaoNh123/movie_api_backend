@@ -1,5 +1,6 @@
 package com.example.backend_sem2.mapper;
 
+import com.example.backend_sem2.api.theMovieDBApi.HttpService;
 import com.example.backend_sem2.dto.CreateMovieRequest;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseInPage;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseWithComment;
@@ -17,6 +18,7 @@ import com.example.backend_sem2.service.interfaceService.AmazonService;
 import com.example.backend_sem2.utils.EntityUtility;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import reactor.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -35,6 +37,8 @@ public abstract class MovieMapper {
     CategoryRepo categoryRepo;
     @Autowired
     AmazonService amazonService;
+    @Autowired
+    HttpService httpService;
 
     abstract Movie toEntity(Long id);
 
@@ -71,9 +75,14 @@ public abstract class MovieMapper {
     @Mapping(source = "movieInApi.originalLanguage", target = "language")
     @Mapping(source = "movieInApi.genreIds", target = "categoryList", qualifiedByName = "genreToCategory")        //    Need creating @Named Mapping method
     @Mapping(source = "movieInApi.adult", target = "movieLabel", qualifiedByName = "booleanAdultToMovieLabel")        // Need creating @Named Mapping method
+    @Mapping(source = "movieInApi.id", target = "imdbId", qualifiedByName = "theMovieDBIdToIMDBId")                 // Need creating @Named Mapping method
+
     public abstract Movie toEntity(MovieInApi movieInApi, @Context ConfigurationTheMovieDB configurationTheMovieDB,
                                    @Context List<Category> existingCategoryList);
-
+    @Named("theMovieDBIdToIMDBId")
+    protected String theMovieDBIdToIMDBId (Long theMovieDBId){
+        return httpService.getImdbIdByTheMovieDBId(theMovieDBId);
+    }
     @Named("posterPathToPosterUrlInS3")
     protected String posterPathToPosterUrlInS3 (String posterPath, @Context ConfigurationTheMovieDB configurationTheMovieDB){
         ImageSizes imageSizes = configurationTheMovieDB.getImageSizes();

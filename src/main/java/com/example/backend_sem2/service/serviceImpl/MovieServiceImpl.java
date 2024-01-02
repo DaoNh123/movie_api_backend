@@ -70,6 +70,7 @@ public class MovieServiceImpl implements MovieService {
     @Override
     @CacheEvict(value = {"movieWithShowingStatus", "movieByCondition"}, allEntries = true)
     public MovieResponseInPage createMovie(CreateMovieRequest createMovieRequest) throws IOException {
+        /*  Using S3 in next 2 lines*/
         if (createMovieRequest.getPoster() != null) createMovieRequest.setPosterUrl(amazonService.
                 handleImageInCreateMovieRequest(createMovieRequest.getPoster()));
 

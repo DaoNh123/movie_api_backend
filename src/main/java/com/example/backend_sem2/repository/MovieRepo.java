@@ -36,7 +36,7 @@ public interface MovieRepo extends JpaRepository<Movie, Long> {
 //            "AND (:categoryName IS NULL OR c.categoryName LIKE CONCAT('%', cast(:categoryName AS text), '%')) " +
 
             /*  return all "category" of the Movie which satisfy having desired "category"*/
-            "AND (m.id IN (SELECT m.id FROM Movie m LEFT JOIN m.categoryList c " +
+            "AND (m.id IN (SELECT DISTINCT m.id FROM Movie m LEFT JOIN m.categoryList c " +
             "WHERE :categoryName IS NULL OR c.categoryName LIKE CONCAT('%', cast(:categoryName AS text), '%'))) " +
 
             "AND (:movieLabel IS NULL OR m.movieLabel = :movieLabel) " +

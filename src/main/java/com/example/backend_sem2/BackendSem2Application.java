@@ -10,9 +10,10 @@ import com.example.backend_sem2.model.theMovieDB.MovieInApi;
 import com.example.backend_sem2.model.theMovieDB.TrendingMovieResponse;
 import com.example.backend_sem2.repository.CommentRepo;
 import com.example.backend_sem2.repository.SlotRepo;
-
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,6 +26,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootApplication
 @AllArgsConstructor
+//@RequiredArgsConstructor
 public class BackendSem2Application {
 
     private CommentRepo commentRepo;
@@ -32,6 +34,8 @@ public class BackendSem2Application {
     private MovieMapper movieMapper;
     private HttpService httpService;
     private MovieMapper2 movieMapper2;
+    @Qualifier("theMovieDBBaseUrl")
+    private String theMovieDbBaseUrl;
 
     private final String image1 = "https://m.media-amazon.com/images/M/MV5BN2IzYzBiOTQtNGZmMi00NDI5LTgxMzMtN2EzZjA1NjhlOGMxXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_.jpg";
     private final String image2 = "https://m.media-amazon.com/images/M/MV5BMjk2NjgzMTEtYWViZS00NTMyLWFjMzctODczYmQzNzk2NjIwXkEyXkFqcGdeQXVyMTEyMjM2NDc2._V1_.jpg";
@@ -51,14 +55,23 @@ public class BackendSem2Application {
     public CommandLineRunner commandLineRunner() {
         return runner -> {
             testMovieWithIdRating();
+//            String ImdbId = getIMDBIdFromTheMovieDBId(343611L);
+//            System.out.println("ImdbId = " + ImdbId);
+
+            System.out.println("Youtube Link: " + ("https://www.youtube.com/watch?v=" + httpService.getYoutubeIdForMovieTrailerByIMDBId("tt4154796")));
             Long start = System.currentTimeMillis();
             if (!slotRepo.existsById(1L)) {
                 /*  this method does not generate all generated Object in method    */
-                generateData(1L);
+                generateData(4L);
             }
             Long end = System.currentTimeMillis();
             System.out.println("Running time: " + (end - start));
         };
+    }
+
+    private String getIMDBIdFromTheMovieDBId(Long theMovieDBId) {
+        String endpoint = "/movie/" + theMovieDBId;
+        return httpService.getImdbIdByTheMovieDBId(theMovieDBId);
     }
 
     private void testMovieWithIdRating() {
@@ -67,14 +80,14 @@ public class BackendSem2Application {
     }
 
     private ConfigurationTheMovieDB getConfigurationTheMovieDB() {
-        ConfigurationTheMovieDB configurationTheMovieDB = httpService.getResponseEntity("/configuration",
+        ConfigurationTheMovieDB configurationTheMovieDB = httpService.getResponseEntity(theMovieDbBaseUrl,"/configuration",
                 ConfigurationTheMovieDB.class, new HashMap<>());
         return configurationTheMovieDB;
     }
 
     @NotNull
     private List<Category> getCategoriesFromGenre() {
-        GenreResponse genreResponse = httpService.getResponseEntity("/genre/movie/list",
+        GenreResponse genreResponse = httpService.getResponseEntity(theMovieDbBaseUrl,"/genre/movie/list",
                 GenreResponse.class, new HashMap<>());
         genreResponse.getGenres().forEach(System.out::println);
 
@@ -92,7 +105,7 @@ public class BackendSem2Application {
         Set<MovieInApi> movieInApiSet = new HashSet<>();
 
         for (int i = 0; i < numberOfPages; i++) {
-            TrendingMovieResponse response = httpService.getResponseEntity("/trending/movie/day",
+            TrendingMovieResponse response = httpService.getResponseEntity(theMovieDbBaseUrl,"/trending/movie/day",
                     TrendingMovieResponse.class, Map.ofEntries(
                             Map.entry("page", Integer.toString(i + 1))
                     )
@@ -136,9 +149,11 @@ public class BackendSem2Application {
                     movie.setDuration(60L + random.nextInt(30));
                     movie.setOpeningTime(openingTime);
                     movie.setClosingTime(openingTime.plusDays(random.nextInt(10) + 20));
-                    movie.setIframe(iframeList.get(random.nextInt(3)));
+                    System.out.println("*** IMDB_ID: " + movie.getImdbId());
+                    movie.setIframe(httpService.getYoutubeIdForMovieTrailerByIMDBId(movie.getImdbId()));
+//                    movie.setIframe(iframeList.get(random.nextInt(3)));
                     return movie;
-                })
+                }).filter(movie -> movie.getIframe() != null)
                 .toList();
         System.out.println("*** Start checking Movie ***");
         movies.forEach(movie -> {

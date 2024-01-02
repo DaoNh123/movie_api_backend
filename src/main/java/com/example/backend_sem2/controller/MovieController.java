@@ -46,7 +46,7 @@ public class MovieController {
     @GetMapping({"", "/"})
     public Page<MovieResponseInPage> getMoviePageableByCondition(
             @SortDefault(sort = "openingTime", direction = Sort.Direction.DESC)
-            @PageableDefault(size = 20) Pageable pageable,
+            @PageableDefault(size = 25) Pageable pageable,
             @RequestParam(name = "name", required = false) String partOfMovieName,
             @RequestParam(name = "category_name", required = false) String categoryName,
             @RequestParam(name = "movie_label", required = false) MovieLabelEnum movieLabel
@@ -57,7 +57,7 @@ public class MovieController {
     @GetMapping({"/now-showing"})
     public Page<MovieResponseInPage> getMovieWithShowingStatusPageableByCondition(
             @SortDefault(sort = "openingTime", direction = Sort.Direction.DESC)
-            @PageableDefault(size = 20) Pageable pageable,
+            @PageableDefault(size = 25) Pageable pageable,
             @RequestParam(name = "name", required = false) String partOfMovieName,
             @RequestParam(name = "category_name", required = false) String categoryName,
             @RequestParam(name = "movie_label", required = false) MovieLabelEnum movieLabel
@@ -74,7 +74,7 @@ public class MovieController {
     @GetMapping("/coming-soon")
     public Page<MovieResponseInPage> getComingSoonMoviesByCondition(
             @SortDefault(sort = "openingTime", direction = Sort.Direction.DESC)
-            @PageableDefault(size = 20) Pageable pageable,
+            @PageableDefault(size = 15) Pageable pageable,
             @RequestParam(name = "name", required = false) String partOfMovieName,
             @RequestParam(name = "category_name", required = false) String categoryName,
             @RequestParam(name = "movie_label", required = false) MovieLabelEnum movieLabel

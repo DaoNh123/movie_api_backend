@@ -1,10 +1,9 @@
 package com.example.backend_sem2.api.theMovieDBApi;
 
-import com.example.backend_sem2.mapper.MovieMapper;
 import com.example.backend_sem2.model.theMovieDB.MovieInApi;
 import com.example.backend_sem2.model.theMovieDB.MovieWithIdRating;
 import com.example.backend_sem2.model.theMovieDB.TrendingMovieResponse;
-import com.example.backend_sem2.repository.MovieRepo;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -14,39 +13,36 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
 public class HttpServiceImpl implements HttpService {
     private OkHttpClient okHttpClient;
     private ObjectMapper objectMapper;
-    private MovieRepo movieRepo;
-    private MovieMapper movieMapper;
 
     @Value("${the_movieDB_api.base_url}")
     private String theMovieDbBaseUrl;
+//    @Value("kinocheck.api.baseUrl")
+    private static final String theKinocheckApiBaseUrl = "https://api.kinocheck.de";      // Using to get YoutubeId for "trailer" of Movie
+    private static final String prefixIframeYoutube = "https://www.youtube.com/embed/";
     @Value("${the_movieDB_api.authorization_key}")
     private String authorizationKeyInTheMovieDB;
-    Environment env;
+
 
     @Autowired
     public HttpServiceImpl(
             OkHttpClient okHttpClient,
-            ObjectMapper objectMapper,
-            MovieRepo movieRepo,
-            MovieMapper movieMapper
+            ObjectMapper objectMapper
     ) {
         this.okHttpClient = okHttpClient;
         this.objectMapper = objectMapper;
-        this.movieRepo = movieRepo;
-        this.movieMapper = movieMapper;
     }
 
     private Request createGetRequest(String getRequestUrl) {
@@ -58,11 +54,9 @@ public class HttpServiceImpl implements HttpService {
                 .build();
     }
 
-    private String createUrlFromEndpointAndParams(String endpoint, Map<String, String> queryParamMap) {
+    private String createUrlFromEndpointAndParams(String baseUrl, String endpoint, Map<String, String> queryParamMap) {
         HttpUrl.Builder urlBuilder
-//                = Objects.requireNonNull(HttpUrl.parse(theMovieDbBaseUrl + endpoint)).newBuilder();
-//                = HttpUrl.parse(env.getProperty("the_movieDB_api.base_url") + endpoint).newBuilder();
-                = HttpUrl.parse(theMovieDbBaseUrl + endpoint).newBuilder();
+                = Objects.requireNonNull(HttpUrl.parse(baseUrl + endpoint)).newBuilder();
 
         for (Map.Entry<String, String> entry : queryParamMap.entrySet()) {
             urlBuilder.addQueryParameter(entry.getKey(), entry.getValue());
@@ -72,12 +66,10 @@ public class HttpServiceImpl implements HttpService {
     }
 
     @SneakyThrows
-    public <T> T getResponseEntity(String endpoint, Class<T> type, Map<String, String> queryParamMap) {
-        Request getRequest = createGetRequest(createUrlFromEndpointAndParams(endpoint, queryParamMap));
-
-        Response response = okHttpClient.newCall(getRequest).execute();
-
+    public <T> T getResponseEntity(String baseUrl, String endpoint, Class<T> type, Map<String, String> queryParamMap) {
+        Request getRequest = createGetRequest(createUrlFromEndpointAndParams(baseUrl, endpoint, queryParamMap));
         String string = null;
+        Response response = okHttpClient.newCall(getRequest).execute();
         try {
             assert response.body() != null;
             string = response.body().string();
@@ -87,9 +79,47 @@ public class HttpServiceImpl implements HttpService {
         return objectMapper.readValue(string, type);
     }
 
+    @SneakyThrows
+    public Object getSpecificProperties(String baseUrl, String endpoint, Map<String, String> queryParamMap, String propertyName) {
+        Request getRequest = createGetRequest(createUrlFromEndpointAndParams(baseUrl, endpoint, queryParamMap));
+
+        Response response = okHttpClient.newCall(getRequest).execute();
+
+        Object extractedProperty = null;
+        try {
+            assert response.body() != null;
+            String jsonString = response.body().string();
+
+            // Use Jackson ObjectMapper to parse JSON into a Map
+            Map<String, Object> resultMap = objectMapper.readValue(jsonString, new TypeReference<>() {});
+
+            // Extract Property from the map
+            extractedProperty = resultMap.get(propertyName);
+        } catch (IOException e) {
+            System.out.println("No data received!");
+        }
+
+        return extractedProperty;
+    }
+
+    /*  Example for "kinocheck" API link: https://api.kinocheck.de/movies?imdb_id=tt4154796 */
+    public String getYoutubeIdForMovieTrailerByIMDBId(String theIMDBId){
+        Map<String, Object> trailerMap = (Map<String, Object>) getSpecificProperties(theKinocheckApiBaseUrl, "/movies",
+                Map.ofEntries(
+                      Map.entry("imdb_id", theIMDBId)
+                ), "trailer");
+        if(trailerMap == null) return null;
+        return prefixIframeYoutube + trailerMap.get("youtube_video_id");
+    }
+
+    public String getImdbIdByTheMovieDBId (Long theMovieDbId){
+        return (String) getSpecificProperties(theMovieDbBaseUrl, "/movie/" + theMovieDbId,
+new HashMap<>(), "imdb_id");
+    }
+
     /*  Method to get Trending "MovieInApi" depend on pageId   */
     public List<MovieInApi> getMovieInApiByPage(int pageNumber) {
-        TrendingMovieResponse response = getResponseEntity("/trending/movie/day",
+        TrendingMovieResponse response = getResponseEntity(theMovieDbBaseUrl ,  "/trending/movie/day",
                 TrendingMovieResponse.class, Map.ofEntries(
                         Map.entry("page", Integer.toString(pageNumber))
                 )
@@ -113,7 +143,7 @@ public class HttpServiceImpl implements HttpService {
     public MovieWithIdRating getMovieWithRatingUsingTheMovieDBId(Long theMovieDBId) {
         String endpoint = "/movie/" + theMovieDBId;
 
-        return getResponseEntity(endpoint, MovieWithIdRating.class, new HashMap<>());
+        return getResponseEntity(theMovieDbBaseUrl, endpoint, MovieWithIdRating.class, new HashMap<>());
     }
 
 }
