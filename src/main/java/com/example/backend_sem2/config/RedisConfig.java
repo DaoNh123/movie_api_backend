@@ -61,7 +61,6 @@ public class RedisConfig {
                 .build();
     }
 
-
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
         JedisConnectionFactory jedisConFactory

@@ -149,6 +149,7 @@ public class BackendSem2Application {
                     movie.setDuration(60L + random.nextInt(30));
                     movie.setOpeningTime(openingTime);
                     movie.setClosingTime(openingTime.plusDays(random.nextInt(10) + 20));
+
                     System.out.println("*** IMDB_ID: " + movie.getImdbId());
                     movie.setIframe(httpService.getYoutubeIdForMovieTrailerByIMDBId(movie.getImdbId()));
 //                    movie.setIframe(iframeList.get(random.nextInt(3)));

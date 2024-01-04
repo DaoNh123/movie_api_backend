@@ -28,48 +28,12 @@ import java.util.concurrent.TimeUnit;
 public class AppConfig implements WebMvcConfigurer {
     @Value("${frontend.endpoint}")
     private String frontendUrl;
-    @Value("${connect_timeout}")
-    private Long connectTimeout;
-    @Value("${response_timeout}")
-    private Long responseTimeout;
-    @Value("${read_timeout}")
-    private Long readTimeout;
-    @Value("${write_timeout}")
-    private Long writeTimeout;
-    @Value("${base_url}")
-    private String baseUrl;
-    @Value("${x_rapid.api.key}")
-    private String xRapidKey;
-    @Value("${x_rapid.api.host}")
-    private String xRapidHost;
-
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(frontendUrl)
+                .allowedOrigins("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE");
-    }
-
-    @Bean
-    public WebClient webClient(){
-        HttpClient httpClient = HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
-                .responseTimeout(Duration.ofMillis(5000))
-                .doOnConnected(conn ->
-                        conn.addHandlerLast(new ReadTimeoutHandler(5000, TimeUnit.MILLISECONDS))
-                                .addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS)));
-
-        WebClient webClient = WebClient.builder()
-                .baseUrl(baseUrl)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultHeader("X-RapidAPI-Key", xRapidKey)
-                .defaultHeader("X-RapidAPI-Host", xRapidHost)
-                .defaultUriVariables(Collections.singletonMap("url", baseUrl))
-                .clientConnector(new ReactorClientHttpConnector(httpClient))
-                .build();
-
-        return webClient;
     }
 
     @Bean
