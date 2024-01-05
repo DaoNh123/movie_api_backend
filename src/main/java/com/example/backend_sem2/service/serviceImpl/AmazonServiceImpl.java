@@ -69,7 +69,7 @@ public class AmazonServiceImpl implements AmazonService {
         return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
     }
 
-    public String uploadImageInUrlToS3(String prefixToObjectKey, String imageUrl){
-        return String.join("/", awsUrl,S3AmazonUtils.uploadImageInUrlToS3(s3Client, bucketName, prefixToObjectKey, imageUrl));
+    public String uploadImageInUrlToS3(String rootFolder, String imageUrl){
+        return String.join("/", awsUrl,S3AmazonUtils.uploadImageInUrlToS3(s3Client, bucketName, rootFolder, imageUrl));
     }
 }

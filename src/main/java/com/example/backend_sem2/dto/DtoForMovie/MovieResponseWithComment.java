@@ -25,7 +25,7 @@ public class MovieResponseWithComment {
     private String language;
     private ZonedDateTime openingTime;      // The time which customer can book a ticket
     private ZonedDateTime closingTime;      // The time which movie is no longer selling ticket
-    private String iframe;
+    private String youtubeVideoId;
     private List<String> categoryNameList;      // need custom expression
     private MovieLabelEnum movieLabel;
     private List<CommentResponse> commentList;

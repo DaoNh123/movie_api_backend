@@ -1,6 +1,7 @@
 package com.example.backend_sem2.mapper;
 
-import com.example.backend_sem2.api.theMovieDBApi.HttpService;
+import com.example.backend_sem2.api.HttpService;
+import com.example.backend_sem2.api.TheMovieDBApiService;
 import com.example.backend_sem2.dto.CreateMovieRequest;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseInPage;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseWithComment;
@@ -8,7 +9,6 @@ import com.example.backend_sem2.dto.OrderResponseInfo.MovieInOrderRes;
 import com.example.backend_sem2.entity.Category;
 import com.example.backend_sem2.entity.Movie;
 import com.example.backend_sem2.enums.MovieLabelEnum;
-import com.example.backend_sem2.model.rapidApi.MovieOverviewDetailIMDB;
 import com.example.backend_sem2.model.theMovieDB.ConfigurationTheMovieDB;
 import com.example.backend_sem2.model.theMovieDB.ImageSizes;
 import com.example.backend_sem2.model.theMovieDB.MovieInApi;
@@ -18,7 +18,6 @@ import com.example.backend_sem2.service.interfaceService.AmazonService;
 import com.example.backend_sem2.utils.EntityUtility;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import reactor.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -39,6 +38,8 @@ public abstract class MovieMapper {
     AmazonService amazonService;
     @Autowired
     HttpService httpService;
+    @Autowired
+    TheMovieDBApiService theMovieDBApiService;
 
     abstract Movie toEntity(Long id);
 
@@ -57,9 +58,6 @@ public abstract class MovieMapper {
             "java(movie.getCategoryList().stream().map(com.example.backend_sem2.entity.Category::getCategoryName).toList())")
     @Mapping(source = "posterUrl", target = "posterUrl", qualifiedByName = "preSignedPosterUrl")
     public abstract MovieResponseWithComment toMovieResponseWithComment(Movie movie);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    public abstract Movie toEntity(MovieOverviewDetailIMDB movieInApi);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "categoryList", source = "categoryList", qualifiedByName = "categoryNameListToCategoryList")
@@ -81,7 +79,7 @@ public abstract class MovieMapper {
                                    @Context List<Category> existingCategoryList);
     @Named("theMovieDBIdToIMDBId")
     protected String theMovieDBIdToIMDBId (Long theMovieDBId){
-        return httpService.getImdbIdByTheMovieDBId(theMovieDBId);
+        return theMovieDBApiService.getImdbIdByTheMovieDBId(theMovieDBId);
     }
     @Named("posterPathToPosterUrlInS3")
     protected String posterPathToPosterUrlInS3 (String posterPath, @Context ConfigurationTheMovieDB configurationTheMovieDB){
@@ -91,7 +89,7 @@ public abstract class MovieMapper {
 
         String posterUrlInTheMovieDB = String.join("",posterBaseUrl, size, posterPath);
 
-        return amazonService.uploadImageInUrlToS3("thMovieDb/images", posterUrlInTheMovieDB);
+        return amazonService.uploadImageInUrlToS3("images", posterUrlInTheMovieDB);
     }
 
     @Named("genreToCategory")

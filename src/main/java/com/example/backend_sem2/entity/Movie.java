@@ -53,8 +53,8 @@ public class Movie extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private MovieBookingStatusEnum movieBookingStatusEnum;      // ALLOWED, NOT_ALLOWED
     private Boolean deleted;
-    @Column(name = "iframe", columnDefinition = "TEXT")
-    private String iframe;
+    @Column(name = "youtube_id", columnDefinition = "TEXT")
+    private String youtubeVideoId;
     @ManyToMany(
             fetch = FetchType.LAZY,
             cascade = {

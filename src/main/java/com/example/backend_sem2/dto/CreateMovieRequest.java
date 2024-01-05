@@ -33,7 +33,7 @@ public class CreateMovieRequest {
     private ZonedDateTime openingTime;      // The time which customer have right to book ticket
     @NotBlank
     private ZonedDateTime closingTime;      // The time which movie is no longer selling ticket
-    private String iframe;              // this will save "youtubeLink" only
+    private String youtubeVideoId;              // this will save "youtubeLink" only
     @NotNull
     private List<String> categoryList;
     @NotBlank

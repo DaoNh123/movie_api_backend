@@ -4,9 +4,11 @@ import com.example.backend_sem2.enums.MovieBookingStatusEnum;
 import com.example.backend_sem2.enums.MovieLabelEnum;
 import com.example.backend_sem2.entity.Movie;
 import com.example.backend_sem2.enums.MovieShowingStatusEnum;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
@@ -44,16 +46,12 @@ public interface MovieRepo extends JpaRepository<Movie, Long> {
             "AND (:movieBookingStatusEnum IS NULL OR m.movieBookingStatusEnum = :movieBookingStatusEnum) " +
             "AND (:deleted IS NULL OR m.deleted = :deleted) ")
     Page<Movie> getMoviePageableByCondition(Pageable pageable, String partOfMovieName, String categoryName,
-                                                      MovieLabelEnum movieLabel, MovieShowingStatusEnum movieShowingStatusEnum,
-                                                      MovieBookingStatusEnum movieBookingStatusEnum, Boolean deleted);
+                                            MovieLabelEnum movieLabel, MovieShowingStatusEnum movieShowingStatusEnum,
+                                            MovieBookingStatusEnum movieBookingStatusEnum, Boolean deleted);
 
     @Query(value = "FROM Movie m LEFT JOIN FETCH m.commentList c " +
             "WHERE m.id = :id")
     Movie getMovieWithComments(Long id);
-
-    boolean existsByImdbId(String imdbId);
-
-    boolean existsByMovieNameIgnoreCase(String movieName);
 
     Page<Movie> getMoviesByOpeningTimeAfter(Pageable pageable, ZonedDateTime zonedDateTime);
 
@@ -61,8 +59,33 @@ public interface MovieRepo extends JpaRepository<Movie, Long> {
             "WHERE s.id = :slotId")
     Optional<Movie> findMovieBySlotId(Long slotId);
 
-    @Query(value = "SELECT m.theMovieDBId FROM Movie m")
-    List<Long> getAllTheMovieDBIdOfAllMovies();
+    @Modifying
+    @Query("UPDATE Movie m SET m.movieShowingStatusEnum = :showingStatusEnum " +
+            "WHERE m.openingTime >= :startTime " +
+            "AND (cast(:startTime as timestamp) IS NULL OR m.openingTime < :endTime)")
+    void updateShowingStatusByOpeningTimeAfter(ZonedDateTime startTime, ZonedDateTime endTime, MovieShowingStatusEnum showingStatusEnum);
 
+    @Transactional
+    @Modifying
+    @Query("UPDATE Movie m " +
+            "SET m.movieBookingStatusEnum = :allowedStatus WHERE (m.openingTime <= :threeDayAfterToday AND :today <= m.closingTime)")
+    void updateAllowedBookingStatus (ZonedDateTime today, ZonedDateTime threeDayAfterToday, MovieBookingStatusEnum allowedStatus);
 
+    @Transactional
+    @Modifying
+    @Query("UPDATE Movie m " +
+            "SET m.movieBookingStatusEnum = :notAllowedStatus WHERE :today > m.closingTime")
+    void updateNotAllowedBookingStatus (ZonedDateTime today, MovieBookingStatusEnum notAllowedStatus);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Movie m " +
+            "SET m.movieShowingStatusEnum = :nowShowingStatus WHERE :today >= m.openingTime AND :today <= m.closingTime")
+    void updateNowShowingStatus (ZonedDateTime today, MovieShowingStatusEnum nowShowingStatus);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Movie m " +
+            "SET m.movieShowingStatusEnum = :endedStatus WHERE :today > m.closingTime")
+    void updateEndedShowingStatus (ZonedDateTime today, MovieShowingStatusEnum endedStatus);
 }

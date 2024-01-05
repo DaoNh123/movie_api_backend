@@ -48,12 +48,11 @@ public class OrderServiceImpl implements OrderService {
         if (!isEnoughAgeToBook(orderRequest))
             throw new CustomErrorException(HttpStatus.BAD_REQUEST, String.format("You need to be older than %s years old to what this movie!", slot.getMovie().getMovieLabel().getMinAge()));
 
+        /*  rarely wrong because in the main flow, customer always choose from exist seat   */
         if (!isAllSeatsExist(orderRequest))
             throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Seat is not exist!");
         if (!isSeatAvailableAndBelongToSlot(orderRequest))
             throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Some seats you choose have been books, please choose other one!");
-        if (!isSlotAvailableToBook(slot))
-            throw new CustomErrorException(HttpStatus.BAD_REQUEST, "This slot have been began, you can not book this slot!");
 
         try {
             List<OrderDetail> orderDetails = orderRequest.getSeatIdList().stream()

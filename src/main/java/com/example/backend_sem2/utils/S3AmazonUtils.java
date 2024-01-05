@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -28,11 +29,25 @@ import java.util.regex.Pattern;
 public class S3AmazonUtils {
 
     @SneakyThrows
-    public static String putS3Object(S3Client s3, String bucketName, String objectKey, File file) {
+    public static String putS3Object(S3Client s3, String bucketName, String rootFolder, File file) {
         try {
             Map<String, String> metadata = new HashMap<>();
-            metadata.put("x-amz-meta-myVal", "test");
+//            metadata.put("x-amz-meta-myVal", "test");
             System.out.println("***" + file.getName() + " in putS3Object");
+            String fileNameWithRoot = file.getName();
+
+            String[] templeArray = fileNameWithRoot.split("/");
+            String fileName = templeArray[templeArray.length - 1];
+
+            LocalDate today = LocalDate.now();
+            String objectKey = String.join("/",
+                    rootFolder,
+                    String.valueOf(today.getYear()),
+                    String.format("%02d", today.getMonthValue()),
+                    String.format("%02d", today.getDayOfMonth()),
+                    fileName
+            );
+
             PutObjectRequest putOb = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(objectKey)
@@ -69,7 +84,7 @@ public class S3AmazonUtils {
     }
 
     /*  prefixToObjectKey: route to where the file saved    ___ Using with "theMovieDB"*/
-    public static String uploadImageInUrlToS3(S3Client s3, String bucketName, String prefixToObjectKey, String imageUrl) {
+    public static String uploadImageInUrlToS3(S3Client s3, String bucketName, String rootFolder, String imageUrl) {
         try {
             // Download the image from the URL
             URL url = new URL(imageUrl);
@@ -77,17 +92,17 @@ public class S3AmazonUtils {
             // Extract file extension from the URL
             String fileExtension = "." + getFileExtension(url.getPath());
 
+            String imageName = getImageNameFromTheMovieDBLink(imageUrl);
+
             // Create a temporary file with a unique name and the extracted extension
-            Path tempImagePath = Files.createTempFile(System.currentTimeMillis() + "-tmp", fileExtension);
+//            Path tempImagePath = Files.createTempFile(System.currentTimeMillis() + "-tmp", fileExtension);
+            Path tempImagePath = Files.createTempFile(imageName.replace(fileExtension, ""), fileExtension);
 
             // Copy the contents from the URL to the temporary file
             Files.copy(url.openStream(), tempImagePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // Upload the downloaded image to S3
-
-            String objectKey = prefixToObjectKey + "/" + System.currentTimeMillis() + "-" + getImageNameFromTheMovieDBLink(imageUrl);
             System.out.println("***" + tempImagePath.toString() + " in uploadImageInUrlToS3");
-            return putS3Object(s3, bucketName, objectKey, new File(tempImagePath.toString()));
+            return putS3Object(s3, bucketName, rootFolder, new File(tempImagePath.toString()));
 
             // Delete the temporary file
 //            Files.delete(tempImagePath);
@@ -116,60 +131,4 @@ public class S3AmazonUtils {
 
         return tmp[tmp.length - 1];
     }
-
-//    public static void main(String[] args) {
-//        System.out.println(getImageNameFromTheMovieDBLink("http://image.tmdb.org/t/p/original/c54HpQmuwXjHq2C9wmoACjxoom3.jpg"));
-//    }
-
-    // New
-    /* Create a presigned URL to use in a subsequent PUT request */
-//    public String createPresignedUrl(String bucketName, String keyName, Map<String, String> metadata) {
-//        try (S3Presigner presigner = S3Presigner.create()) {
-//
-//            PutObjectRequest objectRequest = PutObjectRequest.builder()
-//                    .bucket(bucketName)
-//                    .key(keyName)
-//                    .metadata(metadata)
-//                    .build();
-//
-//            PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-//                    .signatureDuration(Duration.ofMinutes(10))  // The URL expires in 10 minutes.
-//                    .putObjectRequest(objectRequest)
-//                    .build();
-//
-//
-//            PresignedPutObjectRequest presignedRequest = presigner.presignPutObject(presignRequest);
-//            String myURL = presignedRequest.url().toString();
-//
-//            return presignedRequest.url().toExternalForm();
-//        }
-//    }
-
-    /* Use the AWS SDK for Java V2 SdkHttpClient class to do the upload. */
-//    public void useSdkHttpClientToPut(String presignedUrlString, File fileToPut, Map<String, String> metadata) {
-//
-//        try {
-//            URL presignedUrl = new URL(presignedUrlString);
-//
-//            SdkHttpRequest.Builder requestBuilder = SdkHttpRequest.builder()
-//                    .method(SdkHttpMethod.PUT)
-//                    .uri(presignedUrl.toURI());
-//            // Add headers
-//            metadata.forEach((k, v) -> requestBuilder.putHeader("x-amz-meta-" + k, v));
-//            // Finish building the request.
-//            SdkHttpRequest request = requestBuilder.build();
-//
-//            HttpExecuteRequest executeRequest = HttpExecuteRequest.builder()
-//                    .request(request)
-//                    .contentStreamProvider(new FileContentStreamProvider(fileToPut.toPath()))
-//                    .build();
-//
-//            try (SdkHttpClient sdkHttpClient = ApacheHttpClient.create()) {
-//                HttpExecuteResponse response = sdkHttpClient.prepareRequest(executeRequest).call();
-//
-//            }
-//        } catch (URISyntaxException | IOException e) {
-//
-//        }
-//    }
 }
