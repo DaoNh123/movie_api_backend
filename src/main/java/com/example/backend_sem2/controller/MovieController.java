@@ -19,6 +19,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -36,11 +37,21 @@ public class MovieController {
     private SeatService seatService;
 
     @SneakyThrows
-    @PostMapping({"", "/"})
+    @PostMapping({"/remove"})
     public MovieResponseInPage createAMovie(
             @ModelAttribute CreateMovieRequest createMovieRequest
     ){
         return movieService.createMovie(createMovieRequest);
+    }
+
+    @SneakyThrows
+    @PostMapping({"", "/"})
+    public MovieResponseInPage createAMovie2(
+            @RequestPart("poster") MultipartFile poster,
+            @RequestPart("createMovieRequest") CreateMovieRequest createMovieRequest
+    ){
+        System.out.println("*** process ***: Type of createMovieRequest: " + createMovieRequest.getClass());
+        return movieService.createMovie2(poster, createMovieRequest);
     }
 
     @GetMapping({"", "/"})

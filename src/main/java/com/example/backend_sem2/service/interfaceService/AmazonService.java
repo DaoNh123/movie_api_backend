@@ -8,5 +8,5 @@ import java.io.IOException;
 public interface AmazonService {
     String createPreSignedPosterUrl (String posterUrl);
     String handleImageInCreateMovieRequest(MultipartFile multipartFile) throws IOException;
-    public String uploadImageInUrlToS3(String prefixToObjectKey, String imageUrl);
+    public String uploadImageInUrlToS3(String rootFolder, String imageUrl);
 }

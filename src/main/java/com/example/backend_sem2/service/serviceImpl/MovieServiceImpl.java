@@ -17,6 +17,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -73,6 +74,16 @@ public class MovieServiceImpl implements MovieService {
         /*  Using S3 in next 2 lines*/
         if (createMovieRequest.getPoster() != null) createMovieRequest.setPosterUrl(amazonService.
                 handleImageInCreateMovieRequest(createMovieRequest.getPoster()));
+
+        Movie createdMovie = movieRepo.save(movieMapper.toEntity(createMovieRequest));
+
+        return movieMapper.toMovieResponseInPage(createdMovie);
+    }
+
+    @Override
+    public MovieResponseInPage createMovie2(MultipartFile poster, CreateMovieRequest createMovieRequest) throws IOException {
+        if (poster != null) createMovieRequest.setPosterUrl(amazonService.
+                handleImageInCreateMovieRequest(poster));
 
         Movie createdMovie = movieRepo.save(movieMapper.toEntity(createMovieRequest));
 

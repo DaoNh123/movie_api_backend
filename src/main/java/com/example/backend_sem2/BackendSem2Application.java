@@ -115,10 +115,10 @@ public class BackendSem2Application {
                     movie.setClosingTime(openingTime.plusDays(random.nextInt(10) + 20));
 
                     System.out.println("*** IMDB_ID: " + movie.getImdbId());
-                    movie.setYoutubeVideoId(kinoCheckApiService.getYoutubeIdForMovieTrailerByIMDBId(movie.getImdbId()));
+                    movie.setYoutubeId(kinoCheckApiService.getYoutubeIdForMovieTrailerByIMDBId(movie.getImdbId()));
 //                    movie.setYoutubeVideoId(youtubeVideoIdList.get(random.nextInt(3)));
                     return movie;
-                }).filter(movie -> movie.getYoutubeVideoId() != null)
+                }).filter(movie -> movie.getYoutubeId() != null)
                 .toList();
         System.out.println("*** Start checking Movie ***");
         movies.forEach(movie -> {

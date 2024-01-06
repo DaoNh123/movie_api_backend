@@ -19,13 +19,12 @@ public class MovieResponseWithComment {
     private String movieName;
     private Double imdbRatings;         // new
     private String posterUrl;
-    private String director;
     private String description;
     private Long duration;          // calculate in seconds
     private String language;
     private ZonedDateTime openingTime;      // The time which customer can book a ticket
     private ZonedDateTime closingTime;      // The time which movie is no longer selling ticket
-    private String youtubeVideoId;
+    private String trailerUrl;
     private List<String> categoryNameList;      // need custom expression
     private MovieLabelEnum movieLabel;
     private List<CommentResponse> commentList;

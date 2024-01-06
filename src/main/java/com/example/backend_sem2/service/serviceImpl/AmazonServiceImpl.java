@@ -51,10 +51,10 @@ public class AmazonServiceImpl implements AmazonService {
 
         /*  return Object Url in S3 Amazon  */
     public String handleImageInCreateMovieRequest(MultipartFile multipartFile) throws IOException {
-        String objectKey = "images/" + generateFileName(multipartFile);
+        String rootFolder = "images";
         System.out.println("bucketName = " + bucketName);
 
-        return String.join("/", awsUrl, S3AmazonUtils.putS3Object(s3Client, bucketName, objectKey, convertMultiPartToFile(multipartFile)));
+        return String.join("/", awsUrl, S3AmazonUtils.putS3Object(s3Client, bucketName, rootFolder, convertMultiPartToFile(multipartFile)));
     }
 
     private File convertMultiPartToFile(MultipartFile file) throws IOException {

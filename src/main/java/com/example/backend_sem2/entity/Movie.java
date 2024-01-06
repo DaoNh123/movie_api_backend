@@ -36,8 +36,6 @@ public class Movie extends BaseEntity{
     private Double imdbRatings;         // new
     @Column(name = "poster_url", columnDefinition = "TEXT")
     private String posterUrl;
-    @Column(name = "director")
-    private String director;
     @Column(columnDefinition = "TEXT")
     private String description;
     private Long duration;          // calculate in seconds
@@ -53,8 +51,8 @@ public class Movie extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private MovieBookingStatusEnum movieBookingStatusEnum;      // ALLOWED, NOT_ALLOWED
     private Boolean deleted;
-    @Column(name = "youtube_id", columnDefinition = "TEXT")
-    private String youtubeVideoId;
+    @Column(name = "youtube_id")
+    private String youtubeId;
     @ManyToMany(
             fetch = FetchType.LAZY,
             cascade = {
@@ -111,12 +109,15 @@ public class Movie extends BaseEntity{
         }else this.movieBookingStatusEnum = MovieBookingStatusEnum.ALLOWED;
     }
 
+    public String getYoutubeEmbedLink (){
+        return "https://www.youtube.com/embed/" + this.youtubeId;
+    }
+
     @Override
     public String toString() {
         return super.toString() + "Movie{" +
                 "movieName='" + movieName + '\'' +
                 ", posterUrl='" + posterUrl + '\'' +
-                ", director='" + director + '\'' +
                 ", description='" + description + '\'' +
                 ", duration=" + duration +
                 ", language='" + language + '\'' +

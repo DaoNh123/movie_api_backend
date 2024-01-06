@@ -50,17 +50,19 @@ public abstract class MovieMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "categoryNameList", expression =
             "java(movie.getCategoryList() == null ? null : movie.getCategoryList().stream().map(com.example.backend_sem2.entity.Category::getCategoryName).toList())")
-    @Mapping(source = "posterUrl", target = "posterUrl", qualifiedByName = "preSignedPosterUrl")
+    @Mapping(target = "posterUrl", qualifiedByName = "preSignedPosterUrl")
     public abstract MovieResponseInPage toMovieResponseInPage(Movie movie);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "categoryNameList", expression =
             "java(movie.getCategoryList().stream().map(com.example.backend_sem2.entity.Category::getCategoryName).toList())")
     @Mapping(source = "posterUrl", target = "posterUrl", qualifiedByName = "preSignedPosterUrl")
+    @Mapping(target = "trailerUrl", expression = "java(movie.getYoutubeEmbedLink())")
     public abstract MovieResponseWithComment toMovieResponseWithComment(Movie movie);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "categoryList", source = "categoryList", qualifiedByName = "categoryNameListToCategoryList")
+    @Mapping(target = "youtubeId", expression = "java(createMovieRequest.getYoutubeId())")
     public abstract Movie toEntity(CreateMovieRequest createMovieRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
