@@ -20,7 +20,7 @@ public class OrderRequest {
     private String customerAddress;
     @NotNull(message = "Customer age can't be null")
     private Long customerAge;
-    @Email(message = "Customer Email doesn't have right format!")   // "@Email" doesn't check "null"
+//    @Email(message = "Customer Email doesn't have right format!")   // "@Email" doesn't check "null"
     @NotNull(message = "Customer email can't be null")
     private String customerEmail;
 //    @NotNull(message = "Movie Id can't be null")

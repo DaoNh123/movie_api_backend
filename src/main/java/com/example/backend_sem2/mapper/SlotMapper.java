@@ -10,6 +10,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", uses = {ReferenceMapper.class, MovieMapper.class})
 public interface SlotMapper {
+
+//    Slot toEntity(Long id);
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "slotId", source = "id")
     @Mapping(target = "theaterRoom",

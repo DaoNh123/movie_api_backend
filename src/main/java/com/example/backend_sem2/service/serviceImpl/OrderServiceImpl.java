@@ -56,24 +56,28 @@ public class OrderServiceImpl implements OrderService {
             throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Some seats you choose have been books, please choose other one!");
 
         try {
-            List<OrderDetail> orderDetails = orderRequest.getSeatIdList().stream()
-                    .map(id -> seatRepo.findById(id)
-                            .orElseThrow(() -> new CustomErrorException(HttpStatus.BAD_REQUEST, "Seat is not exist!"))
-                    )
-                    .map(
-                            seat -> OrderDetail.builder().seat(seat).build()
-                    ).collect(Collectors.toList());
-            String customerEmail = orderRequest.getCustomerEmail();
-            Order order = Order.builder()
-                    .customerName(orderRequest.getCustomerName())
-                    .customerAddress(orderRequest.getCustomerAddress())
-                    .customerAge(orderRequest.getCustomerAge())
-                    .customerEmail(customerEmail)
-                    .orderDetailList(orderDetails)
-                    .slot(slot)
-                    .build();
-/*  Have Error in builder when convert from "OrderRequest" sang "Order" */
-            order.setCustomerEmail(customerEmail);
+//            List<OrderDetail> orderDetails = orderRequest.getSeatIdList().stream()
+//                    .map(id -> seatRepo.findById(id)
+//                            .orElseThrow(() -> new CustomErrorException(HttpStatus.BAD_REQUEST, "Seat is not exist!"))
+//                    )
+//                    .map(
+//                            seat -> OrderDetail.builder().seat(seat).build()
+//                    ).collect(Collectors.toList());
+//            String customerEmail = orderRequest.getCustomerEmail();
+//            Order order = Order.builder()
+//                    .customerName(orderRequest.getCustomerName())
+//                    .customerAddress(orderRequest.getCustomerAddress())
+//                    .customerAge(orderRequest.getCustomerAge())
+//                    .customerEmail(customerEmail)
+//                    .orderDetailList(orderDetails)
+//                    .slot(slot)
+//                    .build();
+///*  Have Error in builder when convert from "OrderRequest" sang "Order" */
+//            order.setCustomerEmail(customerEmail);
+
+            Order order = orderMapper.toEntity(orderRequest);
+
+            order.setCustomerEmail(orderRequest.getCustomerEmail());
 
             System.out.println("Order ***");
             orderRepo.save(order);

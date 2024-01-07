@@ -14,5 +14,5 @@ public interface OrderDetailMapper {
     @Mapping(target = "seat", source = "seat")
     OrderDetailInOrderRes toOrderDetailInOrderRes (OrderDetail orderDetail);
 
-
+    OrderDetail toDto(Long id);
 }
