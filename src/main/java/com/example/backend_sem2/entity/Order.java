@@ -74,7 +74,6 @@ public class Order extends BaseEntity{
                 "customerName='" + customerName + '\'' +
                 ", customerAddress='" + customerAddress + '\'' +
                 ", customerAge=" + customerAge +
-                ", orderDetailList=" + orderDetailList +
                 '}';
     }
 }

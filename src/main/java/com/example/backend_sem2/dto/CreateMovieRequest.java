@@ -22,7 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class CreateMovieRequest {
-    @NotBlank
+//    @NotBlank
     private String movieName;
 //    private Double imdbRatings;
     @JsonIgnore
@@ -31,14 +31,14 @@ public class CreateMovieRequest {
     private String description;
     private Long duration;          // calculate in seconds
     private String language;
-    @NotBlank
+//    @NotBlank
     private ZonedDateTime openingTime;      // The time which customer have right to book ticket
-    @NotBlank
+//    @NotBlank
     private ZonedDateTime closingTime;      // The time which movie is no longer selling ticket
     private String youtubeLink;              // this will save "youtubeLink" only
-    @NotNull
+//    @NotNull
     private List<String> categoryList;
-    @NotBlank
+//    @NotBlank
     private MovieLabelEnum movieLabel;
 
     private MultipartFile poster;

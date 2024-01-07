@@ -13,4 +13,6 @@ public interface OrderDetailMapper {
     @Mapping(target = "orderDetailId", source = "id")
     @Mapping(target = "seat", source = "seat")
     OrderDetailInOrderRes toOrderDetailInOrderRes (OrderDetail orderDetail);
+
+
 }

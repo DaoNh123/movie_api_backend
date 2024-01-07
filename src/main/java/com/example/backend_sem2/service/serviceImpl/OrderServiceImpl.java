@@ -1,15 +1,15 @@
 package com.example.backend_sem2.service.serviceImpl;
 
+import com.example.backend_sem2.dto.OrderResponseInfo.OrderResponse;
+import com.example.backend_sem2.entity.*;
 import com.example.backend_sem2.enums.SeatStatusEnum;
 import com.example.backend_sem2.dto.OrderRequest;
 import com.example.backend_sem2.dto.SeatResponse;
-import com.example.backend_sem2.entity.Movie;
-import com.example.backend_sem2.entity.Order;
-import com.example.backend_sem2.entity.OrderDetail;
-import com.example.backend_sem2.entity.Slot;
 import com.example.backend_sem2.exception.CustomErrorException;
 import com.example.backend_sem2.mapper.OrderMapper;
 import com.example.backend_sem2.mapper.SeatMapper;
+import com.example.backend_sem2.model.RabbitMQMessage;
+import com.example.backend_sem2.rabbitMQProducer.MessageProducer;
 import com.example.backend_sem2.repository.*;
 import com.example.backend_sem2.service.interfaceService.OrderService;
 import com.example.backend_sem2.service.interfaceService.SeatService;
@@ -37,6 +37,7 @@ public class OrderServiceImpl implements OrderService {
     private SeatRepo seatRepo;
     private OrderRepo orderRepo;
     private OrderMapper orderMapper;
+    private MessageProducer messageProducer;
 
     @Override
     @Transactional
@@ -62,21 +63,32 @@ public class OrderServiceImpl implements OrderService {
                     .map(
                             seat -> OrderDetail.builder().seat(seat).build()
                     ).collect(Collectors.toList());
+            String customerEmail = orderRequest.getCustomerEmail();
             Order order = Order.builder()
                     .customerName(orderRequest.getCustomerName())
                     .customerAddress(orderRequest.getCustomerAddress())
                     .customerAge(orderRequest.getCustomerAge())
-                    .customerEmail(orderRequest.getCustomerEmail())
+                    .customerEmail(customerEmail)
                     .orderDetailList(orderDetails)
                     .slot(slot)
                     .build();
+/*  Have Error in builder when convert from "OrderRequest" sang "Order" */
+            order.setCustomerEmail(customerEmail);
 
+            System.out.println("Order ***");
             orderRepo.save(order);
+            OrderResponse orderResponse = orderMapper.toDto(order);
 
-            return orderMapper.toDto(order);
+            messageProducer.sendMessage(RabbitMQMessage.builder()
+                    .actionType(ActionTypeEnum.ORDER_CREATED)
+                    .data(orderResponse)
+                    .build());
+            return orderResponse;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Fail to create order!");
         }
+
     }
 
     private boolean isAllSeatsExist(OrderRequest orderRequest) {

@@ -2,10 +2,7 @@ package com.example.backend_sem2.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import reactor.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -38,4 +35,5 @@ public class OrderRequest {
         if(CollectionUtils.isEmpty(seatIdList)) return false;
         else return !seatIdList.contains(null);
     }
+
 }
