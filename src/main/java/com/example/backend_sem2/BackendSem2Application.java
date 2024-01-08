@@ -14,6 +14,10 @@ import com.example.backend_sem2.model.theMovieDB.MovieInApi;
 import com.example.backend_sem2.repository.CommentRepo;
 import com.example.backend_sem2.repository.MovieRepo;
 import com.example.backend_sem2.repository.SlotRepo;
+import com.example.backend_sem2.security.AuthorityRepo;
+import com.example.backend_sem2.security.UserRepo;
+import com.example.backend_sem2.security.entityForSecurity.Authority;
+import com.example.backend_sem2.security.entityForSecurity.User;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,6 +46,9 @@ public class BackendSem2Application {
     private MovieRepo movieRepo;
     private TheMovieDBApiService theMovieDBApiService;
     private KinoCheckApiService kinoCheckApiService;
+
+    private AuthorityRepo authorityRepo;
+    private UserRepo userRepo;
     private final long rows = 12;
     private final long columns = 12;
 
@@ -60,7 +67,41 @@ public class BackendSem2Application {
             }
             Long end = System.currentTimeMillis();
             System.out.println("Running time: " + (end - start));
+
+            if(!userRepo.existsById(1L)){
+                generateUsersAndAuthorities();
+            }
         };
+    }
+
+    private void generateUsersAndAuthorities() {
+        Authority user = Authority.builder()
+                .authorityName("USER")
+                .build();
+        Authority admin = Authority.builder()
+                .authorityName("ADMIN")
+                .build();
+
+        User patrickUser = User.builder()
+                .firstName("patrick")
+                .lastName("peter")
+                .username("patrick")
+                .password("$2a$12$7jbRuqKsnbOy8YFWvi51FueDXMVSvVQVCyOGdpSrmPPCvzasoyfRK")   // patrick
+                .email("")
+                .authoritySet(Set.of(user))
+                .enabled(true)
+                .build();
+
+        User adminUser = User.builder()
+                .firstName("admin")
+                .username("admin")
+                .password("$2a$12$AICpFp5VM1Rm4iBxPA5y0uKRgoMHXl1RAXfOTJyW3VdXPhtB6ALW2")
+                .authoritySet(Set.of(admin))
+                .enabled(true)
+                .build();
+
+        List<User> userList = List.of(patrickUser, adminUser);
+        userRepo.saveAll(userList);
     }
 
     private void testKinoCheck() {

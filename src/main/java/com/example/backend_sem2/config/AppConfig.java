@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableScheduling
-//@EnableWebMvc
 public class AppConfig implements WebMvcConfigurer {
     @Value("${frontend.endpoint}")
     private String frontendUrl;

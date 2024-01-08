@@ -1,8 +1,6 @@
-package com.example.backend_sem2.entity.entityForSecurity;
+package com.example.backend_sem2.security.entityForSecurity;
 
 import com.example.backend_sem2.entity.BaseEntity;
-import com.example.backend_sem2.entity.Comment;
-import com.example.backend_sem2.entity.Order;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,6 +10,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -45,7 +44,7 @@ public class User extends BaseEntity {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id")
     )
-    private List<Authority> authorityList;
+    private Set<Authority> authoritySet;
 
 //    @OneToMany(mappedBy = "user",
 //            fetch = FetchType.LAZY, cascade = {
