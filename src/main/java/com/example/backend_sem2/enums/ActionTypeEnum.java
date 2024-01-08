@@ -1,4 +1,4 @@
-package com.example.backend_sem2.entity;
+package com.example.backend_sem2.enums;
 
 public enum ActionTypeEnum {
     ORDER_CREATED, UPCOMING_MOVIE;

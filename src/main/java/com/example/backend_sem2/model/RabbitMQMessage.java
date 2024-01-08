@@ -1,6 +1,6 @@
 package com.example.backend_sem2.model;
 
-import com.example.backend_sem2.entity.ActionTypeEnum;
+import com.example.backend_sem2.enums.ActionTypeEnum;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
