@@ -51,6 +51,7 @@ public class Order extends BaseEntity{
         this.customerAge = b.customerAge;
         this.slot = b.slot;
         this.orderDetailList = b.orderDetailList;
+        this.customerEmail = b.customerEmail;
 
         if(this.slot != null){
             this.slot.addOrder(this);
