@@ -4,7 +4,7 @@ public class Endpoints {
 //    public static final String FRONT_END_HOST = "http://127.0.0.1:5500";
     public static final String FRONT_END_HOST = "*";
     public static final String[] PUBLIC_GET_ENDPOINTS = {
-            "/api/*"
+            "/api/**"
     };
     public static final String[] PUBLIC_POST_ENDPOINTS = {
     };
