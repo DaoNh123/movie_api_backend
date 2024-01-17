@@ -14,6 +14,7 @@ import com.example.backend_sem2.model.theMovieDB.MovieInApi;
 import com.example.backend_sem2.repository.CommentRepo;
 import com.example.backend_sem2.repository.MovieRepo;
 import com.example.backend_sem2.repository.SlotRepo;
+import com.example.backend_sem2.repository.TheaterRoomRepo;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,6 +41,7 @@ public class BackendSem2Application {
     @Qualifier("theMovieDBBaseUrl")
     private String theMovieDbBaseUrl;
     private MovieRepo movieRepo;
+    private TheaterRoomRepo theaterRoomRepo;
     private TheMovieDBApiService theMovieDBApiService;
     private KinoCheckApiService kinoCheckApiService;
     private final long rows = 12;
@@ -52,7 +54,6 @@ public class BackendSem2Application {
     @Bean
     public CommandLineRunner commandLineRunner() {
         return runner -> {
-
             Long start = System.currentTimeMillis();
             if (!slotRepo.existsById(1L)) {
                 /*  this method does not generate all generated Object in method    */
@@ -60,11 +61,36 @@ public class BackendSem2Application {
             }
             Long end = System.currentTimeMillis();
             System.out.println("Running time: " + (end - start));
+
+            generateSlotsForMovieOne(10L);
         };
     }
 
+    private void generateSlotsForMovieOne(Long numberOfSlots) {
+        if (slotRepo.getSlotsByMovie_Id(1L).size() < numberOfSlots) {
+            Movie movie = movieRepo.findByIdJoinFetchSlot(1L);
+            List<TheaterRoom> theaterRooms = theaterRoomRepo.findAll();
+
+            ZonedDateTime currentDateTime = ZonedDateTime.now();
+            List<Slot> slots = new ArrayList<>();
+            Random random = new Random();
+            for (int i = 0; i < numberOfSlots; i++) {
+                int randomDays = random.nextInt(11) - 5;
+                Slot newSlot = new Slot();
+                newSlot.setStartTime(currentDateTime.plus(randomDays, ChronoUnit.DAYS));
+                newSlot.setMovie(movie);
+                newSlot.setTheaterRoom(theaterRooms.get(random.nextInt(theaterRooms.size())));
+
+                movie.getSlotList().add(newSlot);
+                slots.add(newSlot);
+            }
+            movieRepo.save(movie);
+        }
+    }
+
     private void testKinoCheck() {
-        System.out.println(kinoCheckApiService.getYoutubeIdForMovieTrailerByIMDBId("tt15398776"));;
+        System.out.println(kinoCheckApiService.getYoutubeIdForMovieTrailerByIMDBId("tt15398776"));
+        ;
     }
 
     private void testUpdateStatusMovie() {
@@ -95,7 +121,7 @@ public class BackendSem2Application {
         categoryListFromGenre.forEach(System.out::println);
         return categoryListFromGenre;
     }
-    
+
 
     public void generateData(Long numberOfPage) {
         Random random = new Random();

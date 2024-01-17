@@ -103,7 +103,7 @@ public class MovieController {
     /*  Prepare to remove because do not using in Frontend */
     @GetMapping("/{id}/slots")
     public Map<String, Object> getAllSlotOfAMovieByShowDate(
-            @SortDefault(sort = "openingTime", direction = Sort.Direction.ASC)
+//            @SortDefault(sort = "openingTime", direction = Sort.Direction.ASC)
 //            @PageableDefault(value = 10, size = 10, page = 0)
             Pageable pageable,
             @DateTimeFormat(pattern = "dd.MM.yyyy")
