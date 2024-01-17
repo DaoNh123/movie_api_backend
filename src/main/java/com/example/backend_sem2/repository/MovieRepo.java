@@ -95,4 +95,8 @@ public interface MovieRepo extends JpaRepository<Movie, Long> {
     @Query("UPDATE Movie m " +
             "SET m.movieShowingStatusEnum = :endedStatus WHERE :today > m.closingTime")
     void updateEndedShowingStatus (ZonedDateTime today, MovieShowingStatusEnum endedStatus);
+
+    @Query("FROM Movie m JOIN FETCH m.slotList " +
+            "WHERE m.id = :movieId")
+    Movie findByIdJoinFetchSlot(Long movieId);
 }

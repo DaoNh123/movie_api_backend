@@ -14,6 +14,7 @@ import com.example.backend_sem2.model.theMovieDB.MovieInApi;
 import com.example.backend_sem2.repository.CommentRepo;
 import com.example.backend_sem2.repository.MovieRepo;
 import com.example.backend_sem2.repository.SlotRepo;
+import com.example.backend_sem2.repository.TheaterRoomRepo;
 import com.example.backend_sem2.security.AuthorityRepo;
 import com.example.backend_sem2.security.UserRepo;
 import com.example.backend_sem2.security.entityForSecurity.Authority;
@@ -44,6 +45,7 @@ public class BackendSem2Application {
     @Qualifier("theMovieDBBaseUrl")
     private String theMovieDbBaseUrl;
     private MovieRepo movieRepo;
+    private TheaterRoomRepo theaterRoomRepo;
     private TheMovieDBApiService theMovieDBApiService;
     private KinoCheckApiService kinoCheckApiService;
 
@@ -71,6 +73,8 @@ public class BackendSem2Application {
             if(!userRepo.existsById(1L)){
                 generateUsersAndAuthorities();
             }
+
+            generateSlotsForMovieOne(10L);
         };
     }
 
@@ -104,8 +108,31 @@ public class BackendSem2Application {
         userRepo.saveAll(userList);
     }
 
+    private void generateSlotsForMovieOne(Long numberOfSlots) {
+        if (slotRepo.getSlotsByMovie_Id(1L).size() < numberOfSlots) {
+            Movie movie = movieRepo.findByIdJoinFetchSlot(1L);
+            List<TheaterRoom> theaterRooms = theaterRoomRepo.findAll();
+
+            ZonedDateTime currentDateTime = ZonedDateTime.now();
+            List<Slot> slots = new ArrayList<>();
+            Random random = new Random();
+            for (int i = 0; i < numberOfSlots; i++) {
+                int randomDays = random.nextInt(11) - 5;
+                Slot newSlot = new Slot();
+                newSlot.setStartTime(currentDateTime.plus(randomDays, ChronoUnit.DAYS));
+                newSlot.setMovie(movie);
+                newSlot.setTheaterRoom(theaterRooms.get(random.nextInt(theaterRooms.size())));
+
+                movie.getSlotList().add(newSlot);
+                slots.add(newSlot);
+            }
+            movieRepo.save(movie);
+        }
+    }
+
     private void testKinoCheck() {
-        System.out.println(kinoCheckApiService.getYoutubeIdForMovieTrailerByIMDBId("tt15398776"));;
+        System.out.println(kinoCheckApiService.getYoutubeIdForMovieTrailerByIMDBId("tt15398776"));
+        ;
     }
 
     private void testUpdateStatusMovie() {
