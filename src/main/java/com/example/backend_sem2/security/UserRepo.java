@@ -8,8 +8,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
-    @Query("SELECT u FROM User u JOIN FETCH u.authoritySet WHERE u.username = :username")
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.authoritySet WHERE u.username = :username")
     User getUserByUsername(@Param("username") String username);
 
     boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+    User findByEmail(String email);
 }

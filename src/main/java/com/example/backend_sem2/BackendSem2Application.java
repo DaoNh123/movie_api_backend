@@ -40,7 +40,6 @@ public class BackendSem2Application {
     private SlotRepo slotRepo;
     private MovieMapper movieMapper;
     private HttpService httpService;
-    private MovieMapper2 movieMapper2;
     @Qualifier("theMovieDBBaseUrl")
     private String theMovieDbBaseUrl;
     private MovieRepo movieRepo;

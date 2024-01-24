@@ -1,5 +1,6 @@
 package com.example.backend_sem2.security;
 
+import com.example.backend_sem2.security.filter.JwtFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,10 +25,8 @@ import java.util.Arrays;
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig{
-    @Bean
-    public UserDetailsService userDetailsService(){
-        return new UserDetailsServiceImpl();
-    }
+    private UserDetailsService userDetailsService;
+    private JwtFilter jwtFilter;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -37,7 +36,7 @@ public class SecurityConfig{
     @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(bCryptPasswordEncoder());
         return authProvider;
     }
@@ -72,9 +71,9 @@ public class SecurityConfig{
                     });
                 });
 
-//        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-//        /*  set "session" is "stateless"    */
-//        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        /*  set "session" is "stateless"    */
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.httpBasic(Customizer.withDefaults());
         http.csrf(csrf -> csrf.disable());
