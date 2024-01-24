@@ -7,10 +7,26 @@ public class Endpoints {
             "/api/**"
     };
     public static final String[] PUBLIC_POST_ENDPOINTS = {
+            "/api/**"
     };
 
+//    public static final String[] PUBLIC_PUT_ENDPOINTS = {
+//            "/api/**"
+//    };
+//    public static final String[] PUBLIC_DELETE_ENDPOINTS = {
+//            "/api/**"
+//    };
+
     public static final String[] ADMIN_GET_ENDPOINTS = {
+            "/api/admin/**"
     };
     public static final String[] ADMIN_POST_ENDPOINTS = {
+            "/api/admin/**"
+    };
+        public static final String[] ADMIN_PUT_ENDPOINTS = {
+            "/api/admin/**"
+    };
+    public static final String[] ADMIN_DELETE_ENDPOINTS = {
+            "/api/admin/**"
     };
 }

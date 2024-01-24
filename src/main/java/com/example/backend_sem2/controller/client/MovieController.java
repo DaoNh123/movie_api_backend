@@ -1,4 +1,4 @@
-package com.example.backend_sem2.controller;
+package com.example.backend_sem2.controller.client;
 
 import com.example.backend_sem2.dto.CreateMovieRequest;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseInPage;
@@ -36,22 +36,24 @@ public class MovieController {
     private SlotService slotService;
     private SeatService seatService;
 
-    @SneakyThrows
-    @PostMapping({"/remove"})
-    public MovieResponseInPage createAMovie(
-            @ModelAttribute CreateMovieRequest createMovieRequest
-    ){
-        return movieService.createMovie(createMovieRequest);
-    }
+    /*  Removie soon    */
+//    @SneakyThrows
+//    @PostMapping({"/remove"})
+//    public MovieResponseInPage createAMovie(
+//            @ModelAttribute CreateMovieRequest createMovieRequest
+//    ){
+//        return movieService.createMovie(createMovieRequest);
+//    }
 
+    /*  *** Move to "AdminMovieController" soon *** */
     @SneakyThrows
     @PostMapping({"", "/"})
-    public MovieResponseInPage createAMovie2(
+    public MovieResponseInPage createAMovie(
             @RequestPart("poster") MultipartFile poster,
             @RequestPart("createMovieRequest") CreateMovieRequest createMovieRequest
     ){
         System.out.println("*** process ***: Type of createMovieRequest: " + createMovieRequest.getClass());
-        return movieService.createMovie2(poster, createMovieRequest);
+        return movieService.createMovie(poster, createMovieRequest);
     }
 
     @GetMapping({"", "/"})

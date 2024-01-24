@@ -23,7 +23,9 @@ public interface MovieService {
 
     MovieResponseInPage createMovie(CreateMovieRequest createMovieRequest) throws IOException;
 
-    MovieResponseInPage createMovie2(MultipartFile poster, CreateMovieRequest createMovieRequest) throws IOException;
+    MovieResponseInPage createMovie(MultipartFile poster, CreateMovieRequest createMovieRequest) throws IOException;
+
+    MovieResponseInPage deleteMovie(Long id);
 
     /*  "getMoviePageableByCondition" already cover this method */
 //    List<MovieResponseInPage> findMoviesByMovieLabel(String movieLabel);

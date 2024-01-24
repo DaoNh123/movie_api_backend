@@ -7,7 +7,6 @@ import com.example.backend_sem2.entity.*;
 import com.example.backend_sem2.enums.MovieBookingStatusEnum;
 import com.example.backend_sem2.enums.MovieShowingStatusEnum;
 import com.example.backend_sem2.mapper.MovieMapper;
-import com.example.backend_sem2.mapper.MovieMapper2;
 import com.example.backend_sem2.model.theMovieDB.ConfigurationTheMovieDB;
 import com.example.backend_sem2.model.theMovieDB.GenreResponse;
 import com.example.backend_sem2.model.theMovieDB.MovieInApi;
@@ -70,12 +69,18 @@ public class BackendSem2Application {
             Long end = System.currentTimeMillis();
             System.out.println("Running time: " + (end - start));
 
-            if(!userRepo.existsById(1L)){
+            if(userRepo.count() == 0){
                 generateUsersAndAuthorities();
             }
 
             generateSlotsForMovieOne(10L);
+
+            testUser();
         };
+    }
+
+    private void testUser() {
+        User user = userRepo.getUserByUsername("admin");
     }
 
     private void generateUsersAndAuthorities() {

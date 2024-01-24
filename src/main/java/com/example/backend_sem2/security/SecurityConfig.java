@@ -52,23 +52,25 @@ public class SecurityConfig{
         http.authorizeHttpRequests(
                 config -> config
 //                        .requestMatchers(HttpMethod.GET, Endpoints.PUBLIC_GET_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.GET, Endpoints.PUBLIC_GET_ENDPOINTS).authenticated()
-//                        .requestMatchers(HttpMethod.POST, Endpoints.PUBLIC_POST_ENDPOINTS).permitAll()
-//                        .requestMatchers(HttpMethod.GET, Endpoints.ADMIN_GET_ENDPOINTS).hasAnyAuthority("ADMIN")
-//                        .requestMatchers(HttpMethod.POST, Endpoints.ADMIN_POST_ENDPOINTS).hasAnyAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, Endpoints.ADMIN_GET_ENDPOINTS).hasAnyAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, Endpoints.ADMIN_POST_ENDPOINTS).hasAnyAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, Endpoints.ADMIN_DELETE_ENDPOINTS).hasAnyAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, Endpoints.ADMIN_PUT_ENDPOINTS).hasAnyAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, Endpoints.PUBLIC_GET_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.POST, Endpoints.PUBLIC_POST_ENDPOINTS).permitAll()
         );
 
 
-//        http.cors(
-//                cors -> {
-//                    cors.configurationSource(request -> {
-//                        CorsConfiguration corsConfig = new CorsConfiguration();
-//                        corsConfig.addAllowedOrigin(Endpoints.FRONT_END_HOST);
-//                        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-//                        corsConfig.addAllowedHeader("*");
-//                        return corsConfig;
-//                    });
-//                });
+        http.cors(
+                cors -> {
+                    cors.configurationSource(request -> {
+                        CorsConfiguration corsConfig = new CorsConfiguration();
+                        corsConfig.addAllowedOrigin(Endpoints.FRONT_END_HOST);
+                        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+                        corsConfig.addAllowedHeader("*");
+                        return corsConfig;
+                    });
+                });
 
 //        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 //        /*  set "session" is "stateless"    */

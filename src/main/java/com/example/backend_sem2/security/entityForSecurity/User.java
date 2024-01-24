@@ -4,20 +4,22 @@ import com.example.backend_sem2.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+//@Data
+@Getter
+@Setter
 @Entity
 @SuperBuilder
-@ToString(callSuper = true)
+//@ToString(callSuper = true)
 @Table(name = "users")
 public class User extends BaseEntity {
     @Column(name = "first_name")
@@ -36,6 +38,13 @@ public class User extends BaseEntity {
     @JsonIgnore
     @Column(name = "verification_code")
     private String verificationCode;
+//    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JoinTable(
+//            name = "user_authority",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "authority_id")
+//    )
+//    private Set<Authority> authoritySet = new HashSet<>();
     @ManyToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH
     })
@@ -58,4 +67,11 @@ public class User extends BaseEntity {
 //            CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH
 //    })
 //    private List<Order> orderList;
+
+    public void addAuthority(Authority authority){
+        if(authoritySet == null){
+            authoritySet = new HashSet<>();
+        }
+        authoritySet.add(authority);
+    }
 }

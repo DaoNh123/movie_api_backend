@@ -22,6 +22,8 @@ public class MyUserDetails implements UserDetails {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
         for(Authority authority: authoritySet){
+            System.out.println("***");
+            System.out.println(authority.getAuthorityName());
             authorities.add(new SimpleGrantedAuthority(authority.getAuthorityName()));
         }
         return authorities;

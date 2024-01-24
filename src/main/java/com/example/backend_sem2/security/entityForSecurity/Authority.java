@@ -2,10 +2,7 @@ package com.example.backend_sem2.security.entityForSecurity;
 
 import com.example.backend_sem2.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -13,10 +10,11 @@ import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+//@Data
+@Getter@Setter
 @Entity
 @SuperBuilder
-@ToString(callSuper = true)
+//@ToString(callSuper = true)
 @Table(name = "authorities")
 public class Authority extends BaseEntity {
     @Column(name = "authority_name")

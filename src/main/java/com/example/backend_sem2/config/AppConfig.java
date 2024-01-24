@@ -28,12 +28,12 @@ public class AppConfig implements WebMvcConfigurer {
     @Value("${frontend.endpoint}")
     private String frontendUrl;
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE");
-    }
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("*")
+//                .allowedMethods("GET", "POST", "PUT", "DELETE");
+//    }
 
     @Bean
     public ObjectMapper objectMapper(){

@@ -6,6 +6,7 @@ import com.example.backend_sem2.dto.DtoForMovie.MovieResponseWithComment;
 import com.example.backend_sem2.entity.Movie;
 import com.example.backend_sem2.enums.MovieLabelEnum;
 import com.example.backend_sem2.enums.MovieShowingStatusEnum;
+import com.example.backend_sem2.exception.CustomErrorException;
 import com.example.backend_sem2.mapper.MovieMapper;
 import com.example.backend_sem2.repository.MovieRepo;
 import com.example.backend_sem2.service.interfaceService.AmazonService;
@@ -16,6 +17,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -81,12 +83,25 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public MovieResponseInPage createMovie2(MultipartFile poster, CreateMovieRequest createMovieRequest) throws IOException {
+    public MovieResponseInPage createMovie(MultipartFile poster, CreateMovieRequest createMovieRequest) throws IOException {
         if (poster != null) createMovieRequest.setPosterUrl(amazonService.
                 handleImageInCreateMovieRequest(poster));
 
         Movie createdMovie = movieRepo.save(movieMapper.toEntity(createMovieRequest));
 
         return movieMapper.toMovieResponseInPage(createdMovie);
+    }
+
+    @Override
+    public MovieResponseInPage deleteMovie(Long id) {
+        Movie deletedMovie = movieRepo.findById(id).orElseThrow(
+                () -> new CustomErrorException(HttpStatus.BAD_REQUEST, "The movie which you want to delete doesn't exist!")
+        );
+
+        if(deletedMovie.getDeleted()) throw new CustomErrorException(HttpStatus.BAD_REQUEST, "The movie which you want to delete doesn't exist!");
+        else deletedMovie.setDeleted(true);
+
+        movieRepo.save(deletedMovie);
+        return movieMapper.toMovieResponseInPage(deletedMovie);
     }
 }
