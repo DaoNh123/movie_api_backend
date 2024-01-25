@@ -1,8 +1,7 @@
-package com.example.backend_sem2.controller.client;
+package com.example.backend_sem2.controller.user;
 
 import com.example.backend_sem2.dto.CategoryDto;
 import com.example.backend_sem2.service.interfaceService.CategoryService;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

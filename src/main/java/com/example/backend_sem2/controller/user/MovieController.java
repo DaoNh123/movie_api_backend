@@ -1,4 +1,4 @@
-package com.example.backend_sem2.controller.client;
+package com.example.backend_sem2.controller.user;
 
 import com.example.backend_sem2.dto.CreateMovieRequest;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseInPage;

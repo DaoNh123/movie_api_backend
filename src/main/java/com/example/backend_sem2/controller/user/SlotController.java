@@ -1,4 +1,4 @@
-package com.example.backend_sem2.controller.client;
+package com.example.backend_sem2.controller.user;
 
 import com.example.backend_sem2.dto.SeatResponse;
 import com.example.backend_sem2.service.interfaceService.SeatService;

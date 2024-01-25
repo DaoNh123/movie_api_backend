@@ -37,7 +37,9 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         /*  Create new "token" from "username" and "userDetail" from token which is received in "request" */
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() != null){
+//        if(username != null && SecurityContextHolder.getContext().getAuthentication() != null){
+        /*  Something's wrong with "SecurityContextHolder.getContext().getAuthentication() != null" ==> Remove  */
+        if(username != null){
 
             UserDetails userDetails = userService.loadUserByUsername(username);
             if(jwtService.validateToken(token, userDetails)){
