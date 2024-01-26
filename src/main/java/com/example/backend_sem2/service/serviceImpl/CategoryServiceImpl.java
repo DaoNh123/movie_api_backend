@@ -41,16 +41,16 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategoryById(Long id) {
-        return categoryMapper.toDto(categoryRepo.findById(id).get());
+        return categoryMapper.toDto(categoryRepo.findById(id)
+                .orElseThrow(() -> new CustomErrorException(HttpStatus.BAD_REQUEST, "This category is not exist!"))
+        );
     }
 
     @Override
     @Transactional
     public CategoryDto updateCategory(CategoryDto categoryDto, Long id) {
         Category updatedCategory = categoryRepo.findById(id)
-                .orElseThrow(() -> {
-                    return new CustomErrorException(HttpStatus.BAD_REQUEST, "Category is not exist!");
-                });
+                .orElseThrow(() -> new CustomErrorException(HttpStatus.BAD_REQUEST, "Category is not exist!"));
         categoryMapper.updateCategory(categoryDto, updatedCategory);
         try {
             categoryRepo.saveAndFlush(updatedCategory);
@@ -74,7 +74,7 @@ public class CategoryServiceImpl implements CategoryService {
         allCategoryInDB.forEach(category -> System.out.println(category.getId()));
 
         Map<String, Category> nameCategoryMap = new HashMap<>();
-        if(allCategoryInDB != null){
+        if (allCategoryInDB != null) {
             nameCategoryMap = allCategoryInDB.stream()
                     .collect(Collectors.toMap(Category::toString, Function.identity()));
         }

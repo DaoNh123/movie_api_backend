@@ -6,8 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
-import static com.example.backend_sem2.config.RabbitMQConfig.EXCHANGE_MESSAGES;
-import static com.example.backend_sem2.config.RabbitMQConfig.QUEUE_MESSAGES;
+import static com.example.backend_sem2.config.RabbitMQConfig.*;
 
 
 @Service
@@ -27,6 +26,15 @@ public class MessageProducer {
         rabbitTemplate.convertAndSend(EXCHANGE_MESSAGES, QUEUE_MESSAGES, rabbitMQMessage);
         log.info(String.format("Message have been sent to \"%s\" Queue in \"%s\" Exchange",
                 QUEUE_MESSAGES, EXCHANGE_MESSAGES
+        ));
+    }
+
+    public void sendUserCreatedMessage(RabbitMQMessage verifyMessage) {
+        log.info("Sending message...");
+
+        rabbitTemplate.convertAndSend(EXCHANGE_MESSAGES, USER_CREATE_QUEUE_MESSAGES, verifyMessage);
+        log.info(String.format("Message have been sent to \"%s\" Queue in \"%s\" Exchange",
+                USER_CREATE_QUEUE_MESSAGES, EXCHANGE_MESSAGES
         ));
     }
 }

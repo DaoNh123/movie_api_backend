@@ -43,9 +43,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     @SneakyThrows
-    public Object createOrder(OrderRequest orderRequest) {
+    public OrderResponse createOrder(OrderRequest orderRequest) {
 
-        Slot slot = slotRepo.findById(orderRequest.getSlotId()).orElseThrow(()-> new CustomErrorException(HttpStatus.BAD_REQUEST, "This slot is not exist!"));
+        Slot slot = slotRepo.findById(orderRequest.getSlotId()).orElseThrow(() -> new CustomErrorException(HttpStatus.BAD_REQUEST, "This slot is not exist!"));
 
         if (!isEnoughAgeToBook(orderRequest))
             throw new CustomErrorException(HttpStatus.BAD_REQUEST, String.format("You need to be older than %s years old to what this movie!", slot.getMovie().getMovieLabel().getMinAge()));
@@ -57,25 +57,6 @@ public class OrderServiceImpl implements OrderService {
             throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Some seats you choose have been books, please choose other one!");
 
         try {
-//            List<OrderDetail> orderDetails = orderRequest.getSeatIdList().stream()
-//                    .map(id -> seatRepo.findById(id)
-//                            .orElseThrow(() -> new CustomErrorException(HttpStatus.BAD_REQUEST, "Seat is not exist!"))
-//                    )
-//                    .map(
-//                            seat -> OrderDetail.builder().seat(seat).build()
-//                    ).collect(Collectors.toList());
-//            String customerEmail = orderRequest.getCustomerEmail();
-//            Order order = Order.builder()
-//                    .customerName(orderRequest.getCustomerName())
-//                    .customerAddress(orderRequest.getCustomerAddress())
-//                    .customerAge(orderRequest.getCustomerAge())
-//                    .customerEmail(customerEmail)
-//                    .orderDetailList(orderDetails)
-//                    .slot(slot)
-//                    .build();
-///*  Have Error in builder when convert from "OrderRequest" sang "Order" */
-//            order.setCustomerEmail(customerEmail);
-
             Order order = orderMapper.toEntity(orderRequest);
 
             order.setCustomerEmail(orderRequest.getCustomerEmail());
@@ -87,6 +68,7 @@ public class OrderServiceImpl implements OrderService {
             messageProducer.sendMessage(RabbitMQMessage.builder()
                     .actionType(ActionTypeEnum.ORDER_CREATED)
                     .data(orderResponse)
+                    .destinationEmail(orderResponse.getCustomerEmail())
                     .build());
             return orderResponse;
         } catch (Exception e) {
@@ -111,7 +93,8 @@ public class OrderServiceImpl implements OrderService {
         return orderRequest.getSeatIdList().stream()
                 .map(seatId -> {
                     SeatResponse seatResponse = seatResponseMap.get(seatId);
-                    if(seatResponse == null) throw  new CustomErrorException(HttpStatus.BAD_REQUEST, "There are seats which do not belong to this slot or isn't exist");
+                    if (seatResponse == null)
+                        throw new CustomErrorException(HttpStatus.BAD_REQUEST, "There are seats which do not belong to this slot or isn't exist");
                     return seatResponse;
                 })
                 .allMatch(seatResponse -> seatResponse.getStatus().equals(SeatStatusEnum.AVAILABLE));
@@ -134,7 +117,7 @@ public class OrderServiceImpl implements OrderService {
     /*  check Customer Age  */
     private boolean isEnoughAgeToBook(OrderRequest orderRequest) {
         Long customerAge = orderRequest.getCustomerAge() == null ? Long.valueOf(0) : orderRequest.getCustomerAge();
-        Movie bookedMovie = movieRepo.findMovieBySlotId(orderRequest.getSlotId()).orElseThrow(()-> new CustomErrorException(HttpStatus.BAD_REQUEST, "This Movie is not exist!"));
+        Movie bookedMovie = movieRepo.findMovieBySlotId(orderRequest.getSlotId()).orElseThrow(() -> new CustomErrorException(HttpStatus.BAD_REQUEST, "This Movie is not exist!"));
         Long requiredAge = bookedMovie.getMovieLabel().getMinAge();
 
         return customerAge >= requiredAge;

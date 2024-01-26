@@ -29,4 +29,17 @@ public class Endpoints {
     public static final String[] ADMIN_DELETE_ENDPOINTS = {
             "/api/admin/**"
     };
+
+    public static final String[] USER_GET_ENDPOINTS = {
+            "/api/users/**"
+    };
+    public static final String[] USER_POST_ENDPOINTS = {
+            "/api/users/**"
+    };
+    public static final String[] USER_PUT_ENDPOINTS = {
+            "/api/users/**"
+    };
+    public static final String[] USER_DELETE_ENDPOINTS = {
+            "/api/users/**"
+    };
 }

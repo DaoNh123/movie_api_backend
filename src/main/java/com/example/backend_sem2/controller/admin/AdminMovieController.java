@@ -20,7 +20,7 @@ public class AdminMovieController {
 
     @SneakyThrows
     @PostMapping({"", "/"})
-    public MovieResponseInPage createAMovie2(
+    public MovieResponseInPage createAMovie(
             @RequestPart("poster") MultipartFile poster,
             @RequestPart("createMovieRequest") CreateMovieRequest createMovieRequest
     ){

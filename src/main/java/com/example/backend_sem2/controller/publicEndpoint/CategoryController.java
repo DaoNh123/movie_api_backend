@@ -1,4 +1,4 @@
-package com.example.backend_sem2.controller.user;
+package com.example.backend_sem2.controller.publicEndpoint;
 
 import com.example.backend_sem2.dto.CategoryDto;
 import com.example.backend_sem2.service.interfaceService.CategoryService;

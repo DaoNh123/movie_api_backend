@@ -1,6 +1,5 @@
-package com.example.backend_sem2.controller.user;
+package com.example.backend_sem2.controller.publicEndpoint;
 
-import com.example.backend_sem2.dto.CreateMovieRequest;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseInPage;
 import com.example.backend_sem2.dto.DtoForMovie.MovieResponseWithComment;
 import com.example.backend_sem2.dto.SlotResponse;
@@ -10,18 +9,14 @@ import com.example.backend_sem2.service.interfaceService.MovieService;
 import com.example.backend_sem2.service.interfaceService.SeatService;
 import com.example.backend_sem2.service.interfaceService.SlotService;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -36,25 +31,6 @@ public class MovieController {
     private SlotService slotService;
     private SeatService seatService;
 
-    /*  Removie soon    */
-//    @SneakyThrows
-//    @PostMapping({"/remove"})
-//    public MovieResponseInPage createAMovie(
-//            @ModelAttribute CreateMovieRequest createMovieRequest
-//    ){
-//        return movieService.createMovie(createMovieRequest);
-//    }
-
-    /*  *** Move to "AdminMovieController" soon *** */
-    @SneakyThrows
-    @PostMapping({"", "/"})
-    public MovieResponseInPage createAMovie(
-            @RequestPart("poster") MultipartFile poster,
-            @RequestPart("createMovieRequest") CreateMovieRequest createMovieRequest
-    ){
-        System.out.println("*** process ***: Type of createMovieRequest: " + createMovieRequest.getClass());
-        return movieService.createMovie(poster, createMovieRequest);
-    }
 
     @GetMapping({"", "/"})
     public Page<MovieResponseInPage> getMoviePageableByCondition(
@@ -103,22 +79,20 @@ public class MovieController {
     }
 
     /*  Prepare to remove because do not using in Frontend */
-    @GetMapping("/{id}/slots")
-    public Map<String, Object> getAllSlotOfAMovieByShowDate(
-//            @SortDefault(sort = "openingTime", direction = Sort.Direction.ASC)
-//            @PageableDefault(value = 10, size = 10, page = 0)
-            Pageable pageable,
-            @DateTimeFormat(pattern = "dd.MM.yyyy")
-            @RequestParam(name = "show_date", required = false) LocalDate showDate,
-            @PathVariable Long id
-    ) {
-        System.out.println("showDate = " + showDate);
-        ZoneId zoneId = ZoneId.of("UTC+7");
-        ZonedDateTime startOfShowDate = (showDate == null) ? null : showDate.atStartOfDay().atZone(zoneId);
-        ZonedDateTime endOfShowDate = (showDate == null) ? null : showDate.plusDays(1).atStartOfDay().atZone(zoneId);
-
-        return getResponseMap(pageable, id, startOfShowDate, endOfShowDate);
-    }
+//    @GetMapping("/{id}/slots")
+//    public Map<String, Object> getAllSlotOfAMovieByShowDate(
+//            Pageable pageable,
+//            @DateTimeFormat(pattern = "dd.MM.yyyy")
+//            @RequestParam(name = "show_date", required = false) LocalDate showDate,
+//            @PathVariable Long id
+//    ) {
+//        System.out.println("showDate = " + showDate);
+//        ZoneId zoneId = ZoneId.of("UTC+7");
+//        ZonedDateTime startOfShowDate = (showDate == null) ? null : showDate.atStartOfDay().atZone(zoneId);
+//        ZonedDateTime endOfShowDate = (showDate == null) ? null : showDate.plusDays(1).atStartOfDay().atZone(zoneId);
+//
+//        return getResponseMap(pageable, id, startOfShowDate, endOfShowDate);
+//    }
 
 
     @GetMapping("/{id}/slotsInNext7Days")

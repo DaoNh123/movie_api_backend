@@ -1,4 +1,4 @@
-package com.example.backend_sem2.security;
+package com.example.backend_sem2.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

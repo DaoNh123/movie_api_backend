@@ -1,11 +1,9 @@
-package com.example.backend_sem2.security.entityForSecurity;
+package com.example.backend_sem2.entity;
 
-import com.example.backend_sem2.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor

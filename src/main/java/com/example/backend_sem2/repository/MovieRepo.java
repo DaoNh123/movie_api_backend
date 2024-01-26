@@ -57,7 +57,8 @@ public interface MovieRepo extends JpaRepository<Movie, Long> {
                                             MovieBookingStatusEnum movieBookingStatusEnum, Boolean deleted);
 
     @Query(value = "FROM Movie m LEFT JOIN FETCH m.commentList c " +
-            "WHERE m.id = :id")
+            "LEFT JOIN FETCH c.user WHERE " +
+            "m.id = :id")
     Movie getMovieWithComments(Long id);
 
     Page<Movie> getMoviesByOpeningTimeAfter(Pageable pageable, ZonedDateTime zonedDateTime);

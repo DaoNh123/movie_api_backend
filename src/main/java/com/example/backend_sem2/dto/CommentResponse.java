@@ -14,4 +14,5 @@ public class CommentResponse {
     private String commentUsername;
     private Long starRate;
     private String commentContent;
+    private UserDto userDto;
 }

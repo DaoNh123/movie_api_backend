@@ -14,4 +14,5 @@ import lombok.NoArgsConstructor;
 public class RabbitMQMessage {
     private ActionTypeEnum actionType;          // ORDER_CREATED, UPCOMING_MOVIE
     private Object data;
+    private String destinationEmail;
 }

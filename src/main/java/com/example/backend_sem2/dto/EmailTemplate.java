@@ -12,7 +12,6 @@ import lombok.experimental.SuperBuilder;
 
 @Data
 @Entity
-@Table(name = "email_teamplates")
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder

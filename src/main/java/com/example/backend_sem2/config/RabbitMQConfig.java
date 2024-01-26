@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
     public static final String QUEUE_MESSAGES = "movie_booking_messages-queue";
+    public static final String USER_CREATE_QUEUE_MESSAGES = "user_created_" + QUEUE_MESSAGES;
     public static final String EXCHANGE_MESSAGES = "movie_booking_messages-exchange";
 
 

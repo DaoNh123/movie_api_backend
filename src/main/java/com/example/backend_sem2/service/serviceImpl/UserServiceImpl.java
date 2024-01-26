@@ -1,18 +1,16 @@
 package com.example.backend_sem2.service.serviceImpl;
 
-import com.example.backend_sem2.dto.CreateUserRequest;
 import com.example.backend_sem2.exception.CustomErrorException;
 import com.example.backend_sem2.mapper.UserMapper;
-import com.example.backend_sem2.security.AuthorityRepo;
+import com.example.backend_sem2.repository.AuthorityRepo;
 import com.example.backend_sem2.security.MyUserDetails;
-import com.example.backend_sem2.security.UserRepo;
-import com.example.backend_sem2.security.entityForSecurity.User;
+import com.example.backend_sem2.repository.UserRepo;
+import com.example.backend_sem2.entity.User;
 import com.example.backend_sem2.service.interfaceService.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service

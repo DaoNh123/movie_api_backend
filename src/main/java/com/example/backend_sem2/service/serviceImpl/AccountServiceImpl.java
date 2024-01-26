@@ -1,15 +1,20 @@
 package com.example.backend_sem2.service.serviceImpl;
 
 import com.example.backend_sem2.dto.CreateUserRequest;
+import com.example.backend_sem2.dto.JwtResponse;
+import com.example.backend_sem2.dto.LoginRequest;
+import com.example.backend_sem2.enums.ActionTypeEnum;
 import com.example.backend_sem2.exception.CustomErrorException;
 import com.example.backend_sem2.mapper.UserMapper;
-import com.example.backend_sem2.model.Notice;
+import com.example.backend_sem2.model.RabbitMQMessage;
+import com.example.backend_sem2.rabbitMQProducer.MessageProducer;
+import com.example.backend_sem2.repository.AuthorityRepo;
+import com.example.backend_sem2.repository.UserRepo;
 import com.example.backend_sem2.security.*;
-import com.example.backend_sem2.security.entityForSecurity.User;
+import com.example.backend_sem2.entity.User;
 import com.example.backend_sem2.service.interfaceService.AccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +32,7 @@ public class AccountServiceImpl implements AccountService {
     private AuthenticationManager authenticationManager;
     private JwtService jwtService;
     private AuthorityRepo authorityRepo;
+    private MessageProducer messageProducer;
 
     public String registerUser(CreateUserRequest createUserRequest) {
         User user = userMapper.toEntity(createUserRequest);
@@ -42,6 +48,13 @@ public class AccountServiceImpl implements AccountService {
         user.setVerificationCode(createVerificationCode());
         user.setEnabled(false);
         user.addAuthority(authorityRepo.findByAuthorityName("USER"));
+
+        RabbitMQMessage verifyMessage = RabbitMQMessage.builder()
+                .actionType(ActionTypeEnum.USER_CREATED)
+                .destinationEmail(user.getEmail())
+                .data(userMapper.toUserDto(user))
+                .build();
+        messageProducer.sendUserCreatedMessage(verifyMessage);
 
         System.out.println(user);
         userRepo.save(user);
@@ -101,13 +114,13 @@ public class AccountServiceImpl implements AccountService {
 
             System.out.println("authentication = " + authentication);
 
-            if(authentication.isAuthenticated()){
+            if (authentication.isAuthenticated()) {
                 final String jwt = jwtService.generateToken(loginRequest.getUsername());
                 System.out.println("jwtService.extractUsername(jwt) = " + jwtService.extractUsername(jwt));
 
                 return new JwtResponse(jwt);
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             throw ex;
         }

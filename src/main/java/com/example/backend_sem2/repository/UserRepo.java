@@ -1,6 +1,6 @@
-package com.example.backend_sem2.security;
+package com.example.backend_sem2.repository;
 
-import com.example.backend_sem2.security.entityForSecurity.User;
+import com.example.backend_sem2.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

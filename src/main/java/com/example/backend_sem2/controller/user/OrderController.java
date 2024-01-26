@@ -6,10 +6,7 @@ import com.example.backend_sem2.mapper.OrderMapper;
 import com.example.backend_sem2.service.interfaceService.OrderService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -20,7 +17,7 @@ public class OrderController {
 
     /*  This endpoint have used "OrderResponse" as a DTO    */
     @PostMapping("/")
-    public Object createOrder(
+    public OrderResponse createOrder(
             @RequestBody @Valid OrderRequest orderRequest
     ) {
         return orderService.createOrder(orderRequest);
@@ -32,22 +29,5 @@ public class OrderController {
             @PathVariable Long id
     ) {
         return orderMapper.toDto(orderService.getOrderCustomById(id));
-    }
-
-//    @GetMapping("/withoutDto/{id}")
-//    public Order getOrderInfoWithoutDtoById(
-//            @PathVariable Long id
-//    ) {
-//        return orderService.getOrderCustomById(id);
-//    }
-
-    @GetMapping("/email/{id}")
-    public ResponseEntity<?> getEmailByOrderId(
-            @PathVariable Long id
-    ) {
-        String emailByOrderId = orderService.getEmailByOrderId(id);
-
-        if(emailByOrderId == null) emailByOrderId = "";
-        return ResponseEntity.ok(Map.of("email", emailByOrderId));
     }
 }

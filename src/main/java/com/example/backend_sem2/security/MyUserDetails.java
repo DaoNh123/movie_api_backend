@@ -1,7 +1,7 @@
 package com.example.backend_sem2.security;
 
-import com.example.backend_sem2.security.entityForSecurity.Authority;
-import com.example.backend_sem2.security.entityForSecurity.User;
+import com.example.backend_sem2.entity.Authority;
+import com.example.backend_sem2.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
