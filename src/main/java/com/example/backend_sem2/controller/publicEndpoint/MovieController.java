@@ -15,8 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -78,21 +80,20 @@ public class MovieController {
         return movieService.getMovieWithCommentsById(id);
     }
 
-    /*  Prepare to remove because do not using in Frontend */
-//    @GetMapping("/{id}/slots")
-//    public Map<String, Object> getAllSlotOfAMovieByShowDate(
-//            Pageable pageable,
-//            @DateTimeFormat(pattern = "dd.MM.yyyy")
-//            @RequestParam(name = "show_date", required = false) LocalDate showDate,
-//            @PathVariable Long id
-//    ) {
-//        System.out.println("showDate = " + showDate);
-//        ZoneId zoneId = ZoneId.of("UTC+7");
-//        ZonedDateTime startOfShowDate = (showDate == null) ? null : showDate.atStartOfDay().atZone(zoneId);
-//        ZonedDateTime endOfShowDate = (showDate == null) ? null : showDate.plusDays(1).atStartOfDay().atZone(zoneId);
-//
-//        return getResponseMap(pageable, id, startOfShowDate, endOfShowDate);
-//    }
+    @GetMapping("/{id}/slots")
+    public Map<String, Object> getAllSlotOfAMovieByShowDate(
+            Pageable pageable,
+            @DateTimeFormat(pattern = "dd.MM.yyyy")
+            @RequestParam(name = "show_date", required = false) LocalDate showDate,
+            @PathVariable Long id
+    ) {
+        System.out.println("showDate = " + showDate);
+        ZoneId zoneId = ZoneId.of("UTC+7");
+        ZonedDateTime startOfShowDate = (showDate == null) ? null : showDate.atStartOfDay().atZone(zoneId);
+        ZonedDateTime endOfShowDate = (showDate == null) ? null : showDate.plusDays(1).atStartOfDay().atZone(zoneId);
+
+        return getResponseMap(pageable, id, startOfShowDate, endOfShowDate);
+    }
 
 
     @GetMapping("/{id}/slotsInNext7Days")

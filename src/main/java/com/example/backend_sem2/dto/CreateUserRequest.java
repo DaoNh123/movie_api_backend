@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,6 +24,7 @@ public class CreateUserRequest {
     @Length(min = 8, message = "Password must be at least 8 characters")
     private String password;
     private Character gender;
+    private LocalDate dob;      // new
     @NotNull(message = "User email can't be null")
     private String email;
 }

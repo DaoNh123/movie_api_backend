@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class Order extends BaseEntity{
+public class Order extends BaseEntity {
     @Column(name = "customer_name")
     private String customerName;
     @Column(name = "customer_address")
@@ -27,9 +27,9 @@ public class Order extends BaseEntity{
     @ManyToOne(
             fetch = FetchType.EAGER,
             cascade = {
-            CascadeType.DETACH, CascadeType.MERGE,
-            CascadeType.PERSIST, CascadeType.REFRESH
-    })
+                    CascadeType.DETACH, CascadeType.MERGE,
+                    CascadeType.PERSIST, CascadeType.REFRESH
+            })
     @JsonIgnore
     private Slot slot;
 
@@ -43,6 +43,14 @@ public class Order extends BaseEntity{
     )
     @JsonIgnore
     private List<OrderDetail> orderDetailList;
+    @ManyToOne(
+            fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.DETACH, CascadeType.MERGE,
+                    CascadeType.PERSIST, CascadeType.REFRESH
+            }
+    )
+    private User user;
 
     protected Order(final OrderBuilder<?, ?> b) {
         super(b);
@@ -52,15 +60,16 @@ public class Order extends BaseEntity{
         this.slot = b.slot;
         this.orderDetailList = b.orderDetailList;
         this.customerEmail = b.customerEmail;
+        this.user = b.user;
 
-        if(this.slot != null){
+        if (this.slot != null) {
             this.slot.addOrder(this);
         }
     }
 
     @PrePersist
-    public void saveInChild (){
-        if(this.orderDetailList != null){
+    public void saveInChild() {
+        if (this.orderDetailList != null) {
             orderDetailList.stream()
                     .forEach(orderDetail -> orderDetail.setOrder(this));
         }

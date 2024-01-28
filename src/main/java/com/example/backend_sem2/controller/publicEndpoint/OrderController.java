@@ -1,4 +1,4 @@
-package com.example.backend_sem2.controller.user;
+package com.example.backend_sem2.controller.publicEndpoint;
 
 import com.example.backend_sem2.dto.OrderRequest;
 import com.example.backend_sem2.dto.OrderResponseInfo.OrderResponse;
@@ -17,7 +17,7 @@ public class OrderController {
 
     /*  This endpoint have used "OrderResponse" as a DTO    */
     @PostMapping("/")
-    public OrderResponse createOrder(
+    public OrderResponse createOrderWithoutLogin (
             @RequestBody @Valid OrderRequest orderRequest
     ) {
         return orderService.createOrder(orderRequest);

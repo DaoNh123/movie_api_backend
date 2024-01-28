@@ -1,9 +1,11 @@
 package com.example.backend_sem2.mapper;
 
 import com.example.backend_sem2.dto.OrderRequest;
+import com.example.backend_sem2.dto.OrderRequestWithLoginAccount;
 import com.example.backend_sem2.dto.OrderResponseInfo.OrderResponse;
 import com.example.backend_sem2.entity.Order;
 import com.example.backend_sem2.entity.OrderDetail;
+import com.example.backend_sem2.entity.User;
 import com.example.backend_sem2.exception.CustomErrorException;
 import com.example.backend_sem2.repository.SeatRepo;
 import org.mapstruct.*;
@@ -27,6 +29,15 @@ public abstract class OrderMapper {
     @Mapping(source = "seatIdList", target = "orderDetailList", qualifiedByName = "seatIdListToOrderDetailList")
     @Mapping(source = "customerEmail", target = "customerEmail")
     public abstract Order toEntity(OrderRequest orderRequest);
+
+    @Mapping(target = "slot", expression = "java(referenceMapper.map(orderRequest.getSlotId(), com.example.backend_sem2.entity.Slot.class))")
+    @Mapping(source = "orderRequest.seatIdList", target = "orderDetailList", qualifiedByName = "seatIdListToOrderDetailList")
+    @Mapping(target = "user", expression = "java(user)")
+    @Mapping(target = "customerName", expression = "java(user.getFullName())")
+    @Mapping(target = "customerAddress", expression = "java(user.getCustomerAddress())")
+    @Mapping(target = "customerAge", expression = "java(user.getAge().longValue())")
+    @Mapping(target = "customerEmail", expression = "java(user.getEmail())")
+    public abstract Order toEntity(OrderRequestWithLoginAccount orderRequest, User user);
 
     @Named("seatIdListToOrderDetailList")
     public List<OrderDetail> seatIdListToOrderDetailList(List<Long> seatIdList){

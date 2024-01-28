@@ -95,7 +95,7 @@ public class BackendSem2Application {
                 .lastName("peter")
                 .username("patrick")
                 .password("$2a$12$7jbRuqKsnbOy8YFWvi51FueDXMVSvVQVCyOGdpSrmPPCvzasoyfRK")   // patrick
-                .email("")
+                .email("cocon321235@gmail.com")
                 .authoritySet(Set.of(user))
                 .enabled(true)
                 .build();
@@ -105,6 +105,7 @@ public class BackendSem2Application {
                 .username("admin")
                 .password("$2a$12$AICpFp5VM1Rm4iBxPA5y0uKRgoMHXl1RAXfOTJyW3VdXPhtB6ALW2")
                 .authoritySet(Set.of(admin))
+                .email("nhdao.it2.learn@gmail.com")
                 .enabled(true)
                 .build();
 

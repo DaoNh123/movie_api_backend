@@ -8,6 +8,7 @@ import com.example.backend_sem2.repository.CommentRepo;
 import com.example.backend_sem2.repository.UserRepo;
 import com.example.backend_sem2.security.JwtService;
 import com.example.backend_sem2.service.interfaceService.CommentService;
+import com.example.backend_sem2.utils.AuthorityUtility;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class CommentServiceImpl implements CommentService {
     private CommentRepo commentRepo;
     private CommentMapper commentMapper;
     private UserRepo userRepo;
-    private JwtService jwtService;
+    private AuthorityUtility authorityUtility;
 
     @Override
     public List<CommentResponse> getAllCommentByMovieName(String movieName) {
@@ -38,14 +39,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentResponse saveComment(HttpServletRequest request,  CommentRequest commentRequest) {
-        String authHeader = request.getHeader("Authorization");
-        String token = null;
-        String username = null;
-        // "Bearer" is used to marked what is the token, it can be customized.
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7);
-            username = jwtService.extractUsername(token);
-        }
+        String username = authorityUtility.extractUsernameFromRequest(request);
 
         Comment savedComment = commentRepo.save(commentMapper.toEntity(commentRequest));
         savedComment.setUser(userRepo.getUserByUsername(username));

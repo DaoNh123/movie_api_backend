@@ -9,6 +9,7 @@ import com.example.backend_sem2.entity.User;
 import com.example.backend_sem2.service.interfaceService.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,8 @@ public class UserServiceImpl implements UserService {
         User user = userRepo.getUserByUsername(username);
         System.out.println("userRepo.existsByUsername(username) = " + userRepo.existsByUsername(username));
         if(user == null){
-            throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Could not find user!");
+//            throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Could not find user!");
+            throw new BadCredentialsException("Bad credentials");
         }
         return new MyUserDetails(user);
     }

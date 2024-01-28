@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +37,8 @@ public class User extends BaseEntity {
     @Column(name = "customer_address")
     private String customerAddress;
     private boolean enabled = false;
+    private LocalDate dob;
+    private String avatarUrl;
     @JsonIgnore
     @Column(name = "verification_code")
     private String verificationCode;
@@ -56,11 +60,11 @@ public class User extends BaseEntity {
     })
     private List<Comment> commentList;
 
-//    @OneToMany(
-//            mappedBy = "user", fetch = FetchType.LAZY, cascade = {
-//            CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH
-//    })
-//    private List<Order> orderList;
+    @OneToMany(
+            mappedBy = "user", fetch = FetchType.LAZY, cascade = {
+            CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH
+    })
+    private List<Order> orderList;
 
     public void addAuthority(Authority authority){
         if(authoritySet == null){
@@ -69,4 +73,15 @@ public class User extends BaseEntity {
         authoritySet.add(authority);
     }
 
+    public Integer getAge(){
+        if (dob == null) return 0;
+        return Period.between(dob, LocalDate.now()).getYears();
+    }
+
+    public String getFullName(){
+        String fullName = "";
+        if(this.firstName != null) fullName += this.firstName;
+        if(this.lastName != null) fullName += this.lastName;
+        return fullName;
+    }
 }
