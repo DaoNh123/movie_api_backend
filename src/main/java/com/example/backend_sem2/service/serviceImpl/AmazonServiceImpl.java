@@ -57,6 +57,12 @@ public class AmazonServiceImpl implements AmazonService {
         return String.join("/", awsUrl, S3AmazonUtils.putS3Object(s3Client, bucketName, rootFolder, convertMultiPartToFile(multipartFile)));
     }
 
+    public String handleImageUploading (String rootFolder, MultipartFile multipartFile) throws IOException {
+        System.out.println("bucketName = " + bucketName);
+
+        return String.join("/", awsUrl, S3AmazonUtils.putS3Object(s3Client, bucketName, rootFolder, convertMultiPartToFile(multipartFile)));
+    }
+
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
         File convFile = new File(file.getOriginalFilename());
         FileOutputStream fos = new FileOutputStream(convFile);

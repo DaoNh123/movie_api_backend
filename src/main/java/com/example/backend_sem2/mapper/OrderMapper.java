@@ -34,7 +34,6 @@ public abstract class OrderMapper {
     @Mapping(source = "orderRequest.seatIdList", target = "orderDetailList", qualifiedByName = "seatIdListToOrderDetailList")
     @Mapping(target = "user", expression = "java(user)")
     @Mapping(target = "customerName", expression = "java(user.getFullName())")
-    @Mapping(target = "customerAddress", expression = "java(user.getCustomerAddress())")
     @Mapping(target = "customerAge", expression = "java(user.getAge().longValue())")
     @Mapping(target = "customerEmail", expression = "java(user.getEmail())")
     public abstract Order toEntity(OrderRequestWithLoginAccount orderRequest, User user);

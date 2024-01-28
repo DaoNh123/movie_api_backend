@@ -1,5 +1,6 @@
 package com.example.backend_sem2.dto;
 
+import com.example.backend_sem2.dto.dtoForLogin.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

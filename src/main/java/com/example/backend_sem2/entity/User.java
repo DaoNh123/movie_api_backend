@@ -1,11 +1,9 @@
 package com.example.backend_sem2.entity;
 
+import com.example.backend_sem2.enums.GenderEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
@@ -16,7 +14,7 @@ import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
-//@Data
+@Data
 @Getter
 @Setter
 @Entity
@@ -30,18 +28,19 @@ public class User extends BaseEntity {
     private String lastName;
     private String username;
     private String password;
-    private Character gender;
+    private GenderEnum gender;
     private String email;
-    @Column(name = "phone_number")
-    private String phoneNumber;
-    @Column(name = "customer_address")
-    private String customerAddress;
-    private boolean enabled = false;
     private LocalDate dob;
     private String avatarUrl;
-    @JsonIgnore
+
+    private boolean enabled = false;
     @Column(name = "verification_code")
     private String verificationCode;
+
+//    @Column(name = "phone_number")            // remove
+//    private String phoneNumber;
+//    @Column(name = "customer_address")        // remove
+//    private String customerAddress;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH

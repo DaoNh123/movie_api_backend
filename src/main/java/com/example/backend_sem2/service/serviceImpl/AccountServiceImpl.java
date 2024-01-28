@@ -1,8 +1,9 @@
 package com.example.backend_sem2.service.serviceImpl;
 
 import com.example.backend_sem2.dto.CreateUserRequest;
-import com.example.backend_sem2.dto.JwtResponse;
-import com.example.backend_sem2.dto.LoginRequest;
+import com.example.backend_sem2.dto.dtoForLogin.JwtResponse;
+import com.example.backend_sem2.dto.dtoForLogin.LoginRequest;
+import com.example.backend_sem2.dto.dtoForLogin.UserDto;
 import com.example.backend_sem2.enums.ActionTypeEnum;
 import com.example.backend_sem2.exception.CustomErrorException;
 import com.example.backend_sem2.mapper.UserMapper;
@@ -13,6 +14,7 @@ import com.example.backend_sem2.repository.UserRepo;
 import com.example.backend_sem2.security.*;
 import com.example.backend_sem2.entity.User;
 import com.example.backend_sem2.service.interfaceService.AccountService;
+import com.example.backend_sem2.service.interfaceService.AmazonService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,7 +22,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @Service
@@ -33,10 +37,32 @@ public class AccountServiceImpl implements AccountService {
     private JwtService jwtService;
     private AuthorityRepo authorityRepo;
     private MessageProducer messageProducer;
+    private AmazonService amazonService;
 
     public String registerUser(CreateUserRequest createUserRequest) {
         User user = userMapper.toEntity(createUserRequest);
 
+        saveUserAndSendVerificationEmail(user);
+        return "Register successful!";
+    }
+
+    @Override
+    public String registerUser2(MultipartFile avatar, CreateUserRequest createUserRequest) {
+        User user = userMapper.toEntity(createUserRequest);
+
+        if(avatar != null){
+            try {
+                user.setAvatarUrl(amazonService.handleImageUploading("user_avatar", avatar));
+            } catch (IOException e) {
+                throw new CustomErrorException(HttpStatus.BAD_REQUEST, "An error have occurred when uploading avatar!");
+            }
+        }
+
+        saveUserAndSendVerificationEmail(user);
+        return "Register successful!";
+    }
+
+    private void saveUserAndSendVerificationEmail(User user) {
         if (userRepo.existsByUsername(user.getUsername())) {
             throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Username has been existed");
         }
@@ -58,31 +84,11 @@ public class AccountServiceImpl implements AccountService {
 
         System.out.println(user);
         userRepo.save(user);
-
-//        sendVerificationEmail(user.getEmail(), user.getVerificationCode());
-        return "Register successful!";
     }
 
     private String createVerificationCode() {
         return UUID.randomUUID().toString();
     }
-
-    /*  *** ==>> Using RabbitMQ to solve send Email problem ***     */
-//    private void sendVerificationEmail (String email, String verificationCode)
-//    {
-//        String subject = "Active your account at WebBanSach";
-//
-//        String verifyLink = "http://localhost:3000/verify/" + email + "/" + verificationCode;
-//        String text = "Vui lòng sử dụng mã sau để kich hoạt cho tài khoản <" + email + ">:<br/><h1>"
-//                + verificationCode + "</h1>";
-//        text += "<a href=\"[[verifyLink]]\">Verify your account</a>";
-//        text = text.replace("[[verifyLink]]", verifyLink);
-//
-//        System.out.println("***");
-//        System.out.println(text);
-//        String fromAddress = System.getenv("EMAIL");
-//        emailService.sendMessage(fromAddress, email, subject, text);
-//    }
 
     public String verify(String email, String verificationCode) {
         User user = userRepo.findByEmail(email);
@@ -118,7 +124,9 @@ public class AccountServiceImpl implements AccountService {
                 final String jwt = jwtService.generateToken(loginRequest.getUsername());
                 System.out.println("jwtService.extractUsername(jwt) = " + jwtService.extractUsername(jwt));
 
-                return new JwtResponse(jwt);
+                UserDto userDto = userMapper.toUserDto(userRepo.findByUsername(loginRequest.getUsername()));
+
+                return new JwtResponse(jwt, userDto);
             }
         } catch (Exception ex) {
             ex.printStackTrace();

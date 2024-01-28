@@ -1,15 +1,13 @@
 package com.example.backend_sem2.controller.publicEndpoint;
 
 import com.example.backend_sem2.dto.CreateUserRequest;
-import com.example.backend_sem2.dto.JwtResponse;
-import com.example.backend_sem2.dto.LoginRequest;
-import com.example.backend_sem2.security.JwtService;
+import com.example.backend_sem2.dto.dtoForLogin.JwtResponse;
+import com.example.backend_sem2.dto.dtoForLogin.LoginRequest;
 import com.example.backend_sem2.service.interfaceService.AccountService;
-import com.example.backend_sem2.service.interfaceService.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -20,6 +18,14 @@ public class AccountController {
     @PostMapping("/register")
     public String registerUser(@Validated @RequestBody CreateUserRequest createUserRequest){
         return accountService.registerUser(createUserRequest);
+    }
+
+    @PostMapping("/register2")
+    public String registerUser2(
+            @RequestPart("avatar") MultipartFile avatar,
+            @RequestPart("createMovieRequest") @Validated CreateUserRequest createUserRequest
+    ){
+        return accountService.registerUser2(avatar, createUserRequest);
     }
 
     @GetMapping("/verify")

@@ -1,5 +1,7 @@
 package com.example.backend_sem2.dto;
 
+import com.example.backend_sem2.enums.GenderEnum;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -23,8 +25,11 @@ public class CreateUserRequest {
     @NotBlank
     @Length(min = 8, message = "Password must be at least 8 characters")
     private String password;
-    private Character gender;
-    private LocalDate dob;      // new
+    private GenderEnum gender;
     @NotNull(message = "User email can't be null")
     private String email;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate dob;      // new
+
+
 }

@@ -1,11 +1,12 @@
-package com.example.backend_sem2.dto;
+package com.example.backend_sem2.dto.dtoForLogin;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
+import com.example.backend_sem2.enums.GenderEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -15,9 +16,8 @@ public class UserDto {
     private String firstName;
     private String lastName;
     private String username;
-    private Character gender;
+    private GenderEnum gender;
     private String email;
-    private String phoneNumber;
-    private String customerAddress;
-    private String verificationCode;
+    private LocalDate dob;
+    private String avatarUrl;
 }
