@@ -4,20 +4,12 @@ import com.example.backend_sem2.api.HttpService;
 import com.example.backend_sem2.api.KinoCheckApiService;
 import com.example.backend_sem2.api.TheMovieDBApiService;
 import com.example.backend_sem2.entity.*;
-import com.example.backend_sem2.enums.MovieBookingStatusEnum;
-import com.example.backend_sem2.enums.MovieShowingStatusEnum;
 import com.example.backend_sem2.mapper.MovieMapper;
 import com.example.backend_sem2.model.theMovieDB.ConfigurationTheMovieDB;
 import com.example.backend_sem2.model.theMovieDB.GenreResponse;
 import com.example.backend_sem2.model.theMovieDB.MovieInApi;
-import com.example.backend_sem2.repository.CommentRepo;
-import com.example.backend_sem2.repository.MovieRepo;
-import com.example.backend_sem2.repository.SlotRepo;
-import com.example.backend_sem2.repository.TheaterRoomRepo;
-import com.example.backend_sem2.repository.AuthorityRepo;
-import com.example.backend_sem2.repository.UserRepo;
-import com.example.backend_sem2.entity.Authority;
-import com.example.backend_sem2.entity.User;
+import com.example.backend_sem2.model.theMovieDB.MovieWithIdRating;
+import com.example.backend_sem2.repository.*;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,12 +20,14 @@ import org.springframework.context.annotation.Bean;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootApplication
 @AllArgsConstructor
-//@RequiredArgsConstructor
 public class BackendSem2Application {
 
     private CommentRepo commentRepo;
@@ -74,13 +68,17 @@ public class BackendSem2Application {
 
             generateSlotsForMovieOne(10L);
 
-            testUser();
+            getIdInTheMovieDBUsingImdbId("tt9682428");
         };
     }
 
-    private void testUser() {
-        User user = userRepo.getUserByUsername("admin");
+    private void getIdInTheMovieDBUsingImdbId(String imdbId) {
+        Long theMovieDBIdOfMovie = theMovieDBApiService.getTheMovieDBIdByImdbId(imdbId);
+        System.out.println("theMovieDBIdOfMovie = " + theMovieDBIdOfMovie);
+        MovieWithIdRating movieWithIdRating = theMovieDBApiService.getMovieWithRatingUsingTheMovieDBId(theMovieDBIdOfMovie);
+        System.out.println("movieWithIdRating = " + movieWithIdRating);
     }
+
 
     private void generateUsersAndAuthorities() {
         Authority user = Authority.builder()
@@ -135,26 +133,26 @@ public class BackendSem2Application {
         }
     }
 
-    private void testKinoCheck() {
-        System.out.println(kinoCheckApiService.getYoutubeIdForMovieTrailerByIMDBId("tt15398776"));
-        ;
-    }
+//    private void testKinoCheck() {
+//        System.out.println(kinoCheckApiService.getYoutubeIdForMovieTrailerByIMDBId("tt15398776"));
+//        ;
+//    }
 
-    private void testUpdateStatusMovie() {
-        ZoneId zoneId = ZoneId.of("UTC");
-        ZonedDateTime startOfToday = LocalDate.now().atStartOfDay().atZone(zoneId);
-        ZonedDateTime threeDaysAfterToday = LocalDate.now().atStartOfDay().atZone(zoneId);
-
-        /*  If today is between "movie.openingDay" - 3 days and "movie.closingDay" ==> ALLOWED */
-        movieRepo.updateAllowedBookingStatus(startOfToday, threeDaysAfterToday, MovieBookingStatusEnum.ALLOWED);
-        /*  If today is after "movie.closingDay" ==> NOT_ALLOWED    */
-        movieRepo.updateNotAllowedBookingStatus(startOfToday, MovieBookingStatusEnum.NOT_ALLOWED);
-
-        /*  If today is between "movie.openingTime" and "movie.closingTime" ==> NOW_SHOWING */
-        movieRepo.updateNowShowingStatus(startOfToday, MovieShowingStatusEnum.NOW_SHOWING);
-        /*  If today is after "movie.closingTime" ==> ENDED */
-        movieRepo.updateEndedShowingStatus(startOfToday, MovieShowingStatusEnum.ENDED);
-    }
+//    private void testUpdateStatusMovie() {
+//        ZoneId zoneId = ZoneId.of("UTC");
+//        ZonedDateTime startOfToday = LocalDate.now().atStartOfDay().atZone(zoneId);
+//        ZonedDateTime threeDaysAfterToday = LocalDate.now().atStartOfDay().atZone(zoneId);
+//
+//        /*  If today is between "movie.openingDay" - 3 days and "movie.closingDay" ==> ALLOWED */
+//        movieRepo.updateAllowedBookingStatus(startOfToday, threeDaysAfterToday, MovieBookingStatusEnum.ALLOWED);
+//        /*  If today is after "movie.closingDay" ==> NOT_ALLOWED    */
+//        movieRepo.updateNotAllowedBookingStatus(startOfToday, MovieBookingStatusEnum.NOT_ALLOWED);
+//
+//        /*  If today is between "movie.openingTime" and "movie.closingTime" ==> NOW_SHOWING */
+//        movieRepo.updateNowShowingStatus(startOfToday, MovieShowingStatusEnum.NOW_SHOWING);
+//        /*  If today is after "movie.closingTime" ==> ENDED */
+//        movieRepo.updateEndedShowingStatus(startOfToday, MovieShowingStatusEnum.ENDED);
+//    }
 
     @NotNull
     private List<Category> getCategoriesFromGenre() {
@@ -278,7 +276,6 @@ public class BackendSem2Application {
 
             orders.add(Order.builder()
                     .customerName("Customer " + i)
-                    .customerAddress("Address of customer " + i)
                     .customerAge(random.nextLong(50) + 18)
                     .orderDetailList(orderDetailsInOrder)
                     .slot(slots.get(random.nextInt(slots.size())))

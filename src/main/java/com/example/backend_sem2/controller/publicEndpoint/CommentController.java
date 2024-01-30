@@ -21,25 +21,13 @@ public class CommentController {
     private CommentService commentService;
     private JwtService jwtService;
 
-//    @PostMapping({"", "/"})
-//    public CommentResponse saveComment(
-//            HttpServletRequest request,
-//           @Valid @RequestBody CommentRequest commentRequest
-//    ){
-//        String authHeader = request.getHeader("Authorization");
-//        String token = null;
-//        String username = null;
-//        // "Bearer" is used to marked what is the token, it can be customized.
-//        if(authHeader != null && authHeader.startsWith("Bearer ")){
-//            token = authHeader.substring(7);
-//            username = jwtService.extractUsername(token);
-//        }
-//        System.out.println("inner POST method");
-//        System.out.println("username = " + username);
-//
-//
-//        return commentService.saveComment(commentRequest);
-//    }
+    @PostMapping({"", "/"})
+    public CommentResponse saveComment(
+            @Valid @RequestBody CommentRequest commentRequest
+    ){
+        return commentService.saveComment(commentRequest);
+    }
+
 
 
 //    @PutMapping("/update/{id}")

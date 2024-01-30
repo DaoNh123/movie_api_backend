@@ -11,6 +11,7 @@ public interface CommentService {
     List<CommentResponse> getAllCommentByMovieName(String movieName);
 
     CommentResponse saveComment(HttpServletRequest request, CommentRequest commentRequest);
+    CommentResponse saveComment(CommentRequest commentRequest);
 
     CommentResponse updateComment(CommentRequest commentRequest, Long id);
 

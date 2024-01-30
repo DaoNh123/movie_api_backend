@@ -15,13 +15,15 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", uses = {ReferenceMapper.class, SlotMapper.class, OrderDetailMapper.class})
+@Mapper(componentModel = "spring", uses = {ReferenceMapper.class, SlotMapper.class, OrderDetailMapper.class, UserMapper.class})
 public abstract class OrderMapper {
     @Autowired
     private SeatRepo seatRepo;
     @Autowired
     ReferenceMapper referenceMapper;
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "user", target = "userDto")
     public abstract OrderResponse toDto (Order order);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -30,12 +32,16 @@ public abstract class OrderMapper {
     @Mapping(source = "customerEmail", target = "customerEmail")
     public abstract Order toEntity(OrderRequest orderRequest);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "slot", expression = "java(referenceMapper.map(orderRequest.getSlotId(), com.example.backend_sem2.entity.Slot.class))")
     @Mapping(source = "orderRequest.seatIdList", target = "orderDetailList", qualifiedByName = "seatIdListToOrderDetailList")
     @Mapping(target = "user", expression = "java(user)")
     @Mapping(target = "customerName", expression = "java(user.getFullName())")
     @Mapping(target = "customerAge", expression = "java(user.getAge().longValue())")
     @Mapping(target = "customerEmail", expression = "java(user.getEmail())")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     public abstract Order toEntity(OrderRequestWithLoginAccount orderRequest, User user);
 
     @Named("seatIdListToOrderDetailList")

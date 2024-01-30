@@ -18,14 +18,12 @@ import java.util.List;
 public class Order extends BaseEntity {
     @Column(name = "customer_name")
     private String customerName;
-    @Column(name = "customer_address")
-    private String customerAddress;
     @Column(name = "customer_age")
     private Long customerAge;
     @Column(name = "customer_email")
     private String customerEmail;
     @ManyToOne(
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.DETACH, CascadeType.MERGE,
                     CascadeType.PERSIST, CascadeType.REFRESH
@@ -34,7 +32,7 @@ public class Order extends BaseEntity {
     private Slot slot;
 
     @OneToMany(
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             mappedBy = "order",
             cascade = {
                     CascadeType.DETACH, CascadeType.MERGE,
@@ -55,7 +53,6 @@ public class Order extends BaseEntity {
     protected Order(final OrderBuilder<?, ?> b) {
         super(b);
         this.customerName = b.customerName;
-        this.customerAddress = b.customerAddress;
         this.customerAge = b.customerAge;
         this.slot = b.slot;
         this.orderDetailList = b.orderDetailList;
@@ -68,21 +65,19 @@ public class Order extends BaseEntity {
     }
 
     @PrePersist
+    @PreUpdate
     public void saveInChild() {
         if (this.orderDetailList != null) {
             orderDetailList.stream()
                     .forEach(orderDetail -> orderDetail.setOrder(this));
         }
-//        if(this.slot != null){
-//            this.slot.addOrder(this);
-//        }
+
     }
 
     @Override
     public String toString() {
         return "Order{" +
                 "customerName='" + customerName + '\'' +
-                ", customerAddress='" + customerAddress + '\'' +
                 ", customerAge=" + customerAge +
                 '}';
     }

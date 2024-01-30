@@ -8,13 +8,14 @@ import com.example.backend_sem2.model.theMovieDB.MovieWithIdRating;
 import java.util.List;
 
 public interface TheMovieDBApiService {
+    Long getTheMovieDBIdByImdbId(String imdbId);
 
-    public String getImdbIdByTheMovieDBId(Long theMovieDbId);
+    String getImdbIdByTheMovieDBId(Long theMovieDbId);
 
-    public GenreResponse getGenreOfMovieByTheMovieDB();
+    GenreResponse getGenreOfMovieByTheMovieDB();
 
-    public ConfigurationTheMovieDB getConfigurationInTheMovieDB();
+    ConfigurationTheMovieDB getConfigurationInTheMovieDB();
 
-    public MovieWithIdRating getMovieWithRatingUsingTheMovieDBId(Long theMovieDBId);
-    public List<MovieInApi> getTrendingMovieInTheMovieDBApiWithNPage (Long numberOfPage);
+    MovieWithIdRating getMovieWithRatingUsingTheMovieDBId(Long theMovieDBId);
+    List<MovieInApi> getTrendingMovieInTheMovieDBApiWithNPage (Long numberOfPage);
 }

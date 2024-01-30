@@ -16,8 +16,7 @@ import java.util.List;
 public class OrderRequest {
     @NotBlank(message = "Customer name can't be null")
     private String customerName;
-    @NotBlank(message = "Customer address can't be null")
-    private String customerAddress;
+
     @NotNull(message = "Customer age can't be null")
     private Long customerAge;
 //    @Email(message = "Customer Email doesn't have right format!")   // "@Email" doesn't check "null"

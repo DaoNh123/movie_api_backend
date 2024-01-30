@@ -1,9 +1,11 @@
 package com.example.backend_sem2.entity;
 
 import com.example.backend_sem2.enums.GenderEnum;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
@@ -14,7 +16,7 @@ import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+//@Data
 @Getter
 @Setter
 @Entity
@@ -28,6 +30,7 @@ public class User extends BaseEntity {
     private String lastName;
     private String username;
     private String password;
+    @Enumerated(EnumType.STRING)
     private GenderEnum gender;
     private String email;
     private LocalDate dob;

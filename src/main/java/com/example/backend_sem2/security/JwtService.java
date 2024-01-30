@@ -28,13 +28,13 @@ public class JwtService {
     }
 
     /*  We can think about create new Token for Client each time Client using old Token to get data */
-    private String createToken(Map<String, Object> claims, String username) {
+    public String createToken(Map<String, Object> claims, String username) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                // expire after 30 minutes from created
-                .setExpiration(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
+                // expire after 2 hours from created
+                .setExpiration(new Date(System.currentTimeMillis() + 2 * 60 * 60 * 1000))
                 .signWith(SignatureAlgorithm.HS256, getSignKey())
                 .compact();
     }

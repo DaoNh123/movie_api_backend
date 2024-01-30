@@ -1,6 +1,8 @@
 package com.example.backend_sem2.api;
 
 import com.example.backend_sem2.model.theMovieDB.*;
+import com.example.backend_sem2.model.theMovieDB.externalIdForMovie.MovieIdContainer;
+import com.example.backend_sem2.model.theMovieDB.findMovieByIMDBId.MovieReponseContainerIMDBId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +21,22 @@ public class TheMovieDBApiServiceImpl implements TheMovieDBApiService {
         this.httpService = httpService;
     }
 
+    public Long getTheMovieDBIdByImdbId(String imdbId) {
+//        return httpService.getResponseEntity(theMovieDbBaseUrl, "/find/" + imdbId + "?external_source=imdb_id", MovieReponseContainerIMDBId.class,
+//                new HashMap<>(), authorizationKeyInTheMovieDB).getMovieResults().get(0).getId();
+
+        return httpService.getResponseEntity(theMovieDbBaseUrl, "/movie/" + imdbId + "/external_ids",
+                MovieIdContainer.class,
+                new HashMap<>(), authorizationKeyInTheMovieDB).getId();
+    }
+
+    /*  OK  */
     public String getImdbIdByTheMovieDBId(Long theMovieDbId) {
-        return httpService.getResponseEntity(theMovieDbBaseUrl, "/movie/" + theMovieDbId, ImdbIdObject.class,
+//        return httpService.getResponseEntity(theMovieDbBaseUrl, "/movie/" + theMovieDbId, ImdbIdObject.class,
+//                new HashMap<>(), authorizationKeyInTheMovieDB).getImdbId();
+    /*  "https://api.themoviedb.org/3/movie/{movie_id}/external_ids"    */
+        return httpService.getResponseEntity(theMovieDbBaseUrl, "/movie/" + theMovieDbId + "/external_ids",
+                MovieIdContainer.class,
                 new HashMap<>(), authorizationKeyInTheMovieDB).getImdbId();
     }
 

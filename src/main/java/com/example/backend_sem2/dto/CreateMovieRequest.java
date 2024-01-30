@@ -24,10 +24,9 @@ import java.util.List;
 public class CreateMovieRequest {
 //    @NotBlank
     private String movieName;
-//    private Double imdbRatings;
+    private String imdbId;
     @JsonIgnore
     private String posterUrl;
-//    private String director;
     private String description;
     private Long duration;          // calculate in seconds
     private String language;

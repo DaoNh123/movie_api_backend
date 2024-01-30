@@ -23,7 +23,7 @@ public class AccountController {
     @PostMapping("/register2")
     public String registerUser2(
             @RequestPart("avatar") MultipartFile avatar,
-            @RequestPart("createMovieRequest") @Validated CreateUserRequest createUserRequest
+            @RequestPart("createUserRequest") @Validated CreateUserRequest createUserRequest
     ){
         return accountService.registerUser2(avatar, createUserRequest);
     }

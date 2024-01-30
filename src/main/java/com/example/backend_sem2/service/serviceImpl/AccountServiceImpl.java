@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -121,7 +122,17 @@ public class AccountServiceImpl implements AccountService {
             System.out.println("authentication = " + authentication);
 
             if (authentication.isAuthenticated()) {
-                final String jwt = jwtService.generateToken(loginRequest.getUsername());
+                boolean isAdmin = new MyUserDetails(userRepo.getUserByUsername(loginRequest.getUsername()))
+                        .getAuthorities().stream()
+                        .anyMatch(a -> a.getAuthority().equals("ADMIN"));
+
+//                final String jwt = jwtService.generateToken(loginRequest.getUsername());
+                final String jwt = jwtService.createToken(
+                        Map.ofEntries(
+                                Map.entry("isAdmin", isAdmin)
+                        )
+                        ,loginRequest.getUsername()
+                );
                 System.out.println("jwtService.extractUsername(jwt) = " + jwtService.extractUsername(jwt));
 
                 UserDto userDto = userMapper.toUserDto(userRepo.findByUsername(loginRequest.getUsername()));

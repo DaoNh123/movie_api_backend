@@ -30,6 +30,4 @@ public class CreateUserRequest {
     private String email;
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dob;      // new
-
-
 }

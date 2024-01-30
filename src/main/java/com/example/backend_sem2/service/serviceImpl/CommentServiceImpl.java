@@ -34,9 +34,16 @@ public class CommentServiceImpl implements CommentService {
     public List<CommentResponse> getAllCommentByMovieId(Long movieId) {
         return commentRepo.getCommentByMovie_Id(movieId)
                 .stream().map(movie -> commentMapper.toDto(movie)).collect(Collectors.toList());
-
     }
 
+    /*  Save comment without login  */
+    @Override
+    public CommentResponse saveComment(CommentRequest commentRequest) {
+        Comment savedComment = commentRepo.save(commentMapper.toEntity(commentRequest));
+        return commentMapper.toDto(savedComment);
+    }
+
+    /*  Save comment with logged account    */
     @Override
     public CommentResponse saveComment(HttpServletRequest request,  CommentRequest commentRequest) {
         String username = authorityUtility.extractUsernameFromRequest(request);

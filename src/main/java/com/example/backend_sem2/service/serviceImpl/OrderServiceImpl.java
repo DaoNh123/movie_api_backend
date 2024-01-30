@@ -73,6 +73,7 @@ public class OrderServiceImpl implements OrderService {
         validateOrder(loginUser.getAge().longValue(), orderRequestWithLoginAccount.getSlotId(), orderRequestWithLoginAccount.getSeatIdList());
 
         Order order = orderMapper.toEntity(orderRequestWithLoginAccount, loginUser);
+//        order.saveInChild();
 
         return handleCreateOrderProcessAfterValidate(order);
     }
