@@ -22,25 +22,11 @@ public class AdviceHandler {
         HttpStatus status = customErrorException.getStatus();
 
         ErrorResponse errorResponse = new ErrorResponse(status,
-                customErrorException.getMessage() + "___*___CustomErrorException1");
+                customErrorException.getMessage());
 
-        ResponseEntity<ErrorResponse> responseEntity = new ResponseEntity<>(errorResponse, status);
-        return responseEntity;
+        return new ResponseEntity<>(errorResponse, status);
     }
 
-    /*  This method throw "NoResourceFoundException" even if it return a legal Map */
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public Map<String, String> catchMethodArgumentNotValidException(
-//            MethodArgumentNotValidException  ex
-//    ) {
-//        Map<String, String> errors = new HashMap<>();
-//        ex.getBindingResult().getAllErrors().forEach((error) -> {
-//            String fieldName = ((FieldError) error).getField();
-//            String errorMessage = error.getDefaultMessage();
-//            errors.put(fieldName, errorMessage);
-//        });
-//        return errors;
-//    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> catchMethodArgumentNotValidException(
@@ -55,21 +41,13 @@ public class AdviceHandler {
         return ResponseEntity.badRequest().body(new ErrorResponse(HttpStatus.BAD_REQUEST, "Multiple error!", null, errors));
     }
 
-//    @ExceptionHandler(NoResourceFoundException.class)
-//    public Map<String, String> catchNoResourceFoundException(
-//            NoResourceFoundException  ex
-//    ) {
-//        Map<String, String> errors = new HashMap<>();
-//        ex.
-//        return errors;
-//    }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErrorResponse> catchOtherException(NoResourceFoundException ex) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         System.out.println(ex.getClass() + "***");
         ErrorResponse errorResponse = new ErrorResponse(status,
-                ex.getMessage() + "___*___NoResourceFoundException__***3");
+                ex.getMessage());
         System.out.println(ex.getClass() + "***");
 
 
@@ -88,7 +66,7 @@ public class AdviceHandler {
         System.out.println(ex.getMessage());
         ex.printStackTrace();
         ErrorResponse errorResponse = new ErrorResponse(status,
-                ex.getMessage() + "___*___Exception2");
+                ex.getMessage());
 
 
         return new ResponseEntity<>(errorResponse, status);

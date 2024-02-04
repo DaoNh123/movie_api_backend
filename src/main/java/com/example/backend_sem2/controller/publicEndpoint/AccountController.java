@@ -15,10 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class AccountController {
     private AccountService accountService;
 
-    @PostMapping("/register")
-    public String registerUser(@Validated @RequestBody CreateUserRequest createUserRequest){
-        return accountService.registerUser(createUserRequest);
-    }
+//    @PostMapping("/register")
+//    public String registerUser(@Validated @RequestBody CreateUserRequest createUserRequest){
+//        return accountService.registerUser(createUserRequest);
+//    }
 
     @PostMapping("/register2")
     public String registerUser2(

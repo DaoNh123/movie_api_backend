@@ -19,5 +19,6 @@ public class UserDto {
     private GenderEnum gender;
     private String email;
     private LocalDate dob;
+    private String verificationCode;
     private String avatarUrl;
 }
