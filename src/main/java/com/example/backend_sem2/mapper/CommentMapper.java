@@ -3,8 +3,6 @@ package com.example.backend_sem2.mapper;
 import com.example.backend_sem2.dto.CommentRequest;
 import com.example.backend_sem2.dto.CommentResponse;
 import com.example.backend_sem2.entity.Comment;
-import com.example.backend_sem2.entity.Movie;
-import lombok.AllArgsConstructor;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

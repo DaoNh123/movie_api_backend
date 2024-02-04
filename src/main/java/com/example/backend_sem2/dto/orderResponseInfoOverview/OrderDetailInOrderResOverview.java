@@ -1,5 +1,6 @@
-package com.example.backend_sem2.dto.OrderResponseInfo;
+package com.example.backend_sem2.dto.orderResponseInfoOverview;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,9 +10,9 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @Data
-public class SeatResponseInOrderRes {
+public class OrderDetailInOrderResOverview {
+    @JsonProperty("orderDetailId")
     private Long id;
     private String seatName;
-    private String seatClass;
     private Double price;
 }

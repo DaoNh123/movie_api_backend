@@ -1,4 +1,4 @@
-package com.example.backend_sem2.dto.DtoForMovie;
+package com.example.backend_sem2.dto.dtoForMovie;
 
 import com.example.backend_sem2.dto.CommentResponse;
 import com.example.backend_sem2.enums.MovieLabelEnum;

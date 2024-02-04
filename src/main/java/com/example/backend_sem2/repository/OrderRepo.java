@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface OrderRepo extends JpaRepository<Order, Long> {
     @Query(value = "FROM Order o JOIN FETCH o.orderDetailList odl " +
@@ -19,4 +21,8 @@ public interface OrderRepo extends JpaRepository<Order, Long> {
             "JOIN FETCH sl.movie m JOIN FETCH sl.theaterRoom tr " +
             "WHERE o.id = :id")
     Order getOrderCustomById(Long id);
+
+    @Query(value = "FROM Order o LEFT JOIN FETCH o.user u " +
+            "WHERE u.username = :username")
+    List<Order> getOrderByUser_Username(String username);
 }

@@ -2,7 +2,8 @@ package com.example.backend_sem2.mapper;
 
 import com.example.backend_sem2.dto.OrderRequest;
 import com.example.backend_sem2.dto.OrderRequestWithLoginAccount;
-import com.example.backend_sem2.dto.OrderResponseInfo.OrderResponse;
+import com.example.backend_sem2.dto.orderResponseInfoOverview.OrderResponseOverview;
+import com.example.backend_sem2.dto.orderResponseInfo_InDetail.OrderResponse;
 import com.example.backend_sem2.entity.Order;
 import com.example.backend_sem2.entity.OrderDetail;
 import com.example.backend_sem2.entity.User;
@@ -55,4 +56,11 @@ public abstract class OrderMapper {
                 ).collect(Collectors.toList());
         return orderDetailList;
     }
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "slot", target = "slot")
+    @Mapping(source = "orderDetailList", target = "orderDetailList")
+    public abstract OrderResponseOverview toDtoOverview(Order order);
+
 }

@@ -1,6 +1,7 @@
 package com.example.backend_sem2.mapper;
 
-import com.example.backend_sem2.dto.OrderResponseInfo.OrderDetailInOrderRes;
+import com.example.backend_sem2.dto.orderResponseInfoOverview.OrderDetailInOrderResOverview;
+import com.example.backend_sem2.dto.orderResponseInfo_InDetail.OrderDetailInOrderRes;
 import com.example.backend_sem2.entity.OrderDetail;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
@@ -15,4 +16,8 @@ public interface OrderDetailMapper {
     OrderDetailInOrderRes toOrderDetailInOrderRes (OrderDetail orderDetail);
 
     OrderDetail toDto(Long id);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "seatName", expression = "java(orderDetail.getSeat().getSeatName())")
+    OrderDetailInOrderResOverview toDtoOverview(OrderDetail orderDetail);
 }

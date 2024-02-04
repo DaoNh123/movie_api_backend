@@ -9,6 +9,7 @@ import com.example.backend_sem2.model.theMovieDB.ConfigurationTheMovieDB;
 import com.example.backend_sem2.model.theMovieDB.GenreResponse;
 import com.example.backend_sem2.model.theMovieDB.MovieInApi;
 import com.example.backend_sem2.model.theMovieDB.MovieWithIdRating;
+import com.example.backend_sem2.model.theMovieDB.findMovieByTheMovieDBId.MovieByTheMovieDBId;
 import com.example.backend_sem2.repository.*;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +69,7 @@ public class BackendSem2Application {
 
             generateSlotsForMovieOne(10L);
 
-            getIdInTheMovieDBUsingImdbId("tt9682428");
+//            getIdInTheMovieDBUsingImdbId("tt9682428");
         };
     }
 
@@ -77,6 +78,8 @@ public class BackendSem2Application {
         System.out.println("theMovieDBIdOfMovie = " + theMovieDBIdOfMovie);
         MovieWithIdRating movieWithIdRating = theMovieDBApiService.getMovieWithRatingUsingTheMovieDBId(theMovieDBIdOfMovie);
         System.out.println("movieWithIdRating = " + movieWithIdRating);
+        MovieByTheMovieDBId movieByTheMovieDBId = theMovieDBApiService.findMovieByTheMovieDBId(theMovieDBIdOfMovie);
+        System.out.println("movieByTheMovieDBId = " + movieByTheMovieDBId);
     }
 
 
@@ -132,27 +135,6 @@ public class BackendSem2Application {
             movieRepo.save(movie);
         }
     }
-
-//    private void testKinoCheck() {
-//        System.out.println(kinoCheckApiService.getYoutubeIdForMovieTrailerByIMDBId("tt15398776"));
-//        ;
-//    }
-
-//    private void testUpdateStatusMovie() {
-//        ZoneId zoneId = ZoneId.of("UTC");
-//        ZonedDateTime startOfToday = LocalDate.now().atStartOfDay().atZone(zoneId);
-//        ZonedDateTime threeDaysAfterToday = LocalDate.now().atStartOfDay().atZone(zoneId);
-//
-//        /*  If today is between "movie.openingDay" - 3 days and "movie.closingDay" ==> ALLOWED */
-//        movieRepo.updateAllowedBookingStatus(startOfToday, threeDaysAfterToday, MovieBookingStatusEnum.ALLOWED);
-//        /*  If today is after "movie.closingDay" ==> NOT_ALLOWED    */
-//        movieRepo.updateNotAllowedBookingStatus(startOfToday, MovieBookingStatusEnum.NOT_ALLOWED);
-//
-//        /*  If today is between "movie.openingTime" and "movie.closingTime" ==> NOW_SHOWING */
-//        movieRepo.updateNowShowingStatus(startOfToday, MovieShowingStatusEnum.NOW_SHOWING);
-//        /*  If today is after "movie.closingTime" ==> ENDED */
-//        movieRepo.updateEndedShowingStatus(startOfToday, MovieShowingStatusEnum.ENDED);
-//    }
 
     @NotNull
     private List<Category> getCategoriesFromGenre() {
@@ -221,7 +203,7 @@ public class BackendSem2Application {
         }
 
         /*  Generate Slot   */
-        ZonedDateTime currentDateTime = ZonedDateTime.now();
+        ZonedDateTime tmpDateTime = ZonedDateTime.now().plusDays(10);
         List<Slot> slots = new ArrayList<>();
         for (int i = 0; i < movies.size(); i++) {
             int numberOfSlot = random.nextInt(3) + 2;
@@ -229,7 +211,7 @@ public class BackendSem2Application {
             for (int j = 0; j < numberOfSlot; j++) {
                 int randomDays = random.nextInt(11) - 5;
                 slots.add(Slot.builder()
-                        .startTime(currentDateTime.plus(randomDays, ChronoUnit.DAYS))
+                        .startTime(tmpDateTime.plus(randomDays, ChronoUnit.DAYS))
                         .movie(movie)
                         .theaterRoom(theaterRooms.get(random.nextInt(theaterRooms.size())))
                         .build());

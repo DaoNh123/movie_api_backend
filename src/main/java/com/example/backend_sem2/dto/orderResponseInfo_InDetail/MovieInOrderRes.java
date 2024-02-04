@@ -1,4 +1,4 @@
-package com.example.backend_sem2.dto.OrderResponseInfo;
+package com.example.backend_sem2.dto.orderResponseInfo_InDetail;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +11,5 @@ import lombok.experimental.SuperBuilder;
 public class MovieInOrderRes {
     private String movieName;
     private String posterUrl;
-    private String director;
     private String youtubeVideoId;
 }

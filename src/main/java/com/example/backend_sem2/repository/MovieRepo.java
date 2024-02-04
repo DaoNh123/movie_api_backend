@@ -100,4 +100,13 @@ public interface MovieRepo extends JpaRepository<Movie, Long> {
     @Query("FROM Movie m JOIN FETCH m.slotList " +
             "WHERE m.id = :movieId")
     Movie findByIdJoinFetchSlot(Long movieId);
+
+    List<Movie> findByClosingTimeAfter (ZonedDateTime zonedDateTime);
+
+    @Query(value = "FROM Movie m WHERE m.openingTime <= :compareOpeningTime " +
+            "AND m.closingTime >= :compareClosingTime")
+    List<Movie> findByOpeningTimeBeforeAndClosingTimeAfter (ZonedDateTime compareOpeningTime, ZonedDateTime compareClosingTime);
+
+    @Query("SELECT m.movieName FROM Movie m WHERE m.id = :id")
+    String getMovieNameById (Long id);
 }

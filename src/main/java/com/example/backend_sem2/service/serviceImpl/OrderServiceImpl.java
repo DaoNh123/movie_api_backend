@@ -2,7 +2,8 @@ package com.example.backend_sem2.service.serviceImpl;
 
 import com.example.backend_sem2.dto.OrderRequest;
 import com.example.backend_sem2.dto.OrderRequestWithLoginAccount;
-import com.example.backend_sem2.dto.OrderResponseInfo.OrderResponse;
+import com.example.backend_sem2.dto.orderResponseInfoOverview.OrderResponseOverview;
+import com.example.backend_sem2.dto.orderResponseInfo_InDetail.OrderResponse;
 import com.example.backend_sem2.dto.SeatResponse;
 import com.example.backend_sem2.entity.Movie;
 import com.example.backend_sem2.entity.Order;
@@ -36,7 +37,6 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
-    //    private OrderRepo orderRepo;
     private MovieRepo movieRepo;
     private SeatService seatService;
     private SlotRepo slotRepo;
@@ -73,7 +73,6 @@ public class OrderServiceImpl implements OrderService {
         validateOrder(loginUser.getAge().longValue(), orderRequestWithLoginAccount.getSlotId(), orderRequestWithLoginAccount.getSeatIdList());
 
         Order order = orderMapper.toEntity(orderRequestWithLoginAccount, loginUser);
-//        order.saveInChild();
 
         return handleCreateOrderProcessAfterValidate(order);
     }
@@ -165,5 +164,14 @@ public class OrderServiceImpl implements OrderService {
             throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Seat is not exist!");
         if (!isSeatAvailableAndBelongToSlot(slotId, seatIdList))
             throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Some seats you choose have been books, please choose other one!");
+    }
+
+    @Override
+    public List<OrderResponseOverview> listingOrderByUser(HttpServletRequest request) {
+        String username = authorityUtility.extractUsernameFromRequest(request);
+
+        List<Order> ordersByUser_Username = orderRepo.getOrderByUser_Username(username);
+
+        return ordersByUser_Username.stream().map(orderMapper::toDtoOverview).toList();
     }
 }

@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -64,7 +66,7 @@ public class MovieByTheMovieDBId {
    int revenue;
 
    @JsonProperty("runtime")
-   int runtime;
+   Long runtime;
 
    @JsonProperty("spoken_languages")
    List<SpokenLanguages> spokenLanguages;
@@ -86,4 +88,9 @@ public class MovieByTheMovieDBId {
 
    @JsonProperty("vote_count")
    int voteCount;
+
+   public ZonedDateTime getOpeningTime(){
+      ZoneId zoneId = ZoneId.of("UTC+7");
+      return this.releaseDate.atStartOfDay().atZone(zoneId);
+   }
 }

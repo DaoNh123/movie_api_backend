@@ -1,4 +1,4 @@
-package com.example.backend_sem2.dto.CommentRequestWithUser;
+package com.example.backend_sem2.dto.commentRequestWithUser;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

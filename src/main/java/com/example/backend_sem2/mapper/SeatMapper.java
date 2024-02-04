@@ -1,6 +1,6 @@
 package com.example.backend_sem2.mapper;
 
-import com.example.backend_sem2.dto.OrderResponseInfo.SeatResponseInOrderRes;
+import com.example.backend_sem2.dto.orderResponseInfo_InDetail.SeatResponseInOrderRes;
 import com.example.backend_sem2.dto.SeatResponse;
 import com.example.backend_sem2.entity.Seat;
 import org.mapstruct.BeanMapping;

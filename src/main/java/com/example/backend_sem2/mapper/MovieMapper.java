@@ -1,18 +1,18 @@
 package com.example.backend_sem2.mapper;
 
 import com.example.backend_sem2.api.HttpService;
+import com.example.backend_sem2.api.KinoCheckApiService;
 import com.example.backend_sem2.api.TheMovieDBApiService;
 import com.example.backend_sem2.dto.CreateMovieRequest;
-import com.example.backend_sem2.dto.DtoForMovie.MovieResponseInPage;
-import com.example.backend_sem2.dto.DtoForMovie.MovieResponseWithComment;
-import com.example.backend_sem2.dto.OrderResponseInfo.MovieInOrderRes;
+import com.example.backend_sem2.dto.dtoForMovie.MovieResponseInPage;
+import com.example.backend_sem2.dto.dtoForMovie.MovieResponseOverview;
+import com.example.backend_sem2.dto.dtoForMovie.MovieResponseWithComment;
+import com.example.backend_sem2.dto.orderResponseInfo_InDetail.MovieInOrderRes;
 import com.example.backend_sem2.entity.Category;
 import com.example.backend_sem2.entity.Movie;
 import com.example.backend_sem2.enums.MovieLabelEnum;
-import com.example.backend_sem2.model.theMovieDB.ConfigurationTheMovieDB;
-import com.example.backend_sem2.model.theMovieDB.ImageSizes;
-import com.example.backend_sem2.model.theMovieDB.MovieInApi;
-import com.example.backend_sem2.model.theMovieDB.MovieWithIdRating;
+import com.example.backend_sem2.model.theMovieDB.*;
+import com.example.backend_sem2.model.theMovieDB.findMovieByTheMovieDBId.MovieByTheMovieDBId;
 import com.example.backend_sem2.repository.CategoryRepo;
 import com.example.backend_sem2.service.interfaceService.AmazonService;
 import com.example.backend_sem2.utils.EntityUtility;
@@ -40,6 +40,8 @@ public abstract class MovieMapper {
     HttpService httpService;
     @Autowired
     TheMovieDBApiService theMovieDBApiService;
+    @Autowired
+    KinoCheckApiService kinoCheckApiService;
 
     abstract Movie toEntity(Long id);
 
@@ -140,4 +142,53 @@ public abstract class MovieMapper {
     public String preSignedPosterUrl(String posterUrl){
         return amazonService.createPreSignedPosterUrl(posterUrl);
     }
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "title", target = "movieName")
+    @Mapping(source = "imdbId", target = "imdbId")
+    @Mapping(source = "posterPath", target = "posterUrlInMovieDB", qualifiedByName = "posterPathInTheMovieDBToPosterUrl")
+    @Mapping(source = "overview", target = "description")
+    @Mapping(source = "runtime", target = "duration")
+    @Mapping(source = "originalLanguage", target = "language")
+    @Mapping(target = "openingTime", expression = "java(movieByTheMovieDBId.getOpeningTime())")
+    @Mapping(source = "imdbId", target = "youtubeLink", qualifiedByName = "imdbIdToYouTubeLink")
+    @Mapping(source = "genres", target = "categoryList", qualifiedByName = "genresToCategoryList")
+    @Mapping(source = "adult", target = "movieLabel", qualifiedByName = "adultBooleanToMovieLabel")
+    public abstract CreateMovieRequest toCreateMovieRequest (MovieByTheMovieDBId movieByTheMovieDBId);
+
+    @Named("posterPathInTheMovieDBToPosterUrl")
+    public String posterPathInTheMovieDBToPosterUrl(String posterPath){
+        ConfigurationTheMovieDB configurationTheMovieDB = theMovieDBApiService.getConfigurationInTheMovieDB();
+
+        String posterBaseUrl = configurationTheMovieDB.getImageSizes().getBaseUrl();
+        List<String> sizeList = configurationTheMovieDB.getImageSizes().getPosterSizes();
+        String size = sizeList.get(sizeList.size() - 1);
+        return String.join("",posterBaseUrl, size, posterPath);
+    }
+
+    @Named("imdbIdToYouTubeLink")
+    public String imdbIdToYouTubeLink(String imdbId){
+        String youtubeId = kinoCheckApiService.getYoutubeIdForMovieTrailerByIMDBId(imdbId);
+        return youtubeId == null ? null : "https://www.youtube.com/watch?v=" + youtubeId;
+    }
+
+    @Named("genresToCategoryList")
+    public List<String> genresToCategoryList (List<Genre> genres){
+        return genres.stream().map(Genre::getName).toList();
+    }
+    @Named("adultBooleanToMovieLabel")
+    public MovieLabelEnum movieLabelEnum(boolean adult){
+        Random random = new Random();
+        List<MovieLabelEnum> movieLabelEnums = List.of(
+                MovieLabelEnum.P,
+                MovieLabelEnum.C12
+        );
+        if(adult){
+            return MovieLabelEnum.C18;
+        }
+        return movieLabelEnums.get(random.nextInt(2));
+    }
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    public abstract MovieResponseOverview toMovieResponseOverview (Movie movie);
 }

@@ -1,7 +1,7 @@
 package com.example.backend_sem2.controller.publicEndpoint;
 
 import com.example.backend_sem2.dto.OrderRequest;
-import com.example.backend_sem2.dto.OrderResponseInfo.OrderResponse;
+import com.example.backend_sem2.dto.orderResponseInfo_InDetail.OrderResponse;
 import com.example.backend_sem2.mapper.OrderMapper;
 import com.example.backend_sem2.service.interfaceService.OrderService;
 import jakarta.validation.Valid;

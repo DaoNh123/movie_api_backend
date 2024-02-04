@@ -1,4 +1,4 @@
-package com.example.backend_sem2.dto.DtoForMovie;
+package com.example.backend_sem2.dto.dtoForMovie;
 
 import com.example.backend_sem2.entity.Movie;
 import com.example.backend_sem2.enums.MovieLabelEnum;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 @RedisHash("MovieResponseInPage")

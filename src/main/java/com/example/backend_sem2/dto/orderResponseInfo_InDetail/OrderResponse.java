@@ -1,4 +1,4 @@
-package com.example.backend_sem2.dto.OrderResponseInfo;
+package com.example.backend_sem2.dto.orderResponseInfo_InDetail;
 
 import com.example.backend_sem2.dto.dtoForLogin.UserDto;
 import lombok.AllArgsConstructor;

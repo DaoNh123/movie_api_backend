@@ -23,4 +23,12 @@ public interface SlotRepo extends JpaRepository<Slot, Long> {
 
     @Query("FROM Slot s JOIN FETCH s.movie m WHERE m.id = :movieId")
     List<Slot> getSlotsByMovie_Id(Long movieId);
+
+    @Query("SELECT s FROM Slot s LEFT JOIN s.theaterRoom tr " +
+            "WHERE tr.id = :theaterRoomId " +
+            "AND (cast(:startOfDay AS DATE) IS NULL OR s.startTime BETWEEN :startOfDay AND :endOfDay) " +
+            "ORDER BY s.endTime DESC ")
+    Slot findSlotWithGreatestEndTime(Long theaterRoomId, @Param("startOfDay") ZonedDateTime startOfDay, @Param("endOfDay") ZonedDateTime endOfDay);
+
+    List<Slot> findFirst1ByTheaterRoom_IdAndEndTimeBetween (Long theaterRoomId, @Param("startOfDay") ZonedDateTime startOfDay, @Param("endOfDay") ZonedDateTime endOfDay);
 }

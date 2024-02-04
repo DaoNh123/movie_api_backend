@@ -1,7 +1,7 @@
 package com.example.backend_sem2.controller.publicEndpoint;
 
-import com.example.backend_sem2.dto.DtoForMovie.MovieResponseInPage;
-import com.example.backend_sem2.dto.DtoForMovie.MovieResponseWithComment;
+import com.example.backend_sem2.dto.dtoForMovie.MovieResponseInPage;
+import com.example.backend_sem2.dto.dtoForMovie.MovieResponseWithComment;
 import com.example.backend_sem2.dto.SlotResponse;
 import com.example.backend_sem2.enums.MovieLabelEnum;
 import com.example.backend_sem2.enums.MovieShowingStatusEnum;
@@ -47,7 +47,7 @@ public class MovieController {
 
     @GetMapping({"/now-showing"})
     public Page<MovieResponseInPage> getMovieWithShowingStatusPageableByCondition(
-            @SortDefault(sort = "openingTime", direction = Sort.Direction.DESC)
+            @SortDefault(sort = "updatedAt", direction = Sort.Direction.DESC)
             @PageableDefault(size = 25) Pageable pageable,
             @RequestParam(name = "name", required = false) String partOfMovieName,
             @RequestParam(name = "category_name", required = false) String categoryName,
@@ -64,7 +64,7 @@ public class MovieController {
     /*  Coming Soon Movie   */
     @GetMapping("/coming-soon")
     public Page<MovieResponseInPage> getComingSoonMoviesByCondition(
-            @SortDefault(sort = "openingTime", direction = Sort.Direction.DESC)
+            @SortDefault(sort = "createdAt", direction = Sort.Direction.DESC)
             @PageableDefault(size = 15) Pageable pageable,
             @RequestParam(name = "name", required = false) String partOfMovieName,
             @RequestParam(name = "category_name", required = false) String categoryName,
@@ -121,4 +121,10 @@ public class MovieController {
         return response;
     }
 
+    @GetMapping("/movie-name/{id}")
+    public String getMovieNameById (
+            @PathVariable Long id
+    ){
+        return movieService.getMovieNameById(id);
+    }
 }
