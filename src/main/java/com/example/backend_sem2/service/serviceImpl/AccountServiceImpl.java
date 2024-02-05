@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Map;
 import java.util.UUID;
 
@@ -91,7 +93,7 @@ public class AccountServiceImpl implements AccountService {
         return UUID.randomUUID().toString();
     }
 
-    public String verify(String email, String verificationCode) {
+    public String verify(String email, String verificationCode){
         User user = userRepo.findByEmail(email);
 
         if (user == null) {

@@ -27,7 +27,7 @@ public class Schedule {
     private HttpService httpService;
     private TheMovieDBApiService theMovieDBApiService;
 
-    @Scheduled(cron = "0 0/20 * * * *")      // Run every 5 minutes
+    @Scheduled(cron = "0 0/20 * * * *")      // Run every 20 minutes
 //    @Scheduled(cron =  "0/10 * * * * *")      // Run every 10 seconds
     @Transactional
     public void updateRatingAndMovieIMDBId() {

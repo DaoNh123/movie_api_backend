@@ -9,6 +9,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.UnsupportedEncodingException;
+
 @RestController
 @RequestMapping("/api/accounts")
 @AllArgsConstructor
@@ -29,7 +31,7 @@ public class AccountController {
     }
 
     @GetMapping("/verify")
-    public String verify (@RequestParam String email, @RequestParam String verificationCode){
+    public String verify (@RequestParam String email, @RequestParam String verificationCode) {
         String response = accountService.verify(email, verificationCode);
         return response;
     }
