@@ -13,12 +13,9 @@ import java.util.List;
 @Repository
 public interface SlotRepo extends JpaRepository<Slot, Long> {
 
-//    @Query(value = "FROM Slot s JOIN s.movie m WHERE m.id = :id AND " +
-//            "(:startOfDay IS NULL OR s.startTime BETWEEN :startOfDay AND :endOfDay)")
-//    List<Slot> getSlotsByMovie_IdAndStartTimeBetween (Pageable pageable, Long id, ZonedDateTime startOfDay, ZonedDateTime endOfDay);
-
     @Query("FROM Slot s JOIN s.movie m WHERE m.id = :id AND " +
-            "(cast(:startOfDay AS DATE) IS NULL OR s.startTime BETWEEN :startOfDay AND :endOfDay)")
+            "((cast(:startOfDay AS DATE) IS NULL) OR s.startTime >= :startOfDay) AND " +
+            "((cast(:endOfDay AS DATE) IS NULL) OR s.startTime <= :endOfDay)")
     List<Slot> getSlotsByMovie_IdAndStartTimeBetween(Pageable pageable, @Param("id") Long id, @Param("startOfDay") ZonedDateTime startOfDay, @Param("endOfDay") ZonedDateTime endOfDay);
 
     @Query("FROM Slot s JOIN FETCH s.movie m WHERE m.id = :movieId")
@@ -30,5 +27,5 @@ public interface SlotRepo extends JpaRepository<Slot, Long> {
             "ORDER BY s.endTime DESC ")
     Slot findSlotWithGreatestEndTime(Long theaterRoomId, @Param("startOfDay") ZonedDateTime startOfDay, @Param("endOfDay") ZonedDateTime endOfDay);
 
-    List<Slot> findFirst1ByTheaterRoom_IdAndEndTimeBetween (Long theaterRoomId, @Param("startOfDay") ZonedDateTime startOfDay, @Param("endOfDay") ZonedDateTime endOfDay);
+    List<Slot> findFirst1ByTheaterRoom_IdAndEndTimeBetween(Long theaterRoomId, @Param("startOfDay") ZonedDateTime startOfDay, @Param("endOfDay") ZonedDateTime endOfDay);
 }

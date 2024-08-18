@@ -87,9 +87,11 @@ public class MovieController {
             @RequestParam(name = "show_date", required = false) LocalDate showDate,
             @PathVariable Long id
     ) {
+        // If show_date is null, this method will return all Slot from the present time
+
         System.out.println("showDate = " + showDate);
         ZoneId zoneId = ZoneId.of("UTC+7");
-        ZonedDateTime startOfShowDate = (showDate == null) ? null : showDate.atStartOfDay().atZone(zoneId);
+        ZonedDateTime startOfShowDate = (showDate == null) ? ZonedDateTime.now() : showDate.atStartOfDay().atZone(zoneId);
         ZonedDateTime endOfShowDate = (showDate == null) ? null : showDate.plusDays(1).atStartOfDay().atZone(zoneId);
 
         return getResponseMap(pageable, id, startOfShowDate, endOfShowDate);
