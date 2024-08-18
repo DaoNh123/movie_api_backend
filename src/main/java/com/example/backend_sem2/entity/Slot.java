@@ -48,7 +48,12 @@ public class Slot extends BaseEntity{
     @JsonIgnore
     private List<Order> orderList;
 
-
+    @PrePersist
+    public void setEndTime(){
+        if(this.movie != null && this.movie.getDuration() != null){
+            this.endTime = this.startTime.plusMinutes(this.movie.getDuration());
+        }
+    }
     public void addOrder (Order order){
         if(orderList == null){
             orderList = new ArrayList<>();

@@ -28,6 +28,14 @@ public class Comment extends BaseEntity {
             })
     private Movie movie;
 
+    @ManyToOne(
+            fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.DETACH, CascadeType.MERGE,
+                    CascadeType.PERSIST, CascadeType.REFRESH
+            })
+    private User user;
+
 //    @Override
 //    public String toString() {
 //        return "Comment{" +

@@ -24,23 +24,22 @@ import java.util.List;
 public class CreateMovieRequest {
     @NotBlank
     private String movieName;
-//    private Double imdbRatings;
-    @JsonIgnore
+    private String imdbId;
     private String posterUrl;
-//    private String director;
+    private String posterUrlInMovieDB;
     private String description;
-    private Long duration;          // calculate in seconds
+    private Long duration;          // calculate in minutes
     private String language;
-    @NotBlank
+//    @NotBlank
     private ZonedDateTime openingTime;      // The time which customer have right to book ticket
-    @NotBlank
+//    @NotBlank
     private ZonedDateTime closingTime;      // The time which movie is no longer selling ticket
     private String youtubeLink;              // this will save "youtubeLink" only
     @NotNull
     private List<String> categoryList;
-    @NotBlank
+    @NotNull
     private MovieLabelEnum movieLabel;
-
+    @JsonIgnore
     private MultipartFile poster;
 
     @AssertTrue(message = "Category List can't empty or contain any \"null\" value !")
@@ -49,6 +48,7 @@ public class CreateMovieRequest {
         else return !categoryList.contains(null);
     }
 
+    @JsonIgnore
     public String getYoutubeId(){
         // Find the index of "=" and "&" in the URL
         if(this.youtubeLink == null) return null;

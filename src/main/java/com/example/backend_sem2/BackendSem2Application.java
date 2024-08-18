@@ -4,17 +4,13 @@ import com.example.backend_sem2.api.HttpService;
 import com.example.backend_sem2.api.KinoCheckApiService;
 import com.example.backend_sem2.api.TheMovieDBApiService;
 import com.example.backend_sem2.entity.*;
-import com.example.backend_sem2.enums.MovieBookingStatusEnum;
-import com.example.backend_sem2.enums.MovieShowingStatusEnum;
 import com.example.backend_sem2.mapper.MovieMapper;
-import com.example.backend_sem2.mapper.MovieMapper2;
 import com.example.backend_sem2.model.theMovieDB.ConfigurationTheMovieDB;
 import com.example.backend_sem2.model.theMovieDB.GenreResponse;
 import com.example.backend_sem2.model.theMovieDB.MovieInApi;
-import com.example.backend_sem2.repository.CommentRepo;
-import com.example.backend_sem2.repository.MovieRepo;
-import com.example.backend_sem2.repository.SlotRepo;
-import com.example.backend_sem2.repository.TheaterRoomRepo;
+import com.example.backend_sem2.model.theMovieDB.MovieWithIdRating;
+import com.example.backend_sem2.model.theMovieDB.findMovieByTheMovieDBId.MovieByTheMovieDBId;
+import com.example.backend_sem2.repository.*;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,25 +21,29 @@ import org.springframework.context.annotation.Bean;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootApplication
 @AllArgsConstructor
-//@RequiredArgsConstructor
 public class BackendSem2Application {
 
     private CommentRepo commentRepo;
     private SlotRepo slotRepo;
     private MovieMapper movieMapper;
     private HttpService httpService;
-    private MovieMapper2 movieMapper2;
     @Qualifier("theMovieDBBaseUrl")
     private String theMovieDbBaseUrl;
     private MovieRepo movieRepo;
     private TheaterRoomRepo theaterRoomRepo;
     private TheMovieDBApiService theMovieDBApiService;
     private KinoCheckApiService kinoCheckApiService;
+
+    private AuthorityRepo authorityRepo;
+    private UserRepo userRepo;
     private final long rows = 12;
     private final long columns = 12;
 
@@ -54,6 +54,7 @@ public class BackendSem2Application {
     @Bean
     public CommandLineRunner commandLineRunner() {
         return runner -> {
+
             Long start = System.currentTimeMillis();
             if (!slotRepo.existsById(1L)) {
                 /*  this method does not generate all generated Object in method    */
@@ -62,8 +63,55 @@ public class BackendSem2Application {
             Long end = System.currentTimeMillis();
             System.out.println("Running time: " + (end - start));
 
+            if(userRepo.count() == 0){
+                generateUsersAndAuthorities();
+            }
+
             generateSlotsForMovieOne(10L);
+
+//            getIdInTheMovieDBUsingImdbId("tt9682428");
         };
+    }
+
+    private void getIdInTheMovieDBUsingImdbId(String imdbId) {
+        Long theMovieDBIdOfMovie = theMovieDBApiService.getTheMovieDBIdByImdbId(imdbId);
+        System.out.println("theMovieDBIdOfMovie = " + theMovieDBIdOfMovie);
+        MovieWithIdRating movieWithIdRating = theMovieDBApiService.getMovieWithRatingUsingTheMovieDBId(theMovieDBIdOfMovie);
+        System.out.println("movieWithIdRating = " + movieWithIdRating);
+        MovieByTheMovieDBId movieByTheMovieDBId = theMovieDBApiService.findMovieByTheMovieDBId(theMovieDBIdOfMovie);
+        System.out.println("movieByTheMovieDBId = " + movieByTheMovieDBId);
+    }
+
+
+    private void generateUsersAndAuthorities() {
+        Authority user = Authority.builder()
+                .authorityName("USER")
+                .build();
+        Authority admin = Authority.builder()
+                .authorityName("ADMIN")
+                .build();
+
+        User patrickUser = User.builder()
+                .firstName("patrick")
+                .lastName("peter")
+                .username("patrick")
+                .password("$2a$12$7jbRuqKsnbOy8YFWvi51FueDXMVSvVQVCyOGdpSrmPPCvzasoyfRK")   // patrick
+                .email("cocon321235@gmail.com")
+                .authoritySet(Set.of(user))
+                .enabled(true)
+                .build();
+
+        User adminUser = User.builder()
+                .firstName("admin")
+                .username("admin")
+                .password("$2a$12$AICpFp5VM1Rm4iBxPA5y0uKRgoMHXl1RAXfOTJyW3VdXPhtB6ALW2")
+                .authoritySet(Set.of(admin))
+                .email("nhdao.it2.learn@gmail.com")
+                .enabled(true)
+                .build();
+
+        List<User> userList = List.of(patrickUser, adminUser);
+        userRepo.saveAll(userList);
     }
 
     private void generateSlotsForMovieOne(Long numberOfSlots) {
@@ -88,27 +136,6 @@ public class BackendSem2Application {
         }
     }
 
-    private void testKinoCheck() {
-        System.out.println(kinoCheckApiService.getYoutubeIdForMovieTrailerByIMDBId("tt15398776"));
-        ;
-    }
-
-    private void testUpdateStatusMovie() {
-        ZoneId zoneId = ZoneId.of("UTC");
-        ZonedDateTime startOfToday = LocalDate.now().atStartOfDay().atZone(zoneId);
-        ZonedDateTime threeDaysAfterToday = LocalDate.now().atStartOfDay().atZone(zoneId);
-
-        /*  If today is between "movie.openingDay" - 3 days and "movie.closingDay" ==> ALLOWED */
-        movieRepo.updateAllowedBookingStatus(startOfToday, threeDaysAfterToday, MovieBookingStatusEnum.ALLOWED);
-        /*  If today is after "movie.closingDay" ==> NOT_ALLOWED    */
-        movieRepo.updateNotAllowedBookingStatus(startOfToday, MovieBookingStatusEnum.NOT_ALLOWED);
-
-        /*  If today is between "movie.openingTime" and "movie.closingTime" ==> NOW_SHOWING */
-        movieRepo.updateNowShowingStatus(startOfToday, MovieShowingStatusEnum.NOW_SHOWING);
-        /*  If today is after "movie.closingTime" ==> ENDED */
-        movieRepo.updateEndedShowingStatus(startOfToday, MovieShowingStatusEnum.ENDED);
-    }
-
     @NotNull
     private List<Category> getCategoriesFromGenre() {
         GenreResponse genreResponse = theMovieDBApiService.getGenreOfMovieByTheMovieDB();
@@ -121,7 +148,7 @@ public class BackendSem2Application {
         categoryListFromGenre.forEach(System.out::println);
         return categoryListFromGenre;
     }
-
+    
 
     public void generateData(Long numberOfPage) {
         Random random = new Random();
@@ -176,7 +203,7 @@ public class BackendSem2Application {
         }
 
         /*  Generate Slot   */
-        ZonedDateTime currentDateTime = ZonedDateTime.now();
+        ZonedDateTime tmpDateTime = ZonedDateTime.now().plusDays(10);
         List<Slot> slots = new ArrayList<>();
         for (int i = 0; i < movies.size(); i++) {
             int numberOfSlot = random.nextInt(3) + 2;
@@ -184,7 +211,7 @@ public class BackendSem2Application {
             for (int j = 0; j < numberOfSlot; j++) {
                 int randomDays = random.nextInt(11) - 5;
                 slots.add(Slot.builder()
-                        .startTime(currentDateTime.plus(randomDays, ChronoUnit.DAYS))
+                        .startTime(tmpDateTime.plus(randomDays, ChronoUnit.DAYS))
                         .movie(movie)
                         .theaterRoom(theaterRooms.get(random.nextInt(theaterRooms.size())))
                         .build());
@@ -231,7 +258,6 @@ public class BackendSem2Application {
 
             orders.add(Order.builder()
                     .customerName("Customer " + i)
-                    .customerAddress("Address of customer " + i)
                     .customerAge(random.nextLong(50) + 18)
                     .orderDetailList(orderDetailsInOrder)
                     .slot(slots.get(random.nextInt(slots.size())))

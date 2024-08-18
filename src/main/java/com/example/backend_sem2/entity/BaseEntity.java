@@ -23,10 +23,10 @@ import java.time.ZonedDateTime;
 public abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    protected Long id;
     @CreationTimestamp
-    private ZonedDateTime createdAt;
+    protected ZonedDateTime createdAt;
     @UpdateTimestamp
-    private ZonedDateTime updatedAt;
+    protected ZonedDateTime updatedAt;
 
 }

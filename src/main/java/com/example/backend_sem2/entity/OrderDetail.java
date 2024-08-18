@@ -31,4 +31,10 @@ public class OrderDetail extends BaseEntity{
             }
     )
     private Order order;
+    private Double price;
+
+    @PrePersist
+    public void saveCurrentPrice(){
+        this.price = this.seat.getSeatClass().getPrice();
+    }
 }

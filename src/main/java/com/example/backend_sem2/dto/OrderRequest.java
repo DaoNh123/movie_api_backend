@@ -2,10 +2,7 @@ package com.example.backend_sem2.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import reactor.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -19,11 +16,10 @@ import java.util.List;
 public class OrderRequest {
     @NotBlank(message = "Customer name can't be null")
     private String customerName;
-    @NotBlank(message = "Customer address can't be null")
-    private String customerAddress;
+
     @NotNull(message = "Customer age can't be null")
     private Long customerAge;
-    @Email(message = "Customer Email doesn't have right format!")   // "@Email" doesn't check "null"
+//    @Email(message = "Customer Email doesn't have right format!")   // "@Email" doesn't check "null"
     @NotNull(message = "Customer email can't be null")
     private String customerEmail;
 //    @NotNull(message = "Movie Id can't be null")
@@ -38,4 +34,5 @@ public class OrderRequest {
         if(CollectionUtils.isEmpty(seatIdList)) return false;
         else return !seatIdList.contains(null);
     }
+
 }

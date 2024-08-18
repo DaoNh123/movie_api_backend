@@ -92,6 +92,8 @@ public class Movie extends BaseEntity{
 
         /*  Set up MovieShowingStatusEnum   */
         LocalDate today = LocalDate.now();
+
+
         LocalDate openingDate = this.openingTime.toLocalDate();
         LocalDate closingDate = this.closingTime.toLocalDate();
         if(today.isBefore(openingDate)){

@@ -10,6 +10,7 @@ import com.example.backend_sem2.model.theMovieDB.MovieWithIdRating;
 import com.example.backend_sem2.repository.MovieRepo;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -26,7 +27,7 @@ public class Schedule {
     private HttpService httpService;
     private TheMovieDBApiService theMovieDBApiService;
 
-//    @Scheduled(cron = "0 0/5 * * * *")      // Run every 5 minutes
+    @Scheduled(cron = "0 0/20 * * * *")      // Run every 20 minutes
 //    @Scheduled(cron =  "0/10 * * * * *")      // Run every 10 seconds
     @Transactional
     public void updateRatingAndMovieIMDBId() {
@@ -48,7 +49,7 @@ public class Schedule {
     }
 
     /*  Update "booking_status" and "showing_status"    */
-//    @Scheduled(cron = "0 0/5 * * * *")
+    @Scheduled(cron = "0 0/20 * * * *")
     public void updateMovieStatus(){
         System.out.println("Start updating BookingStatus and ShowingStatus of Movie!");
         ZoneId zoneId = ZoneId.of("UTC");

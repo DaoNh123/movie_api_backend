@@ -15,26 +15,24 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class Order extends BaseEntity{
+public class Order extends BaseEntity {
     @Column(name = "customer_name")
     private String customerName;
-    @Column(name = "customer_address")
-    private String customerAddress;
     @Column(name = "customer_age")
     private Long customerAge;
     @Column(name = "customer_email")
     private String customerEmail;
     @ManyToOne(
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             cascade = {
-            CascadeType.DETACH, CascadeType.MERGE,
-            CascadeType.PERSIST, CascadeType.REFRESH
-    })
+                    CascadeType.DETACH, CascadeType.MERGE,
+                    CascadeType.PERSIST, CascadeType.REFRESH
+            })
     @JsonIgnore
     private Slot slot;
 
     @OneToMany(
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             mappedBy = "order",
             cascade = {
                     CascadeType.DETACH, CascadeType.MERGE,
@@ -43,39 +41,44 @@ public class Order extends BaseEntity{
     )
     @JsonIgnore
     private List<OrderDetail> orderDetailList;
+    @ManyToOne(
+            fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.DETACH, CascadeType.MERGE,
+                    CascadeType.PERSIST, CascadeType.REFRESH
+            }
+    )
+    private User user;
 
     protected Order(final OrderBuilder<?, ?> b) {
         super(b);
         this.customerName = b.customerName;
-        this.customerAddress = b.customerAddress;
         this.customerAge = b.customerAge;
         this.slot = b.slot;
         this.orderDetailList = b.orderDetailList;
         this.customerEmail = b.customerEmail;
+        this.user = b.user;
 
-        if(this.slot != null){
+        if (this.slot != null) {
             this.slot.addOrder(this);
         }
     }
 
     @PrePersist
-    public void saveInChild (){
-        if(this.orderDetailList != null){
+    @PreUpdate
+    public void saveInChild() {
+        if (this.orderDetailList != null) {
             orderDetailList.stream()
                     .forEach(orderDetail -> orderDetail.setOrder(this));
         }
-//        if(this.slot != null){
-//            this.slot.addOrder(this);
-//        }
+
     }
 
     @Override
     public String toString() {
         return "Order{" +
                 "customerName='" + customerName + '\'' +
-                ", customerAddress='" + customerAddress + '\'' +
                 ", customerAge=" + customerAge +
-                ", orderDetailList=" + orderDetailList +
                 '}';
     }
 }

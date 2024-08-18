@@ -20,17 +20,24 @@ import java.util.Optional;
 @Repository
 @EnableJpaRepositories
 public interface MovieRepo extends JpaRepository<Movie, Long> {
-//    @Query(value = "FROM Movie m LEFT JOIN FETCH m.categoryList c " +
-//            "WHERE (cast(:partOfMovieName AS text) IS NULL OR m.movieName LIKE CONCAT('%', cast(:partOfMovieName AS text), '%')) " +
-//            "AND (:categoryName IS NULL OR c.categoryName LIKE CONCAT('%', cast(:categoryName AS text), '%')) " +
-//            "AND (:movieLabel IS NULL OR cast(m.movieLabel AS text) = :movieLabel) ")
-//    Page<Movie> getMoviePageableByCondition(Pageable pageable, String partOfMovieName, String categoryName, String movieLabel);
 
-//    @Query(value = "FROM Movie m LEFT JOIN FETCH m.categoryList c " +
-//            "WHERE (cast(:partOfMovieName AS text) IS NULL OR m.movieName LIKE CONCAT('%', cast(:partOfMovieName AS text), '%')) " +
-//            "AND (:categoryName IS NULL OR c.categoryName LIKE CONCAT('%', cast(:categoryName AS text), '%')) " +
-//            "AND (:movieLabel IS NULL OR m.movieLabel = :movieLabel) ")
-//    Page<Movie> getMoviePageableByCondition(Pageable pageable, String partOfMovieName, String categoryName, MovieLabelEnum movieLabel);
+//    @Query(value = "SELECT new Movie(m.id, m.movieName, m.posterUrl, m.duration, new Category , m.movieLabel) " +
+//            "FROM Movie m LEFT JOIN FETCH m.categoryList c " +
+//            "WHERE (cast(:partOfMovieName AS text) IS NULL OR lower(m.movieName) LIKE CONCAT('%', lower(cast(:partOfMovieName AS text)), '%')) " +
+//            // ==> after query, return only desired "category"
+////            "AND (:categoryName IS NULL OR c.categoryName LIKE CONCAT('%', cast(:categoryName AS text), '%')) " +
+//
+//            /*  return all "category" of the Movie which satisfy having desired "category"*/
+//            "AND (m.id IN (SELECT DISTINCT m.id FROM Movie m LEFT JOIN m.categoryList c " +
+//            "WHERE :categoryName IS NULL OR c.categoryName LIKE CONCAT('%', cast(:categoryName AS text), '%'))) " +
+//
+//            "AND (:movieLabel IS NULL OR m.movieLabel = :movieLabel) " +
+//            "AND (:movieShowingStatusEnum IS NULL OR m.movieShowingStatusEnum = :movieShowingStatusEnum) " +
+//            "AND (:movieBookingStatusEnum IS NULL OR m.movieBookingStatusEnum = :movieBookingStatusEnum) " +
+//            "AND (:deleted IS NULL OR m.deleted = :deleted) ")
+//    Page<Movie> getMoviePageableByCondition(Pageable pageable, String partOfMovieName, String categoryName,
+//                                            MovieLabelEnum movieLabel, MovieShowingStatusEnum movieShowingStatusEnum,
+//                                            MovieBookingStatusEnum movieBookingStatusEnum, Boolean deleted);
 
     @Query(value = "FROM Movie m LEFT JOIN FETCH m.categoryList c " +
             "WHERE (cast(:partOfMovieName AS text) IS NULL OR lower(m.movieName) LIKE CONCAT('%', lower(cast(:partOfMovieName AS text)), '%')) " +
@@ -50,7 +57,8 @@ public interface MovieRepo extends JpaRepository<Movie, Long> {
                                             MovieBookingStatusEnum movieBookingStatusEnum, Boolean deleted);
 
     @Query(value = "FROM Movie m LEFT JOIN FETCH m.commentList c " +
-            "WHERE m.id = :id")
+            "LEFT JOIN FETCH c.user WHERE " +
+            "m.id = :id")
     Movie getMovieWithComments(Long id);
 
     Page<Movie> getMoviesByOpeningTimeAfter(Pageable pageable, ZonedDateTime zonedDateTime);
@@ -92,4 +100,13 @@ public interface MovieRepo extends JpaRepository<Movie, Long> {
     @Query("FROM Movie m JOIN FETCH m.slotList " +
             "WHERE m.id = :movieId")
     Movie findByIdJoinFetchSlot(Long movieId);
+
+    List<Movie> findByClosingTimeAfter (ZonedDateTime zonedDateTime);
+
+    @Query(value = "FROM Movie m WHERE m.openingTime <= :compareOpeningTime " +
+            "AND m.closingTime >= :compareClosingTime")
+    List<Movie> findByOpeningTimeBeforeAndClosingTimeAfter (ZonedDateTime compareOpeningTime, ZonedDateTime compareClosingTime);
+
+    @Query("SELECT m.movieName FROM Movie m WHERE m.id = :id")
+    String getMovieNameById (Long id);
 }

@@ -67,6 +67,7 @@ public class HttpServiceImpl implements HttpService {
             e.printStackTrace();
         }
         try {
+            assert response != null;
             assert response.body() != null;
             string = response.body().string();
         } catch (IOException e) {

@@ -1,21 +1,30 @@
 package com.example.backend_sem2.service.serviceImpl;
 
-import com.example.backend_sem2.enums.SeatStatusEnum;
 import com.example.backend_sem2.dto.OrderRequest;
+import com.example.backend_sem2.dto.OrderRequestWithLoginAccount;
+import com.example.backend_sem2.dto.orderResponseInfoOverview.OrderResponseOverview;
+import com.example.backend_sem2.dto.orderResponseInfo_InDetail.OrderResponse;
 import com.example.backend_sem2.dto.SeatResponse;
 import com.example.backend_sem2.entity.Movie;
 import com.example.backend_sem2.entity.Order;
-import com.example.backend_sem2.entity.OrderDetail;
 import com.example.backend_sem2.entity.Slot;
+import com.example.backend_sem2.entity.User;
+import com.example.backend_sem2.enums.ActionTypeEnum;
+import com.example.backend_sem2.enums.SeatStatusEnum;
 import com.example.backend_sem2.exception.CustomErrorException;
 import com.example.backend_sem2.mapper.OrderMapper;
 import com.example.backend_sem2.mapper.SeatMapper;
+import com.example.backend_sem2.model.RabbitMQMessage;
+import com.example.backend_sem2.rabbitMQProducer.MessageProducer;
 import com.example.backend_sem2.repository.*;
 import com.example.backend_sem2.service.interfaceService.OrderService;
 import com.example.backend_sem2.service.interfaceService.SeatService;
+import com.example.backend_sem2.utils.AuthorityUtility;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +37,6 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
-    //    private OrderRepo orderRepo;
     private MovieRepo movieRepo;
     private SeatService seatService;
     private SlotRepo slotRepo;
@@ -37,74 +45,59 @@ public class OrderServiceImpl implements OrderService {
     private SeatRepo seatRepo;
     private OrderRepo orderRepo;
     private OrderMapper orderMapper;
+    private MessageProducer messageProducer;
+    private AuthorityUtility authorityUtility;
+    private UserRepo userRepo;
 
     @Override
     @Transactional
     @SneakyThrows
-    public Object createOrder(OrderRequest orderRequest) {
+    public OrderResponse createOrder(OrderRequest orderRequest) {
 
-        Slot slot = slotRepo.findById(orderRequest.getSlotId()).orElseThrow(()-> new CustomErrorException(HttpStatus.BAD_REQUEST, "This slot is not exist!"));
+        Long customerAge = orderRequest.getCustomerAge() == null ? Long.valueOf(0) : orderRequest.getCustomerAge();
+        List<Long> seatIdList = orderRequest.getSeatIdList();
+        Long slotId = orderRequest.getSlotId();
 
-        if (!isEnoughAgeToBook(orderRequest))
-            throw new CustomErrorException(HttpStatus.BAD_REQUEST, String.format("You need to be older than %s years old to what this movie!", slot.getMovie().getMovieLabel().getMinAge()));
+        validateOrder(customerAge, slotId, seatIdList);
+        Order order = orderMapper.toEntity(orderRequest);
 
-        /*  rarely wrong because in the main flow, customer always choose from exist seat   */
-        if (!isAllSeatsExist(orderRequest))
-            throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Seat is not exist!");
-        if (!isSeatAvailableAndBelongToSlot(orderRequest))
-            throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Some seats you choose have been books, please choose other one!");
-
-        try {
-            List<OrderDetail> orderDetails = orderRequest.getSeatIdList().stream()
-                    .map(id -> seatRepo.findById(id)
-                            .orElseThrow(() -> new CustomErrorException(HttpStatus.BAD_REQUEST, "Seat is not exist!"))
-                    )
-                    .map(
-                            seat -> OrderDetail.builder().seat(seat).build()
-                    ).collect(Collectors.toList());
-            Order order = Order.builder()
-                    .customerName(orderRequest.getCustomerName())
-                    .customerAddress(orderRequest.getCustomerAddress())
-                    .customerAge(orderRequest.getCustomerAge())
-                    .customerEmail(orderRequest.getCustomerEmail())
-                    .orderDetailList(orderDetails)
-                    .slot(slot)
-                    .build();
-
-            orderRepo.save(order);
-
-            return orderMapper.toDto(order);
-        } catch (Exception e) {
-            throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Fail to create order!");
-        }
+        return handleCreateOrderProcessAfterValidate(order);
     }
 
-    private boolean isAllSeatsExist(OrderRequest orderRequest) {
-        return orderRequest.getSeatIdList().stream().allMatch(seatRepo::existsById);
+
+    @Override
+    public OrderResponse createOrderWithLoginAccount(HttpServletRequest request, OrderRequestWithLoginAccount orderRequestWithLoginAccount) {
+        String username = authorityUtility.extractUsernameFromRequest(request);
+        User loginUser = userRepo.getUserByUsername(username);
+
+        validateOrder(loginUser.getAge().longValue(), orderRequestWithLoginAccount.getSlotId(), orderRequestWithLoginAccount.getSeatIdList());
+
+        Order order = orderMapper.toEntity(orderRequestWithLoginAccount, loginUser);
+
+        return handleCreateOrderProcessAfterValidate(order);
+    }
+
+    private boolean isAllSeatsExist(List<Long> seatIdList) {
+        return seatIdList.stream().allMatch(seatRepo::existsById);
     }
 
     /*  check if all seat which is ordered still available  */
     /*  --- Solution 1: Check through "getAllSeatOfASlotWithStatus" --- */
-    private boolean isSeatAvailableAndBelongToSlot(OrderRequest orderRequest) {
-        List<SeatResponse> seatResponseList = seatService.getAllSeatOfASlotWithStatus(orderRequest.getSlotId());
+    private boolean isSeatAvailableAndBelongToSlot(Long slotId, List<Long> seatIdList) {
+        List<SeatResponse> seatResponseList = seatService.getAllSeatOfASlotWithStatus(slotId);
 
         Map<Long, SeatResponse> seatResponseMap = seatResponseList.stream()
                 .collect(Collectors.toMap(SeatResponse::getSeatId, Function.identity()));
 
-        return orderRequest.getSeatIdList().stream()
+        return seatIdList.stream()
                 .map(seatId -> {
                     SeatResponse seatResponse = seatResponseMap.get(seatId);
-                    if(seatResponse == null) throw  new CustomErrorException(HttpStatus.BAD_REQUEST, "There are seats which do not belong to this slot or isn't exist");
+                    if (seatResponse == null)
+                        throw new CustomErrorException(HttpStatus.BAD_REQUEST, "There are seats which do not belong to this slot or isn't exist");
                     return seatResponse;
                 })
                 .allMatch(seatResponse -> seatResponse.getStatus().equals(SeatStatusEnum.AVAILABLE));
     }
-
-    /*  --- Solution 2: Check through "existsBySeat_IdAnAndOrder_Slot_Id" --- */
-    /*  - Remove because this method can't check if this Seat belong to "Slot" or not*/
-//    public boolean isSeatAvailable(OrderRequest orderRequest) {
-//        return seatService.isAllSeatIsAvailableInSlot(orderRequest.getSeatIdList(), orderRequest.getSlotId());
-//    }
 
     /*  check if Slot began or not, we can not book a seat 10 minutes after movie started  */
     private boolean isSlotAvailableToBook(Slot slot) {
@@ -115,12 +108,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /*  check Customer Age  */
-    private boolean isEnoughAgeToBook(OrderRequest orderRequest) {
-        Long customerAge = orderRequest.getCustomerAge() == null ? Long.valueOf(0) : orderRequest.getCustomerAge();
-        Movie bookedMovie = movieRepo.findMovieBySlotId(orderRequest.getSlotId()).orElseThrow(()-> new CustomErrorException(HttpStatus.BAD_REQUEST, "This Movie is not exist!"));
+    private boolean isEnoughAgeToBook(Long customerAge2, Long slotId) {
+//        Long customerAge = orderRequest.getCustomerAge() == null ? Long.valueOf(0) : orderRequest.getCustomerAge();
+
+        Movie bookedMovie = movieRepo.findMovieBySlotId(slotId).orElseThrow(() -> new CustomErrorException(HttpStatus.BAD_REQUEST, "This Movie is not exist!"));
         Long requiredAge = bookedMovie.getMovieLabel().getMinAge();
 
-        return customerAge >= requiredAge;
+        return customerAge2 >= requiredAge;
     }
 
     @Override
@@ -136,5 +130,48 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order getOrderCustomById(Long id) {
         return orderRepo.getOrderCustomById(id);
+    }
+
+    @NotNull
+    private OrderResponse handleCreateOrderProcessAfterValidate(Order order) {
+        try {
+            System.out.println("Order ***");
+            orderRepo.save(order);
+            OrderResponse orderResponse = orderMapper.toDto(order);
+
+            if(orderResponse.getCustomerEmail() != null){
+                messageProducer.sendMessage(RabbitMQMessage.builder()
+                        .actionType(ActionTypeEnum.ORDER_CREATED)
+                        .data(orderResponse)
+                        .destinationEmail(orderResponse.getCustomerEmail())
+                        .build());
+            }else {
+                System.out.println("Customer Email is null ==> Do not send email to inform about \"Order Created\"");
+            }
+            return orderResponse;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Fail to create order!");
+        }
+    }
+
+    private void validateOrder(Long customerAge, Long slotId, List<Long> seatIdList) {
+        Slot slot = slotRepo.findById(slotId).orElseThrow(() -> new CustomErrorException(HttpStatus.BAD_REQUEST, "This slot is not exist!"));
+        if (!isEnoughAgeToBook(customerAge, slotId))
+            throw new CustomErrorException(HttpStatus.BAD_REQUEST, String.format("You need to be older than %s years old to what this movie!", slot.getMovie().getMovieLabel().getMinAge()));
+        /*  rarely wrong because in the main flow, customer always choose from exist seat   */
+        if (!isAllSeatsExist(seatIdList))
+            throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Seat is not exist!");
+        if (!isSeatAvailableAndBelongToSlot(slotId, seatIdList))
+            throw new CustomErrorException(HttpStatus.BAD_REQUEST, "Some seats you choose have been books, please choose other one!");
+    }
+
+    @Override
+    public List<OrderResponseOverview> listingOrderByUser(HttpServletRequest request) {
+        String username = authorityUtility.extractUsernameFromRequest(request);
+
+        List<Order> ordersByUser_Username = orderRepo.getOrderByUser_Username(username);
+
+        return ordersByUser_Username.stream().map(orderMapper::toDtoOverview).toList();
     }
 }
